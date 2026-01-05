@@ -1,0 +1,46 @@
+# --- Dependências (Ignora em todas as pastas: raiz, frontend e backend) ---
+node_modules/
+pnpm-lock.yaml
+
+# --- Geral / Logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# --- Backend (Node.js) ---
+# Arquivos de ambiente (NUNCA suba suas chaves privadas)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+
+# Pastas de coverage de testes
+coverage/
+.nyc_output/
+
+# --- Frontend (React / Vite / Next.js) ---
+# Pastas de build de produção
+build/
+dist/
+.next/
+out/
+
+# Cache
+.eslintcache
+.cache
+.parcel-cache
+
+# --- IDEs e Sistema Operacional ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
