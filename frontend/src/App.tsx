@@ -8,38 +8,18 @@ import {
   Outlet,
   NavLink,
 } from 'react-router-dom'
+import { useAuth } from './hooks/useAuth'
+
+import AppLayout from './layouts/AppLayout'
+
+import Login from './pages/Login'
+
+import { AuthProvider } from './contexts/AuthContext'
 
 /* =========================
    Guards de Autenticação
 ========================= */
 
-// Simulação de autenticação
-const isAuthenticated = () => {
-   // trocar pela lógica real (token, session, etc)
-  return true
-}
-
-function PrivateRoute({ children }: { children: JSX.Element }) {
-  return isAuthenticated() ? children : <Navigate to="/login" replace />
-}
-
-/* =========================
-   Layouts
-========================= */
-
-function AppLayout() {
-  return (
-    <>
-      <nav>
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/busca">Busca</NavLink>
-        <NavLink to="/agora">Agora</NavLink>
-        <NavLink to="/perfil">Perfil</NavLink>
-      </nav>
-      <Outlet />
-    </>
-  )
-}
 
 function FeedLayout() {
   return (
@@ -51,13 +31,15 @@ function FeedLayout() {
       <Outlet />
     </>
   )
+function PrivateRoute({ children }: { children: JSX.Element }) {
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated ? children : <Navigate to="/login" replace />
 }
 
 /* =========================
    Pages (placeholders)
 ========================= */
 
-const Login = () => <div>Login</div>
 
 const FeedSeguindo = () => <div>Feed — Seguindo</div>
 const FeedParaVoce = () => <div>Feed — Para você</div>
@@ -108,5 +90,9 @@ export const router = createHashRouter(
 )
 
 export default function App() {
-  return <RouterProvider router={router} />
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  )
 }
