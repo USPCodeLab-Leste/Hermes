@@ -46,7 +46,7 @@ html.dark {
 }
 
 body, button, textarea {
-  color: var(--color-text-primary);
+  /* color: var(--color-text-primary); */
   font-family: var(--font-sans);
 }
 
