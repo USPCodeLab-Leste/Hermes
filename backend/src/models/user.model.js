@@ -1,4 +1,5 @@
-import pool from "../conect.bd.js";
+import pool from "../config/database.js";
+import crypto from "crypto";
 
 class UserModel {
   
@@ -36,26 +37,26 @@ class UserModel {
 
   // Cria usuario
   async create({ name, email, password, role = "USER" }) {
-    const query = `
-    INSERT INTO tb_user (id, name, email, password, role)
-    VALUES ($1, $2, $3, $4, $5);
-    `
+    try {
+      const id = crypto.randomUUID();
 
-    const values = [16818655, name, email, password, role];
-    
-    const result = await pool
-    .query(query, values)
-    .then( res => {
-        return {
-            message: "Usuário criado",
-            id: 16818655,
-            status: 201
-        }
+      const query = `
+        INSERT INTO tb_user (id, name, email, password, role)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id
+      `;
 
-    } )
-    .catch( err => console.log("ERROR CREATE USER: ", err));
+      const values = [id, name, email, password, role];
+      const result = await pool.query(query, values);
 
-    return result;
+      return { id: result.rows[0].id };
+
+    } catch (err) {
+
+      console.error("ERROR CREATE USER:", err);
+      throw err;
+
+    }
   }
 }
 
