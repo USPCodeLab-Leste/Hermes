@@ -1,36 +1,30 @@
-import { createContext, useState } from 'react'
+import { createContext } from 'react'
+import { auth } from '../services/auth'
+import { useAuthState } from '../hooks/useAuthState'
 
 interface AuthContextData {
   token: string | null
   isAuthenticated: boolean
-  login(token: string): void
-  logout(): void
+  loading: boolean
+  error: string | null
 }
 
 export const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = useState(
-    () => localStorage.getItem('token')
-  )
-
-  function login(token: string) {
-    localStorage.setItem('token', token)
-    setToken(token)
-  }
-
-  function logout() {
-    localStorage.removeItem('token')
-    setToken(null)
-  }
+  const [
+    token,
+    loading,
+    error
+  ] = useAuthState(auth);
 
   return (
     <AuthContext.Provider
       value={{ 
-        token, 
-        isAuthenticated: !!token, 
-        login, 
-        logout 
+        token,
+        isAuthenticated: !!token,
+        loading,
+        error
       }}
     >
       {children}
