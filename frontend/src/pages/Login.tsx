@@ -7,8 +7,17 @@ import discordIcon from '../assets/brand-discord.svg'
 import instagramIcon from '../assets/brand-instagram.svg'
 import logoHermes from '../assets/temp-logo.png'
 
+// hooks de autenticação
+import { auth } from "../services/auth"
+import { useSignIn } from './../hooks/useSignIn';
+import { useRegister } from "../hooks/useRegister"
+import { useCheckEmail } from "../hooks/useCheckEmail"
+
 export default function Login() {
-  const { login, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
+  const [signIn, signInLoading, signInError] = useSignIn(auth)
+  const [register, regLoading, regError] = useRegister(auth)
+  const [checkEmail, checkLoading, checkError] = useCheckEmail(auth)
 
   const [step, setStep] = useState<'check_email' | 'login' | 'register'>('check_email')
   const [email, setEmail] = useState('')
@@ -40,7 +49,7 @@ export default function Login() {
 
     // 2. Fase de Login
     if (step === 'login') {
-      login('dummy-token')
+      signIn({ email, password: 'password123' })
       return
     }
 
