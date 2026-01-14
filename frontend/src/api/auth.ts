@@ -1,19 +1,10 @@
-// api/auth.ts
 import { fakeRequest } from './client'
 import { authUsers } from '../mocks/auth.mock'
+import type { LoginPayload, RegisterPayload } from '../types/payloads'
 
-interface LoginPayload {
-  email: string
-  password: string
-}
-
-interface RegisterPayload {
-  name: string
-  email: string
-  password: string
-}
-
-export async function login({ email, password }: LoginPayload) {
+export async function signIn(data: LoginPayload) {
+  const { email, password } = data
+  
   const user = authUsers.find(
     u => u.email === email && u.password === password
   )
@@ -22,17 +13,29 @@ export async function login({ email, password }: LoginPayload) {
     throw new Error('Credenciais inválidas')
   }
 
+  const token = `jwt-${user.uuid}`
   return fakeRequest({
-    token: 'fake-jwt-token',
+    token,
   })
+}
+
+export async function checkEmail(email: string) {
+  const emailExists = authUsers.some(u => u.email === email)
+
+  if (emailExists) {
+    throw new Error('Email já cadastrado')
+  }
+
+  return fakeRequest({ message: 'Email verificado' })
+}
+
+export async function signOut() {
+  return fakeRequest(true)
 }
 
 export async function register(data: RegisterPayload) {
   const newUser = {
-    id: crypto.randomUUID(),
-    username: data.email.split('@')[0],
-    avatarUrl: '/avatars/default.png',
-    rating: 0,
+    uuid: crypto.randomUUID(),
     ...data,
   }
 
@@ -40,6 +43,6 @@ export async function register(data: RegisterPayload) {
 
   return fakeRequest({
     message: 'Usuário criado',
-    id: newUser.id,
+    uuid: newUser.uuid,
   })
 }

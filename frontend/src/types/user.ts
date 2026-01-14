@@ -1,9 +1,17 @@
 export interface User {
-  id: string
-  name: string
+  uuid: string
   username: string
-  avatarUrl: string
-  rating: number
-  phone?: string
-  whatsapp?: string
+}
+
+export type UserCredential = {
+  uuid: string
+  email: string
+  username: string
+}
+
+export interface UserMe {
+  id: string
+  nome: string
+  email: string
+  role: 'USER' | 'ADMIN'
 }
