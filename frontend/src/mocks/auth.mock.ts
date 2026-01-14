@@ -7,12 +7,9 @@ export interface AuthUser extends User {
 
 export const authUsers: AuthUser[] = [
   {
-    id: 'u1',
-    name: 'Hermes',
+    uuid: 'u1',
     username: 'hermes',
-    email: 'hermes@email.com',
-    password: '123456',
-    avatarUrl: '/avatars/1.png',
-    rating: 4.9,
+    email: 'hermes@usp.br',
+    password: 'password123',
   },
 ]

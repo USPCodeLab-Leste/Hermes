@@ -2,18 +2,11 @@ import type { User } from '../types/user'
 
 export const users: User[] = [
   {
-    id: 'u1',
-    name: 'Hermes',
+    uuid: 'u1',
     username: 'hermes',
-    avatarUrl: '/avatars/1.png',
-    rating: 4.9,
   },
   {
-    id: 'u2',
-    name: 'Code Laber da Silva',
+    uuid: 'u2',
     username: 'codelaber',
-    avatarUrl: '/avatars/2.png',
-    rating: 4.8,
-    whatsapp: '+55 22 22222-2222',
   },
 ]
