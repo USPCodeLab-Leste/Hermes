@@ -2,9 +2,9 @@ import { useState } from "react"
 import { Navigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 
-import youtubeIcon from '../assets/brand-youtube.svg'
-import discordIcon from '../assets/brand-discord.svg'
-import instagramIcon from '../assets/brand-instagram.svg'
+import YoutubeIcon from '../assets/brand-youtube.svg?react'
+import DiscordIcon from '../assets/brand-discord.svg?react'
+import InstagramIcon from '../assets/brand-instagram.svg?react'
 import logoHermes from '../assets/temp-logo.png'
 
 // hooks de autenticação
@@ -71,7 +71,7 @@ export default function Login() {
           <img src={logoHermes} alt="Logo do Hermes" className="w-48 md:w-64 max-w-xs object-contain" />
 
           <div className={`grid transition-all duration-500 ease-in-out 
-            ${step === 'register'? 'grid-rows-[0fr] opacity-0 margin-0': 'grid-rows-[1fr] opacity-100'}`
+            ${step === 'register' ? 'grid-rows-[0fr] opacity-0 margin-0' : 'grid-rows-[1fr] opacity-100'}`
           }>
             <div className="overflow-hidden pt-6">
               <p className="text-base md:text-center max-w-md pb-1">
@@ -146,13 +146,13 @@ export default function Login() {
             <p className="text-white text-sm font-bold">Criado por Codelab Leste</p>
             <div className="flex justify-center gap-8">
               <a href="" target="_blank">
-                <img src={youtubeIcon} alt="YouTube" className="w-6 h-6 brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer transition-opacity" />
+                <YoutubeIcon className="w-6 h-6 stroke-white brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer transition-opacity" />
               </a>
               <a href="" target="_blank">
-                <img src={discordIcon} alt="Discord" className="w-6 h-6 brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer transition-opacity" />
+                <DiscordIcon className="w-6 h-6 stroke-white brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer transition-opacity" />
               </a>
               <a href="" target="_blank">
-                <img src={instagramIcon} alt="Instagram" className="w-6 h-6 brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer transition-opacity" />
+                <InstagramIcon className="w-6 h-6 stroke-white brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer transition-opacity" />
               </a>
             </div>
           </footer>
