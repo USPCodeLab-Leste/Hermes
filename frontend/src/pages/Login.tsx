@@ -21,46 +21,78 @@ export default function Login() {
 
   const [step, setStep] = useState<'check_email' | 'login' | 'register'>('check_email')
   const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
+  // Redireciona se já estiver logado
   if (isAuthenticated) {
     return <Navigate to="/" replace />
   }
 
-  // FUNÇÃO MOCK PARA VERIFICAR SE O EMAIL EXISTE
-  const checkEmailExists = (emailToCheck: string) => {
-    if (emailToCheck === 'hermes@usp.br') {
-      return true
-    }
-    return false
+  // Helper para tratar mensagens de erro de forma segura
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    return String(error);
   }
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    // 1. Fase de Verificação de Email
     if (step === 'check_email') {
       if (!email) {
         alert("Digite um email!")
         return
       }
-      const exists = checkEmailExists(email)
-      setStep(exists ? 'login' : 'register')
+
+      // Sucesso = Email disponível (NÃO existe) -> Vai para cadastro
+      // Erro = Email já cadastrado (Existe) -> Vai para login
+      try {
+        await checkEmail(email)
+        setStep('register')
+
+      } catch (err: unknown) {
+        setStep('login')
+      }
       return
     }
 
-    // 2. Fase de Login
+    // 2 a) Fase de Login
     if (step === 'login') {
-      signIn({ email, password: 'password123' })
+      try {
+        await signIn({ email, password })
+        // Sucesso! O Contexto de Auth detectará o token e redirecionará.
+      } catch (err: unknown) {
+        alert("Erro ao fazer login: " + getErrorMessage(err))
+      }
       return
     }
 
-    // 3. Fase de Cadastro
+    // 2 b) Fase de Cadastro
     if (step === 'register') {
-      alert("Conta criada com sucesso! (Simulação)")
-      //Adcionar a chamada de cadastro aqui
+      if (password !== confirmPassword) {
+        alert("As senhas não conferem!")
+        return
+      }
+
+      try {
+        await register({ email, username, password })
+        alert("Conta criada com sucesso! Faça login agora.")
+
+        // Limpa a senha para o usuário digitar de novo no login (segurança)
+        setPassword('')
+        setConfirmPassword('')
+
+        setStep('login')
+      } catch (err: unknown) {
+        alert("Erro ao registrar: " + getErrorMessage(err))
+      }
       return
     }
   }
 
+  const isLoading = checkLoading || signInLoading || regLoading;
 
   return (
     <>
@@ -91,44 +123,88 @@ export default function Login() {
                 Insira o seu e-mail
               </label>
               <input
-                type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} readOnly={step !== 'check_email'} placeholder="E-mail USP"
+                type="email"
+                id="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                readOnly={step !== 'check_email' || isLoading} // Desabilita edição se não estiver na fase de verificação de email ou se estiver carregando
+                placeholder="E-mail USP"
                 className={`border-3 border-white rounded-2xl p-2 text-white transition-colors duration-300 ${step !== 'check_email' ? 'bg-white/10 cursor-not-allowed' : 'bg-transparent'}`}
               />
             </div>
 
 
             <div className={`grid transition-[grid-template-rows] duration-500 ease-out 
-                ${step === 'check_email' ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'}`
+              ${step === 'check_email' ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'}`
             }>
               <div className="overflow-hidden">
 
                 <div className={`flex flex-col gap-3 transition-opacity duration-500 delay-100 
-                    ${step === 'check_email' ? 'opacity-0' : 'opacity-100'}`}>
+                  ${step === 'check_email' ? 'opacity-0' : 'opacity-100'}`
+                }>
 
                   {/* CAMPOS DE LOGIN */}
                   {step === 'login' && (
-                    <div className="flex flex-col gap-1">
-                      <label htmlFor="pass-login" className="text-white text-base font-semibold">
-                        Insira a sua senha
-                      </label>
-                      <input type="password" id="pass-login" placeholder="Senha" className="border-3 border-white rounded-2xl p-2 text-white bg-transparent" />
-                    </div>
+                    <>
+                      <div className="flex flex-col gap-1">
+                        <label htmlFor="pass-login" className="text-white text-base font-semibold">
+                          Insira a sua senha
+                        </label>
+                        <input
+                          type="password"
+                          id="pass-login"
+                          value={password}
+                          onChange={e => setPassword(e.target.value)}
+                          disabled={isLoading}
+                          placeholder="Senha"
+                          className="border-3 border-white rounded-2xl p-2 text-white bg-transparent"
+                        />
+                      </div>
+
+
+                    </>
                   )}
 
                   {/* CAMPOS DE REGISTRO */}
                   {step === 'register' && (
                     <>
                       <div className="flex flex-col gap-1">
-                        <label className="text-white text-base font-semibold">Número USP</label>
-                        <input type="text" placeholder="Número USP" className="border-3 border-white rounded-2xl p-2 text-white bg-transparent" />
+                        <label htmlFor="username" className="text-white text-base font-semibold">Nome de usuário</label>
+                        <input
+                          type="text"
+                          id="username"
+                          value={username}
+                          onChange={e => setUsername(e.target.value)}
+                          disabled={isLoading}
+                          placeholder="Nome de usuário"
+                          className="border-3 border-white rounded-2xl p-2 text-white bg-transparent"
+                        />
                       </div>
+
                       <div className="flex flex-col gap-1">
-                        <label className="text-white text-base font-semibold">Crie uma senha</label>
-                        <input type="password" placeholder="Senha" className="border-3 border-white rounded-2xl p-2 text-white bg-transparent" />
+                        <label htmlFor="pass-register" className="text-white text-base font-semibold">Crie uma senha</label>
+                        <input
+                          type="password"
+                          id="pass-register"
+                          value={password}
+                          onChange={e => setPassword(e.target.value)}
+                          disabled={isLoading}
+                          placeholder="Senha"
+                          className="border-3 border-white rounded-2xl p-2 text-white bg-transparent"
+                        />
                       </div>
+
                       <div className="flex flex-col gap-1">
-                        <label className="text-white text-base font-semibold">Confirme a senha</label>
-                        <input type="password" placeholder="Senha" className="border-3 border-white rounded-2xl p-2 text-white bg-transparent" />
+                        <label htmlFor="pass-confirm" className="text-white text-base font-semibold">Confirme a senha</label>
+                        <input
+                          type="password"
+                          id="pass-confirm"
+                          value={confirmPassword}
+                          onChange={e => setConfirmPassword(e.target.value)}
+                          disabled={isLoading}
+                          placeholder="Senha"
+                          className="border-3 border-white rounded-2xl p-2 text-white bg-transparent"
+                        />
                       </div>
                     </>
                   )}
@@ -136,9 +212,11 @@ export default function Login() {
               </div>
             </div>
 
-            <button className="w-2/3 text-white text-lg font-bold bg-amber-400 p-2 mb-4 rounded-2xl m-auto 
-              hover:bg-amber-500 transition-colors z-10">
-              {step === 'check_email' ? 'Próximo' : (step === 'login' ? 'Entrar' : 'Criar Conta')}
+            <button className="w-2/3 text-white text-lg font-bold bg-amber-400 p-2 mb-4 rounded-2xl m-auto hover:bg-amber-500 transition-colors z-10">
+              {isLoading
+                ? 'Carregando...'
+                : (step === 'check_email' ? 'Próximo' : (step === 'login' ? 'Entrar' : 'Criar Conta'))
+              }
             </button>
           </form>
 
