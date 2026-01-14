@@ -1,8 +1,11 @@
 import { Navigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
+import { useSignIn } from "../hooks/useSignIn"
+import { auth } from "../services/auth"
 
 export default function Login() {
-  const { login, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
+  const [signIn] = useSignIn(auth)
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />
@@ -11,7 +14,7 @@ export default function Login() {
   return (
     <>
       <h1>Login Page</h1>
-      <button onClick={() => login('dummy-token')}>Login</button>
+      <button onClick={() => signIn({email: "hermes@usp.br", password: "password123"})}>Login</button>
     </>
   )
 }

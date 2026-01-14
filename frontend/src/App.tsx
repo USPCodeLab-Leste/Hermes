@@ -12,6 +12,8 @@ import FeedLayout from './layouts/FeedLayout'
 import AppLayout from './layouts/AppLayout'
 
 import Login from './pages/Login'
+import Info from './pages/Info'
+import Perfil from './pages/Perfil'
 import FeedSeguindo from './pages/FeedSeguindo'
 import FeedParaVoce from './pages/FeedParaVoce'
 
@@ -25,13 +27,6 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
   const { isAuthenticated } = useAuth()
   return isAuthenticated ? children : <Navigate to="/login" replace />
 }
-
-/* =========================
-   Pages (placeholders)
-========================= */
-const Busca = () => <div>Busca</div>
-const Agora = () => <div>Coisas de Agora</div>
-const Perfil = () => <div>Perfil</div>
 
 /* =========================
    Router
@@ -57,14 +52,7 @@ export const router = createHashRouter(
           <Route path="/feed/para-voce" element={<FeedParaVoce />} />
         </Route>
 
-        {/* Busca */}
-        <Route path="/busca" element={<Busca />} />
-
-        {/* Página do Agora */}
-        <Route path="/agora" element={<Agora />} />
-
-        {/* Perfil */}
-        <Route path="/perfil/:userId" element={<Perfil />} />
+        <Route path="/info" element={<Info />} />
         <Route path="/perfil" element={<Perfil />} />
       </Route>
 
