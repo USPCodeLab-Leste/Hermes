@@ -61,6 +61,11 @@ html, body {
   min-height: 100vh;
 }
 
+#root:has(> .main-app) {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
 /* Custom resets */
 
 img {
