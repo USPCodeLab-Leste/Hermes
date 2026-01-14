@@ -13,6 +13,7 @@
     "@tabler/icons-react": "^3.36.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.16",
+    "motion": "^12.26.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.11.0",
