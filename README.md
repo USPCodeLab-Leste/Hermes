@@ -1,18 +1,13 @@
-# Hermes Backend
+# Hermes
 
-## Tecnologias
-- Node.js
-- Express
-- PostgreSQL
-- JWT
-- bcrypt
-<br>
 ## Fluxo de Branches
+
 - **Branch principal:** main
 - Novas features devem ser criadas a partir da main
 - **Padrão de nome:** /nome-feature
 
 **Exemplo:** /auth-login
+
 <br>
 
 **Fluxo:**
@@ -23,6 +18,7 @@
 <br>
 
 ## Padrão de Commit
+
 **Formato:** 
 tipo: descrição curta
 
@@ -34,14 +30,4 @@ tipo: descrição curta
 - **chore** - Tarefas de manutenção que não afetam a lógica principal
 
 **Exemplo:**
-feat: create login endpoint
-<br>
-
-## Como Rodar o Projeto
-
-1. **Instalar dependências:** npm install
-
-2. **Criar arquivo .env:** 
-
-3. **Rodar servidor:**  npm run dev
-
+feat: Endpoint GET users/me
