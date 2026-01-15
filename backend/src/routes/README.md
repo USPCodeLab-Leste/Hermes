@@ -8,9 +8,9 @@ Cria um novo usuário (email ainda não confirmado).
 Entrada:
 ```json
 {  
-  "nome": "Usuario",
+  "name": "Usuario",
   "email": "usuario@usp.br",
-  "password": "123456"
+  "password": "12345678" // min 8 caracteres
 }
 ```
 
@@ -18,7 +18,7 @@ Saída (201):
 ```json
 {
   "message": "Usuário criado",
-  "id": "uuid"
+  "userId": "uuid"
 }
 ```
 
@@ -31,14 +31,14 @@ Entrada:
 ```json
 {
   "email": "usuario@usp.br",
-  "password": "123456"
+  "password": "12345678"
 }
 ```
 
 Saída (200):
 ```json
 {
-  "token": "jwt_token"
+  "message": "Login realizado com sucesso"
 }
 ```
 
@@ -60,23 +60,21 @@ Saída (200):
 
 ### Autorização
 
-Todas as rotas abaixo exigem token JWT no header.
-O token identifica o usuário autenticado e é validado pelo backend em todas as requisições protegidas:
-``Authorization: Bearer <token>``
+Todas as rotas abaixo exigem que o usuário esteja autenticado.
+A autenticação é feita através de um **JWT armazenado em cookie HttpOnly**, enviado automaticamente pelo navegador em cada requisição.
 
-**Exemplo de requisição autenticada (Frontend)**
+- Não é necessário (nem possível) acessar o token via JavaScript.  
+
+### Exemplo de requisição autenticada (Frontend)
 
 ```js
-const token = localStorage.getItem("token");
-
 fetch("http://localhost:3000/users/me", {
   method: "GET",
-  headers: {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json"
-  }
+  credentials: "include"
 });
 ```
+
+--- 
 
 <br>
 
@@ -87,7 +85,7 @@ Resposta (200):
 ```json
 {
   "id": "uuid",
-  "nome": "Usuario",
+  "name": "Usuario",
   "email": "usuario@usp.br",
   "role": "USER",
   "...": "..."
