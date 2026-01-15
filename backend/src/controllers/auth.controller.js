@@ -41,34 +41,49 @@ class AuthController {
   }
 
   async login(req, res) {
-    const { email, password } = req.body;
 
-    // Verificando Email 
-    const user = await UserModel.findOne({ email: email });
-    if(!user) {
-      return res.status(500).json({ error: "Email ou Password is incorrect" });
+    try {
+
+      const { email, password } = req.body;
+
+      // Verificando Email 
+      const user = await UserModel.findOne({ email: email });
+      if(!user) {
+        return res.status(500).json({ error: "Email ou Password is incorrect" });
+      }
+
+      // Verificando Password
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+        return res.status(500).json({ error: "Email or Password is incorrect" });
+      }
+
+      // Criando Token
+      const token = jwt.sign(
+        {
+          data: {
+            id: user.id,
+            role: user.role || "USER"
+          }
+        }, 
+        process.env.ACCESS_TOKEN_SECRET, 
+        { expiresIn: "1h" }
+      );
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,   // true - em produção
+        sameSite: "lax"
+      });
+
+      res.status(200).json({ message: "Login realizado com sucesso" });
+
+    } catch (err) {
+      
+      console.error(err);
+      res.status(400).json({ error: "Falha no login" })
     }
-
-    // Verificando Password
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      return res.status(500).json({ error: "Email or Password is incorrect" });
-    }
-
-    // Criando Token
-    const token = jwt.sign(
-      {
-        data: {
-          id: user.id,
-          role: user.role || "USER"
-        }
-      }, 
-      process.env.ACCESS_TOKEN_SECRET, 
-      { expiresIn: "1h" }
-    );
-
-
-    res.status(200).json({ token: token });
+    
   }
 
 }
