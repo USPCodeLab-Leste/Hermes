@@ -1,5 +1,15 @@
 # Hermes
 
+<br>
+
+## Documentação da API
+
+A documentação completa das rotas da API está disponível no link abaixo:
+
+👉 [Ver documentação das rotas](./backend/src/routes/README.md)
+
+<br>
+
 ## Fluxo de Branches
 
 - **Branch principal:** main
