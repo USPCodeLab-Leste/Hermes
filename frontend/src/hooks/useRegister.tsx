@@ -4,7 +4,7 @@ import type { AuthService } from '../services/auth'
 
 export function useRegister(auth: AuthService) {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<{ message: string } | null>(null)
 
   if (!auth || !auth.register) {
     throw new Error('Auth service is not available')
@@ -20,7 +20,7 @@ export function useRegister(auth: AuthService) {
 
       return result
     } catch (error: any) {
-      setError(error.message)
+      setError({ message: error.message })
       setLoading(false)
 
       throw error

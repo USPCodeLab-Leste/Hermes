@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import type { AuthService } from '../services/auth'
+import type { UserMe } from '../types/user'
 
 export function useAuthState(auth: AuthService) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [token, setToken] = useState<string | null>(null)
+  const [user, setUser] = useState<UserMe| null>(null)
 
   if (!auth || !auth.onAuthStateChanged) {
     throw new Error('Auth service is not available')
@@ -12,8 +13,8 @@ export function useAuthState(auth: AuthService) {
 
   useEffect(() => {
     try {
-      const unsubscribe = auth.onAuthStateChanged(() => {
-        setToken(auth.getToken())
+      const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+        setUser(currentUser)
         setLoading(false)
       })
 
@@ -24,5 +25,5 @@ export function useAuthState(auth: AuthService) {
     }
   }, [auth])
 
-  return [token, loading, error] as const
+  return [user, loading, error] as const
 }

@@ -8,16 +8,22 @@ import {
 } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 
-import FeedLayout from './layouts/FeedLayout'
-import AppLayout from './layouts/AppLayout'
+// Auth
+import { AuthProvider } from './contexts/AuthContext'
+import AuthLayout from './layouts/AuthLayout'
+import Login from './pages/auth/Login'
+import Register from './pages/auth/Register'
+import VerifyEmail from './pages/auth/VerifyEmail'
+import ResetPassword from './pages/auth/ResetPassword'
 
-import Login from './pages/Login'
+// Páginas protegidas
 import Info from './pages/Info'
 import Perfil from './pages/Perfil'
 import FeedSeguindo from './pages/FeedSeguindo'
 import FeedParaVoce from './pages/FeedParaVoce'
+import FeedLayout from './layouts/FeedLayout'
+import AppLayout from './layouts/AppLayout'
 
-import { AuthProvider } from './contexts/AuthContext'
 
 /* =========================
    Guards de Autenticação
@@ -25,7 +31,7 @@ import { AuthProvider } from './contexts/AuthContext'
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const { isAuthenticated } = useAuth()
-  return isAuthenticated ? children : <Navigate to="/login" replace />
+  return isAuthenticated ? children : <Navigate to="/auth" replace />
 }
 
 /* =========================
@@ -35,7 +41,13 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
 export const router = createHashRouter(
   createRoutesFromElements(
     <>
-      <Route path="/login" element={<Login />} />
+      <Route path="/auth" element={<AuthLayout />}>
+        <Route index element={<Navigate to="login" replace />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="verify-email" element={<VerifyEmail />} />
+        <Route path="reset-password" element={<ResetPassword />} />
+      </Route>
 
       {/* Rotas protegidas */}
       <Route
