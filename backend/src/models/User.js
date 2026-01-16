@@ -30,3 +30,15 @@ export async function verifyUserEmail(id) {
     const result = await query (sql, [id]);
     return result.rows[0];
 }
+
+export async function recoveryPass(id, newPassword) {
+    const sql = `
+    UPDATE USER
+    SET password $1
+    WHERE id = $2
+    RETURNING id, email
+    `;
+
+    const result = await query (sql, [newPassword, id]);
+    return result.rows[0];
+}
