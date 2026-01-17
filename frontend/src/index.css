@@ -54,7 +54,10 @@ html, body {
   background: var(--color-surface-base);
   font-size: 18px;
   line-height: 1;
-  height: 100vh;
+}
+
+input {
+  outline: none;
 }
 
 #root {
