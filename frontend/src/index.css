@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: "Montserrat", system-ui, sans-serif;
+
   --color-surface-base: hsl(var(--color-surface-base));
   --color-surface-muted: hsl(var(--color-surface-muted));
   --color-surface-strong: hsl(var(--color-surface-strong));
@@ -11,7 +13,7 @@
 /* Variables */
 
 :root {
-  --font-main: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  
 }
 
 /*Reset & root*/
@@ -44,8 +46,8 @@ html.dark {
 }
 
 body, button, textarea {
-  color: var(--color-text-primary);
-  font-family: var(--font-main);
+  /* color: var(--color-text-primary); */
+  font-family: var(--font-sans);
 }
 
 html, body {
