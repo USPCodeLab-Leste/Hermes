@@ -57,7 +57,7 @@ color: "#F4F3F8",
       width:"10%", height:"10%", maxHeight:"50px", maxWidth: "50px"
     }
   return (
-    <header className="p-4">
+    <header className="p-0">
       <div style={background}>
       <div style={tituloEfoto}>
       <img src="https://placehold.co/400x400" style={userPic}></img> 
