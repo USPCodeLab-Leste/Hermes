@@ -9,7 +9,7 @@ export default function NotificationButton() {
       }}
       className="bg-transparent border-none cursor-pointer"
     >
-			<NotificationIcon className="text-white size-7" />
+			<NotificationIcon className="text-paper size-7" />
     </button>
   );
 }

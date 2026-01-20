@@ -1,65 +1,45 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
+  --color-ink: #141010;
+  --color-paper: #F4F3F8;
+
+  --color-violet-dark: #373358;
+  --color-violet-mid: #494266;
+  --color-violet-light: #8B8BAE;
+
+  --color-teal-light: #5FAC9D;
+  --color-teal-mid: #2D799F;
+
   --font-sans: "Montserrat", system-ui, sans-serif;
-
-  --color-surface-base: hsl(var(--color-surface-base));
-  --color-surface-muted: hsl(var(--color-surface-muted));
-  --color-surface-strong: hsl(var(--color-surface-strong));
-  --color-text-primary: hsl(var(--color-text-primary));
-  --color-highlight: hsl(var(--color-highlight));
-}
-
-/* Variables */
-
-:root {
-  
 }
 
 /*Reset & root*/
 html {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 *, *:before, *:after {
   box-sizing: inherit;
 }
 
 ::selection {
-  background: var(--color-surface-muted);
-  color: var(--color-highlight);
-}
-
-html {
-  --color-surface-base: #f4f4f5;
-  --color-surface-muted: #e5e5e5;
-  --color-surface-strong: #c7c7c7;
-  --color-text-primary: #383a42;
-  --color-highlight: #868686;
-}
-
-html.dark {
-  --color-surface-base: #1e1e1e;
-  --color-surface-muted: #3c3d3f;
-  --color-surface-strong: #292929;
-  --color-text-primary: #abb2bf;
-  --color-highlight: #fffbeb;
-}
-
-body, button, textarea {
-  /* color: var(--color-text-primary); */
-  font-family: var(--font-sans);
+  @apply bg-teal-mid text-paper;
 }
 
 html, body {
-  background: var(--color-surface-base);
   font-size: 18px;
-  line-height: 1;
+  line-height: 1.2;
 }
 
-input {
-  outline: none;
+html, body {
+  @apply bg-paper dark:bg-violet-mid;
 }
 
+body, button, textarea {
+  @apply font-sans dark:text-paper text-ink;
+}
 #root {
   min-height: 100vh;
 }
@@ -68,8 +48,6 @@ input {
   display: grid;
   grid-template-rows: auto 1fr auto;
 }
-
-/* Custom resets */
 
 img {
   max-width: 100%;
