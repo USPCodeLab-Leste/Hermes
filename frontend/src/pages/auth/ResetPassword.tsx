@@ -26,8 +26,8 @@ export default function VerifyEmail() {
   if (!token) {
     return (
       <>
-        <h2 className="text-center text-white font-bold text-2xl">Redefinir senha</h2>
-        <p className="text-center text-white mt-4">Insira seu e-mail USP para receber o link de redefinição de senha</p>
+        <h2 className="text-center text-paper font-bold text-2xl">Redefinir senha</h2>
+        <p className="text-center text-paper mt-4">Insira seu e-mail USP para receber o link de redefinição de senha</p>
         <form onSubmit={handleFormSubmit} className="flex flex-col pt-2 pb-8 gap-3 h-full">
           <div className="flex flex-col gap-1">
             <InputEmail 
@@ -48,9 +48,7 @@ export default function VerifyEmail() {
           />
         </form>
   
-        <Link to="/auth/login" className="text-white text-center mt-2 hover:underline">Voltar para login</Link>
-  
-        {/* <p className="text-white text-center">Já tem uma conta? <Link to={`/auth/login?email=${formData.email}`} className="text-amber-400 hover:text-amber-500 font-bold">Faça login</Link></p> */}
+        <Link to="/auth/login" className="text-paper text-center mt-2 hover:underline">Voltar para login</Link>
       </>
     );
   }

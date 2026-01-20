@@ -37,8 +37,8 @@ html, body {
   @apply bg-paper dark:bg-violet-mid;
 }
 
-body, button, textarea {
-  @apply font-sans dark:text-paper text-ink;
+body, button, textarea, input {
+  @apply font-sans dark:text-paper text-ink outline-none;
 }
 #root {
   min-height: 100vh;

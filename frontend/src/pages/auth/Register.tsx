@@ -132,9 +132,9 @@ export default function Login() {
         </p>
       )}
 
-      <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Registrar"} />
+      <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Cria Conta"} />
 
-      <p className="text-white text-center">Já tem uma conta? <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-amber-400 hover:text-amber-500 font-bold">Faça login</Link></p>
+      <p className="text-paper text-center">Já tem uma conta? <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Faça login</Link></p>
 
     </form>
   );

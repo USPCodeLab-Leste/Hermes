@@ -105,10 +105,10 @@ export default function Login() {
         </p>
       )}
 
-      <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Login"} />
+      <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Entrar"} />
 
-      <p className="text-white text-center">Não tem uma conta? <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${formData.email}` : "" }} className="text-amber-400 hover:text-amber-500 font-bold">Registre-se</Link></p>
-      <Link to="/auth/reset-password" className="text-white text-center mt-2 hover:underline">Esqueci minha senha</Link>
+      <p className="text-paper text-center">Não tem uma conta? <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Registre-se</Link></p>
+      <Link to="/auth/reset-password" className="text-paper text-center mt-2 hover:underline">Esqueci minha senha</Link>
     </form>
   )
 }

@@ -8,8 +8,8 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
 
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-white font-semibold select-none">{label}</label>
-      <div className="border-3 h-10 border-white rounded-2xl p-2 text-white bg-transparent focus-within:border-amber-400 flex items-center gap-2">
+      <label htmlFor={id} className="text-paper font-semibold select-none">{label}</label>
+      <div className="border-3 h-10 border-paper rounded-2xl p-2 text-paper bg-transparent focus-within:border-teal-light flex items-center gap-2">
         <input 
           type={visible ? "text" : "password"} 
           id={id} 
@@ -43,6 +43,6 @@ const ShowPassword = ({Icon, onClick}: {Icon: React.FC<React.SVGProps<SVGSVGElem
     type="button"
     onClick={onClick}
   >
-    <Icon className='cursor-pointer hover:text-amber-400 active:text-amber-400 transition-colors' />
+    <Icon className='cursor-pointer hover:text-teal-light active:text-teal-light transition-colors' />
   </button>
 );

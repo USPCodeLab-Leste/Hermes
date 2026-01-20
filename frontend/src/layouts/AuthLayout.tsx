@@ -16,7 +16,7 @@ export default function AuthLayout() {
   }
 
   return (
-    <main className="auth-main min-h-screen w-full bg-amber-100">
+    <main className="auth-main min-h-screen w-full">
 
       {/* LOGO E DESCRIÇÃO DO HERMES */}
       <section className="w-full flex flex-col justify-center items-center p-4">
@@ -37,7 +37,7 @@ export default function AuthLayout() {
       </section>
 
       {/* FORMULÁRIO DE LOGIN E Rodapé */}
-      <section className="w-full flex flex-col justify-between bg-amber-700 p-4 rounded-t-3xl md:rounded-t-none md:rounded-l-3xl">
+      <section className="w-full flex flex-col justify-between bg-violet-dark p-4 rounded-t-3xl md:rounded-t-none md:rounded-l-3xl">
         <Outlet />
         <FooterSocials />
       </section>
@@ -47,11 +47,11 @@ export default function AuthLayout() {
 
 const FooterSocials = () => (
   <footer className="flex flex-col items-center gap-2 mb-2">
-    <p className="text-white text-sm font-bold">Criado por CodeLab Leste</p>
+    <p className="text-paper text-sm font-bold">Criado por CodeLab Leste</p>
     <div className="flex justify-center gap-8">
-      <YoutubeIcon className="w-6 h-6 stroke-white brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer" />
-      <DiscordIcon className="w-6 h-6 stroke-white brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer" />
-      <InstagramIcon className="w-6 h-6 stroke-white brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer" />
+      <YoutubeIcon className="w-6 h-6 stroke-paper brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer" />
+      <DiscordIcon className="w-6 h-6 stroke-paper brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer" />
+      <InstagramIcon className="w-6 h-6 stroke-paper brightness-0 invert opacity-80 hover:opacity-100 cursor-pointer" />
     </div>
   </footer>
 )
