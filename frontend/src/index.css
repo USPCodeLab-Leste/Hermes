@@ -52,15 +52,3 @@ body, button, textarea, input {
 img {
   max-width: 100%;
 }
-
-.auth-main {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-}
-
-@media (max-width: 768px) {
-  .auth-main {
-    grid-template-columns: 1fr;
-    grid-template-rows: 500px auto;
-  }
-}
