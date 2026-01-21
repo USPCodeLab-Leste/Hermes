@@ -52,3 +52,17 @@ body, button, textarea {
 img {
   max-width: 100%;
 }
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-violet-dark;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-violet-light;
+  border-radius: 6px;
+}
