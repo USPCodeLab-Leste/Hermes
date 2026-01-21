@@ -13,6 +13,7 @@ import AppLayout from './layouts/AppLayout'
 import Login from './pages/Login'
 import Info from './pages/Info'
 import Perfil from './pages/Perfil'
+import Home from './pages/Home'
 
 import { AuthProvider } from './contexts/AuthContext'
 
@@ -42,6 +43,8 @@ export const router = createHashRouter(
           </PrivateRoute>
         }
       >
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="home" element={<Home />} />
 
         <Route path="/info" element={<Info />} />
         <Route path="/perfil" element={<Perfil />} />
