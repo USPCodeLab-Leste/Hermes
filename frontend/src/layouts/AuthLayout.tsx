@@ -18,7 +18,7 @@ export default function AuthLayout() {
   }
 
   return (
-    <main className="w-full flex flex-col md:flex-row">
+    <main className="min-h-screen w-full flex flex-col md:flex-row">
 
       {/* LOGO E DESCRIÇÃO DO HERMES */}
       <section className="w-full flex flex-1 flex-col justify-center items-center p-4">

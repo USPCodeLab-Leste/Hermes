@@ -30,27 +30,25 @@ export default function VerifyEmail() {
         <p className="text-center text-paper mt-4">Insira seu e-mail USP para receber o link de redefinição de senha</p>
         <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
           <div className="flex flex-col gap-1">
-            <InputEmail 
+            <InputEmail
               id="email"
               label="E-mail USP"
               value={email}
               onChange={handleChange}
               isLoading={isLoading}
               placeholder="E-mail USP"
-              pattern=".+@usp\.br" 
+              pattern=".+@usp\.br"
               title="Por favor, utilize um e-mail com domínio @usp.br"
             />
           </div>
-  
+
           <SubmitButton
             waiting={isLoading}
             text={isLoading ? "Carregando..." : "Enviar link"}
           />
-        </form>
-  
-        <Link to="/auth/login" className="text-paper text-center mt-2 hover:underline">Voltar para login</Link>
 
-        {/* <p className="text-paper text-center">ou <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Faça login</Link></p> */}
+          <p className="text-paper text-center"><Link to={{ pathname: "/auth/login", search: email ? `?email=${email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Voltar para login</Link></p>
+        </form>
       </>
     );
   }
