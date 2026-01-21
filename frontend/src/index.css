@@ -40,6 +40,11 @@ html, body {
 body, button, textarea {
   @apply font-sans dark:text-paper text-ink;
 }
+
+html:has(.modal-open) {
+  overflow: hidden;
+}
+
 #root {
   min-height: 100vh;
 }
