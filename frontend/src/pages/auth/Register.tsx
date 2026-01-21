@@ -18,7 +18,7 @@ export default function Login() {
 
   // Hooks de autenticação
   const [register, regLoading, regError] = useRegister(auth);
-  const [formError, setFormError] = useState<string | null>(null); // Novo estado para erros em vez de alert
+  const [formError, setFormError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     email: searchParams.get("email") || "",
@@ -97,6 +97,7 @@ export default function Login() {
             onChange={handleChange}
             disabled={isLoading}
             placeholder="Senha"
+            validation={true}
           />
           <InputPassword
             id="confirmPassword"
@@ -105,6 +106,7 @@ export default function Login() {
             onChange={handleChange}
             disabled={isLoading}
             placeholder="Confirme a senha"
+            validation={false}
           />
         </div>
       </div>
