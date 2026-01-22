@@ -4,4 +4,5 @@ export interface Event {
   date: string
   location: string
   description: string
+  tags: string[]
 }
