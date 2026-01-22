@@ -1,9 +1,11 @@
 # Endpoints da API
 
+<br>
+
 ## Auth
 
-**POST /auth/register**
-Cria um novo usuário (email ainda não confirmado).
+**POST /auth/register** <br>
+Cria um novo usuário (email ainda não confirmado). <br>
 
 Entrada:
 ```json
@@ -24,8 +26,8 @@ Saída (201):
 
 --- 
 
-**POST /auth/login**
-Autentica o usuário.
+**POST /auth/login** <br>
+Autentica o usuário. <br>
 
 Entrada:
 ```json
@@ -44,8 +46,8 @@ Saída (200):
 
 ---
 
-**GET /auth/verify-email?token=XYZ**
-Confirma o email do usuário.
+**GET /auth/verify-email?token=XYZ** <br>
+Confirma o email do usuário. <br>
 
 Saída (200):
 ```json
@@ -54,9 +56,13 @@ Saída (200):
 }
 ```
 
----
+
+
+<br><br>
 
 ## Usuario
+
+<br>
 
 ### Autorização
 
@@ -78,8 +84,8 @@ fetch("http://localhost:3000/users/me", {
 
 <br>
 
-**GET /users/me**
-Retorna os dados do usuário autenticado.
+**GET /users/me** <br>
+Retorna os dados do usuário autenticado. <br>
 
 Resposta (200):
 ```json
@@ -89,5 +95,32 @@ Resposta (200):
   "email": "usuario@usp.br",
   "role": "USER",
   "...": "..."
+}
+```
+
+--- 
+
+<br>
+
+**PATCH /users/me** <br>
+Atualiza parcialmente os dados do usuário autenticado (**apenas o nome por enquanto**). <br>
+
+Entrada:
+```json
+{
+  "name": "Novo Nome"
+}
+```
+
+Resposta (200):
+```json
+{
+  "message": "Usuário atualizado com sucesso",
+  "user": {
+    "id": "uuid",
+    "name": "Novo Nome",
+    "email": "usuario@usp.br",
+    "role": "USER"
+  }
 }
 ```

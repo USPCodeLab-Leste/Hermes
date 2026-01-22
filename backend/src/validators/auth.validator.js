@@ -10,3 +10,14 @@ export const registerSchema = z.object({
     }),
   password: z.string().min(8, "Password precisa de ao menos 8 caracteres")
 });
+
+export const updateUserSchema = z.object({
+  name: z.string().min(3).optional(),
+  email: z
+    .string()
+    .email()
+    .refine(email => email.endsWith("@usp.br"), {
+      message: "Email precisa terminar com @usp.br"
+    })
+    .optional()
+});
