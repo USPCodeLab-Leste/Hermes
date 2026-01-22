@@ -10,14 +10,14 @@ export default function AppFooter() {
  
   return (
     <footer className="p-4">
-      <nav>
+      <nav className="bg-violet-dark w-full h-16 flex justify-evenly items-center">
 
-        <NavLink to="/"> <IconHome/> </NavLink>
-        
-        <NavLink to="/info"><IconBook2/></NavLink>
+        <NavLink to="/" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2 ' : 'rounded-full p-2'}> <IconHome/> </NavLink>
+    
+        <NavLink to="/info" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2 ' : 'rounded-full p-2 '}><IconBook2/></NavLink>
 
-        <NavLink to="/perfil"><IconUser/></NavLink>
-
+        <NavLink to="/perfil" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2 ' : 'rounded-full p-2 '}><IconUser/></NavLink>
+      
       </nav>
     </footer>
   )
