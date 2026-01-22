@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
+import eventsRoutes from "./routes/events.route.js";
+import muralRoutes from "./routes/mural.route.js";
 
 const app = express();
 
@@ -13,6 +15,8 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use(userRoutes);
+app.use(eventsRoutes);
+app.use(muralRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
