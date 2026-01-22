@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Watch from '../assets/icons/watch.svg?react';
 import WatchOff from '../assets/icons/watch-off.svg?react';
 
-export const InputPassword = ({ id, label, value, onChange, disabled, placeholder, validation }: any) => {
+export const InputPassword = ({ id, label, value, onChange, disabled, placeholder, validation, onValidationChange }: any) => {
   const [visible, setVisible] = useState(false);
 
   const validations = [
@@ -28,6 +28,16 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
       message: "Pelo menos um cacacter especial",
     },
   ];
+
+  const allValid = validations.every(v => v.isValid);
+
+  useEffect(() => {
+    if (onValidationChange) {
+      // Se 'validation' for false (campo de confirmar senha), consideramos válido sempre
+      // Se 'validation' for true, passamos o resultado real das regras
+      onValidationChange(validation ? allValid : true);
+    }
+  }, [allValid, onValidationChange, validation]);
 
   return (
     <div className="flex flex-col gap-1">
@@ -58,7 +68,7 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
         )}
       </div>
 
-      {validation == false ||
+      {validation &&
         <div className="mt-4 space-y-2">
           <p className="text-sm text-gray-500 mb-2">A senha deve conter:</p>
           <ul className="space-y-1">

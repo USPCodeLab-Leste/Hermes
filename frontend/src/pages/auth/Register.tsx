@@ -12,13 +12,15 @@ import { SubmitButton } from "../../components/SubmitButton";
 import { auth } from "../../services/auth";
 import { useRegister } from "../../hooks/useRegister";
 
-export default function Login() {
+export default function Register() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
   // Hooks de autenticação
   const [register, regLoading, regError] = useRegister(auth);
   const [formError, setFormError] = useState<string | null>(null);
+
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
 
   const [formData, setFormData] = useState({
     email: searchParams.get("email") || "",
@@ -34,6 +36,12 @@ export default function Login() {
   };
 
   const handleRegister = async () => {
+    if (!isPasswordValid) {
+      // TODO: fazer a mensagem de erro ser pop-up
+      setFormError("A senha não atende aos requisitos de segurança.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setFormError("As senhas não conferem!");
       return;
@@ -64,7 +72,7 @@ export default function Login() {
 
   return (
     <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
-      
+
       <div className="flex flex-col gap-1">
         <InputEmail
           id="email"
@@ -98,6 +106,7 @@ export default function Login() {
             disabled={isLoading}
             placeholder="Senha"
             validation={true}
+            onValidationChange={setIsPasswordValid}
           />
           <InputPassword
             id="confirmPassword"

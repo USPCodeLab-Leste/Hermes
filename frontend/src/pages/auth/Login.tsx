@@ -78,6 +78,7 @@ export default function Login() {
             onChange={handleChange}
             disabled={isLoading}
             placeholder="Senha"
+            validation={false}
           />
           <Link to={{ pathname: "/auth/reset-password", search: formData.email ? `?email=${formData.email}` : "" }} className="text-sm text-paper text-right mb-2 hover:underline">Esqueci minha senha</Link>
         </div>
