@@ -12,11 +12,11 @@ export default function AppFooter() {
     <footer className="w-full bottom-0">
       <nav className="bg-violet-dark w-full h-16 flex justify-evenly items-center">
  
-        <NavLink to="/" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2 ' : 'rounded-full p-2'}> <IconHome/> </NavLink>
+        <NavLink to="/" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2 -translate-y-6' : 'rounded-full p-2'}> <IconHome/> </NavLink>
     
-        <NavLink to="/info" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2' : 'rounded-full p-2 '}><IconBook2/></NavLink>
+        <NavLink to="/info" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2 -translate-y-6' : 'rounded-full p-2 '}><IconBook2/></NavLink>
 
-        <NavLink to="/perfil" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2' : 'rounded-full p-2 '}><IconUser/></NavLink>
+        <NavLink to="/perfil" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2 -translate-y-6' : 'rounded-full p-2 '}><IconUser/></NavLink>
       
       </nav>
     </footer>
