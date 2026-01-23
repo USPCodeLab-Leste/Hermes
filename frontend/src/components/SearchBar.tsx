@@ -1,48 +1,30 @@
 import SearchIcon from "../assets/icons/search.svg?react";
 import CloseIcon from "../assets/icons/close-circle.svg?react";
-import { useState } from "react";
+interface SearchBarProps {
+  search: string;
+  setSearch: (newSearch: string) => void;
+}
 
-export default function SearchBar() {
-  const [searchVal, setSearchVal] = useState(0);
-  const [texto, setTexto] = useState("");
-  interface SearchBarProps {
-    search: string;
-    handleSearchChange: (newSearch: string) => void;
-  }
-
+export default function SearchBar({search, setSearch}: SearchBarProps) {
   return (
-    <div className=" flex flex-row rounded-full border-2 relative">
-      <div className="align-center pointer-events-none">
-        <SearchIcon
-          className="top-1/2 -translate-y-1/2 absolute pl-2"
-          stroke="#FFFFFF"
-          strokeWidth={1.5}
-        />
-      </div>
+    <div className="flex flex-row gap-2 items-center py-1 px-2 rounded-full border-2 max-w-90 focus-within:border-teal-light focus-within:text-teal-light transition-colors">
+      <SearchIcon className="pointer-events-none"/>
 
       <input
-        className="p-1 pl-6 rounded-full w-full border-none outline-none"
-        value={texto}
-        onChange={(e) => {
-          e.target.value == "" ? setSearchVal(0) : setSearchVal(1);
-          setTexto(e.target.value);
-        }}
+        className="w-full border-none outline-none appearance-none text-paper"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
         type="search"
         placeholder="Buscar na Hermes"
       />
 
-      {searchVal ? (
+      {search && (
         <button
           className="cursor-pointer"
-          onClick={() => {
-            setTexto("");
-            setSearchVal(0);
-          }}
+          onClick={() => setSearch("")}
         >
-          <CloseIcon className="self-center" />{" "}
+          <CloseIcon className="hover:text-teal-light transition-colors"/>
         </button>
-      ) : (
-        <></>
       )}
     </div>
   );
