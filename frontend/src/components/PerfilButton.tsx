@@ -14,14 +14,14 @@ export default function PerfilButton({
 }: PerfilButtonProps){
     return (
         <button
-            className="bg-violet-light text-[20px]/[24px] flex items-center justify-between max-w-95 w-[90%] h-11.25 border-2 px-2 py-4 rounded-2xl mb-4 mx-6"
+            className="bg-violet-light cursor-pointer text-[20px]/[24px] flex items-center justify-between max-w-95 w-[90%] h-11.25 border-2 px-2 py-4 rounded-2xl mb-4 mx-6  duration-200 ease-in hover:bg-teal-mid group "
             onClick={onClick}
         >
             <span className="flex gap-2 ml-4">
                 {icon}
                 <span className="w-40 text-left">{btnName}</span>
             </span>
-            <RightArrow className="w-6 h-5 mr-3.5"/>
+            <RightArrow className="w-6 h-5 mr-3.5 duration-300 ease-linear group-hover:rotate-90"/>
         </button>
     );
 }

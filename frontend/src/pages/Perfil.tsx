@@ -3,6 +3,7 @@ import { useTheme } from "../hooks/useTheme";
 import { auth } from "../services/auth";
 import PerfilButton from "../components/PerfilButton";
 import type { MouseEventHandler, SVGProps, ComponentType } from "react";
+import { useNavigate } from "react-router-dom";
 
 // icones
 import UserIcon from "../assets/icons/userIcon.svg?react";
@@ -25,14 +26,13 @@ export default function Perfil() {
   const handleDarkMode = toggleTheme; 
   const handleBug = () => {};
   const handleInfo = () => {};
-  //seria interessante criar um interface para esses objetos
 
+  //seria interessante criar um interface para esses objetos: feito
   interface PerfilAction {
     label: string
     icon: ComponentType<SVGProps<SVGSVGElement>>,
     onClick: MouseEventHandler<HTMLButtonElement>,
   }
-
 
   const actions: PerfilAction[] = [
     { label: "Gerenciar Perfil", icon: UserIcon, onClick: handlePerfil },
@@ -44,11 +44,15 @@ export default function Perfil() {
     { label: "Sair", icon: LogoutIcon, onClick: signOut },
   ];
 
+  const navigate = useNavigate();
+
   return (
     <section className=" flex flex-col items-center">
       <div className="w-screen flex items-center flex-col text-paper dark:text-paper bg-violet-dark  mb-6 pb-5.5 gap-5 rounded-b-2xl">
         <div className="mt-6 mp-5 mx-4 flex justify-center w-screen">
-          <LeftArrow className="w-6 h-6 absolute ml-4 left-0"/>
+          <button onClick={() => navigate("/")} className="absolute ml-4 left-0 cursor-pointer" aria-label="voltar">
+            <LeftArrow  className="w-6 h-6"/>
+          </button>
           <h6 className="text-[20px]/[24px] ">Perfil</h6>
         </div>
        {/* <img src="" alt="iamgem de perfil" />*/}
