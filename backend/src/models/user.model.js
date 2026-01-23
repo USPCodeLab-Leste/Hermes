@@ -58,6 +58,37 @@ class UserModel {
 
     }
   }
+
+  async update(id, data) {
+    const fields = [];
+    const values = [];
+    let index = 1;
+
+    for (const key in data) {
+      if (data[key] !== undefined) {
+        fields.push(`${key} = $${index}`);
+        values.push(data[key]);
+        index++;
+      }
+    }
+
+    if (!fields.length) {
+      throw new Error("NO_FIELDS_TO_UPDATE");
+    }
+
+    const query = `
+      UPDATE tb_user
+      SET ${fields.join(", ")}
+      WHERE id = $${index}
+      RETURNING id, name, email, role
+    `;
+
+    values.push(id);
+
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+  
 }
 
 export default new UserModel();
