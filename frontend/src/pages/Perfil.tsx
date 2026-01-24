@@ -4,6 +4,7 @@ import { auth } from "../services/auth";
 import PerfilButton from "../components/PerfilButton";
 import type { MouseEventHandler, SVGProps, ComponentType } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMe } from "../hooks/useMe";
 
 // icones
 import UserIcon from "../assets/icons/userIcon.svg?react";
@@ -14,18 +15,19 @@ import InfoIcon from "../assets/icons/infoIcon.svg?react";
 import PasswordIcon from "../assets/icons/passwordIcon.svg?react"
 import LogoutIcon from "../assets/icons/tabler_logout.svg?react"
 import LeftArrow from "../assets/icons/chevron-left.svg?react"
-import { useMe } from "../hooks/useMe";
+import LightModeIcon from "../assets/icons/sun.svg?react"
 
 export default function Perfil() {
   const [signOut] = useSignOut(auth);
-  const { toggleTheme } = useTheme();
+  const { theme , toggleTheme } = useTheme();
   const { data: user, isLoading } = useMe(auth);
+  const isDark = theme === 'dark';
 
   // onClick Functions (alterar para as funcoes ou router corretos)
   const handlePerfil = () => console.log("Perfil ok");
   const handleSenha = () => console.log("Senha ok");
   const handleNotificacoes = () => console.log("Notificacoes");
-  const handleDarkMode = toggleTheme; 
+  const handleDarkMode = toggleTheme;
   const handleBug = () => {};
   const handleInfo = () => {};
 
@@ -36,17 +38,19 @@ export default function Perfil() {
     onClick: MouseEventHandler<HTMLButtonElement>,
   }
 
-  const actions: PerfilAction[] = [
+  let actions: PerfilAction[] = [
     { label: "Gerenciar Perfil", icon: UserIcon, onClick: handlePerfil },
     { label: "Alterar Senha", icon: PasswordIcon, onClick: handleSenha },
     { label: "Notificações", icon: BellIcon, onClick: handleNotificacoes },
-    { label: "Dark Mode", icon: DarkModeIcon, onClick: handleDarkMode },
+    { label: isDark ? "Modo Claro" : "Modo Escuro", icon: isDark ? LightModeIcon : DarkModeIcon, onClick: handleDarkMode },
     { label: "Relatar Bugs", icon: BugIcon, onClick: handleBug },
     { label: "Informações", icon: InfoIcon, onClick: handleInfo },
     { label: "Sair", icon: LogoutIcon, onClick: signOut },
   ];
 
   const navigate = useNavigate();
+
+  if (isLoading) return <p>Loading ...</p>
 
   return (
     <>
