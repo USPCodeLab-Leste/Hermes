@@ -9,7 +9,7 @@ export const InputText = ({ id, label, value, onChange, disabled, placeholder, a
         onChange={onChange} 
         disabled={disabled} 
         placeholder={placeholder} 
-        className="flex-1 bg-transparent text-paper" 
+        className="flex-1 bg-transparent text-paper outline-none appearance-none"
         autoComplete={autocomplete}
         required={required}
       />

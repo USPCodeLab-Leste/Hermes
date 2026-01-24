@@ -27,7 +27,7 @@ export default function VerifyEmail() {
     return (
       <>
         <h2 className="text-center text-paper font-bold text-2xl">Redefinir senha</h2>
-        <p className="text-center text-paper mt-4">Insira seu e-mail USP para receber o link de redefinição de senha</p>
+        <p className="text-center text-paper mt-4 mb-6 max-w-70">Insira seu e-mail USP para receber o link de redefinição de senha</p>
         <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
           <div className="flex flex-col gap-1">
             <InputEmail
@@ -47,7 +47,7 @@ export default function VerifyEmail() {
             text={isLoading ? "Carregando..." : "Enviar link"}
           />
 
-          <p className="text-paper text-center"><Link to={{ pathname: "/auth/login", search: email ? `?email=${email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Voltar para login</Link></p>
+          <p className="text-paper text-center">volte para <Link to={{ pathname: "/auth/login", search: email ? `?email=${email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Login</Link></p>
         </form>
       </>
     );

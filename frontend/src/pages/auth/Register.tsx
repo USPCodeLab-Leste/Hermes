@@ -129,7 +129,7 @@ export default function Register() {
 
       <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Cria Conta"} />
 
-      <p className="text-paper text-center">ou <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Faça login</Link></p>
+      <p className="text-paper text-center">ou faça <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Login</Link></p>
 
     </form>
   );

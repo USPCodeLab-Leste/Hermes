@@ -25,7 +25,7 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
     {
       id: 4,
       isValid: /[!@#$%^&*(),.?":{}|<>]/.test(value),
-      message: "Pelo menos um cacacter especial",
+      message: "Pelo menos um caracter especial",
     },
   ];
 
@@ -50,7 +50,7 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
           onChange={onChange}
           disabled={disabled}
           placeholder={placeholder}
-          className="flex-1"
+          className="flex-1 bg-transparent text-paper outline-none appearance-none"
           required
         />
         {value && (
@@ -70,16 +70,15 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
 
       {validation &&
         <div className="mt-4 space-y-2">
-          <p className="text-sm text-gray-500 mb-2">A senha deve conter:</p>
+          <p className="text-sm text-paper/75 mb-2">A senha deve conter:</p>
           <ul className="space-y-1">
             {validations.map((item) => (
               <li
                 key={item.id}
-                className={`flex items-center text-sm transition-colors duration-300 ${item.isValid ? 'text-green-600 font-medium' : 'text-gray-400'
+                className={`flex items-center text-sm transition-colors duration-300 ${item.isValid ? 'text-green-600 font-medium' : 'text-paper/50'
                   }`}
               >
-                <span className={`mr-2 w-4 h-4 flex items-center justify-center rounded-full border ${item.isValid ? 'bg-green-100 border-green-600' : 'border-gray-300'
-                  }`}>
+                <span className={`mr-2 w-4 h-4 flex items-center justify-center rounded-full border ${item.isValid ? 'bg-green-100 border-green-600' : 'border-paper/40'}`}>
                   {item.isValid && (
                     <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
