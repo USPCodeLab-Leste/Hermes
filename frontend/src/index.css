@@ -59,3 +59,7 @@ input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance:none;
 }
+
+.main-app {
+  @apply p-4 my-0 mx-auto max-w-2xl w-9/10
+}
