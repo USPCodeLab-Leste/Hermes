@@ -14,7 +14,7 @@ class AuthController {
       // Conferindo se email ja esta em uso
       const existingUser = await UserModel.findOne({ email: email });
       if(existingUser) {
-        return res.status(400).json({ error: "Email already in use" });
+        return res.status(409).json({ error: "Email already in use" });
       }
 
       // Hash password

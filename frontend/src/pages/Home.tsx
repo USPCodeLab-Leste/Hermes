@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useEvents } from "../hooks/useEvents"
 import { ModalWrapper } from "../components/Modal"
 import type { Event } from "../types/events"
+import AppHeader from "../components/AppHeader"
 
 export default function Home() {
   const { data, isLoading } = useEvents()
@@ -16,26 +17,31 @@ export default function Home() {
 
   const selectedEventData = data?.find((e) => e.id === selectedEventId) ?? null
 
-  if (isLoading) return <p>Loading...</p>
-
   return (
     <>
-      <ModalWrapper
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      >
-        {selectedEventId && selectedEventData && (
-          <SelectedEventDetails
-            event={selectedEventData}
-          />
-        )}
-      </ModalWrapper>
+      <AppHeader />
+      <main className="main-app">
+        {isLoading ? <p>Carregando eventos...</p> : (
+          <>
+            <ModalWrapper
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            >
+              {selectedEventId && selectedEventData && (
+                <SelectedEventDetails
+                  event={selectedEventData}
+                />
+              )}
+            </ModalWrapper>
 
-      <section className="m-auto mt-10 flex flex-col items-center gap-8">
-        {data?.map((event) => (
-          <EventCard event={event} selectEvent={handleEventCardClick} />
-        ))}
-      </section>
+            <section className="m-auto mt-10 flex flex-col items-center gap-8">
+              {data?.map((event) => (
+                <EventCard event={event} selectEvent={handleEventCardClick} />
+              ))}
+            </section>
+          </>
+        )}
+      </main>
     </>
   )
 }
