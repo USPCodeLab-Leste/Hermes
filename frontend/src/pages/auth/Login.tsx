@@ -30,6 +30,11 @@ export default function Login() {
   }
 
   const handleLogin = async () => {
+    if (formData.password.length < 8) {
+      setFormError("Credenciais inválidas.");
+      return;
+    }
+
     signIn({ email: formData.email, password: formData.password })
   }
 
@@ -55,7 +60,7 @@ export default function Login() {
 
   return (
     <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
-      
+
       <div className="flex flex-col gap-1">
         <InputEmail
           id="email"
