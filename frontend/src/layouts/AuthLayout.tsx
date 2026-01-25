@@ -28,7 +28,7 @@ export default function AuthLayout() {
       </section>
 
       {/* FORMULÁRIO DE LOGIN E RODAPÉ */}
-      <section className="w-full flex flex-1 basis-50 flex-col justify-center items-center p-10 bg-violet-dark rounded-t-3xl md:rounded-t-none md:rounded-l-3xl">
+      <section className="w-full flex flex-1 basis-50 flex-col justify-center items-center p-5 bg-violet-dark rounded-t-3xl md:rounded-t-none md:rounded-l-3xl">
         <Outlet />
         <FooterSocials />
       </section>

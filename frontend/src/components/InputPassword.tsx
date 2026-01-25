@@ -33,8 +33,6 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
 
   useEffect(() => {
     if (onValidationChange) {
-      // Se 'validation' for false (campo de confirmar senha), consideramos válido sempre
-      // Se 'validation' for true, passamos o resultado real das regras
       onValidationChange(validation ? allValid : true);
     }
   }, [allValid, onValidationChange, validation]);
@@ -42,7 +40,16 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={id} className="text-paper font-semibold select-none">{label}</label>
-      <div className="border-3 h-10 border-paper rounded-2xl p-2 text-paper bg-transparent focus-within:border-teal-light flex items-center gap-2">
+
+      <div
+        className={`
+          border-3 h-10 rounded-2xl p-2 bg-transparent flex items-center gap-2 transition-colors duration-300
+          ${validation && !allValid && value.length > 0
+            ? 'border-red-300 text-red-800' // Feedback sutil de erro na borda
+            : 'border-paper text-paper focus-within:border-teal-light'
+          }
+        `}
+      >
         <input
           type={visible ? "text" : "password"}
           id={id}
@@ -50,57 +57,64 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
           onChange={onChange}
           disabled={disabled}
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-paper outline-none appearance-none"
+          className="flex-1 bg-transparent outline-none w-full"
           required
         />
         {value && (
-          visible ? (
-            <ShowPassword
-              Icon={WatchOff}
-              onClick={() => setVisible(false)}
-            />
-          ) : (
-            <ShowPassword
-              Icon={Watch}
-              onClick={() => setVisible(true)}
-            />
-          )
+          <ShowPassword
+            Icon={visible ? WatchOff : Watch}
+            onClick={() => setVisible(!visible)}
+          />
         )}
       </div>
 
-      {validation &&
-        <div className="mt-4 space-y-2">
-          <p className="text-sm text-paper/75 mb-2">A senha deve conter:</p>
-          <ul className="space-y-1">
+      {validation && (
+        <div className="mt-3 bg-white/5 p-3 rounded-lg border border-white/10">
+          <p className="text-xs font-semibold text-paper/80 mb-2 uppercase tracking-wide">
+            Sua senha deve ter:
+          </p>
+          <ul className="space-y-2">
             {validations.map((item) => (
               <li
                 key={item.id}
-                className={`flex items-center text-sm transition-colors duration-300 ${item.isValid ? 'text-green-600 font-medium' : 'text-paper/50'
+                className={`flex items-center text-sm transition-all duration-300 ${item.isValid
+                  ? 'text-green-600 font-medium translate-x-1'
+                  : 'text-paper/80'
                   }`}
               >
-                <span className={`mr-2 w-4 h-4 flex items-center justify-center rounded-full border ${item.isValid ? 'bg-green-100 border-green-600' : 'border-paper/40'}`}>
-                  {item.isValid && (
-                    <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                    </svg>
+                {/* Ícone */}
+                <div className={`mr-2 shrink-0 flex items-center justify-center w-5 h-5 rounded-full border transition-colors duration-300 ${item.isValid
+                  ? 'bg-green-100 border-green-700'
+                  : 'bg-transparent border-paper/80'
+                  }`}>
+                  {item.isValid ? (
+                    <CheckIcon />
+                  ) : (
+                    <div className="w-1.5 h-1.5 rounded-full bg-paper/80" /> // Bolinha central
                   )}
+                </div>
+
+                <span className={item.isValid ? "line-through opacity-80" : ""}>
+                  {item.message}
                 </span>
-                {item.message}
               </li>
             ))}
           </ul>
         </div>
-      }
+      )}
 
     </div>
   );
 }
 
+const CheckIcon = () => (
+  <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+  </svg>
+);
+
 const ShowPassword = ({ Icon, onClick }: { Icon: React.FC<React.SVGProps<SVGSVGElement>>, onClick: () => void }) => (
-  <button
-    type="button"
-    onClick={onClick}
-  >
-    <Icon className='cursor-pointer hover:text-teal-light active:text-teal-light transition-colors' />
+  <button type="button" onClick={onClick} tabIndex={-1} className="focus:outline-none">
+    <Icon className='cursor-pointer hover:text-teal-light active:text-teal-light transition-colors w-5 h-5' />
   </button>
 );
