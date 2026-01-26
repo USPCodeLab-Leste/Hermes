@@ -6,6 +6,10 @@ import {
   Navigate,
   RouterProvider,
 } from 'react-router-dom'
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { useAuth } from './hooks/useAuth'
 
 // Auth
@@ -77,6 +81,18 @@ export const router = createHashRouter(
 export default function App() {
   return (
     <AuthProvider>
+      <ToastContainer
+        position="top-right"     // Posição na tela
+        autoClose={3000}         // 3 segundos
+        hideProgressBar={false}  // Mostrar ou esconder a barrinha de tempo
+        newestOnTop={true}       // Novas notificações aparecem em cima das antigas
+        closeOnClick             // Fecha ao clicar na notificação
+        rtl={false}              // Right to Left (para árabe/hebraico)
+        pauseOnFocusLoss         // Pausa o tempo se o usuário mudar de aba
+        draggable                // Arrastar para fechar
+        theme="light"            // 'light', 'dark', ou 'colored' (colored = fundo colorido)
+        /> 
+
       <RouterProvider router={router} />
     </AuthProvider>
   )
