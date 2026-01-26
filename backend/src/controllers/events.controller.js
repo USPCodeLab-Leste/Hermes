@@ -4,11 +4,11 @@ class eventsController {
 
   async getEvents(req, res) {
     try {
-      const events = eventsModel.searchEvent(req.params.id);
+      const {titulo, local, tag } = req.body;
 
-      if(events == undefined) {
-        return res.status(400).json({error: "Events not found"});
-      }
+      const events = eventsModel.searchEvent({titulo, local, tag});
+
+      if(!events) return res.status(404).json({ error: "Events not found!"});
 
       return res.status(200).json(events);
     } catch (err) {

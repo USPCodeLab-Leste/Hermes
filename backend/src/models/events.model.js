@@ -16,22 +16,35 @@ class eventsModel {
 
   }
 
-  async searchEvent(search = undefined) {
+  async searchEvent({title, local, tag}) {
     let query = `
-      SELECT *
+      SELECT DISTINCT post.*
       FROM post
       JOIN post_tag. ON post_tag.post_id = post.id
       JOIN tag on post_tag.id_tag = tag.id
+      WHERE 1=1
     `;
 
     const values = [];
+    const index = 1;
 
-    if(search != undefined) {
-      query += ` WHERE post.id = $1 OR post.local = $1 OR post.titulo = $1`
-      values.push(search);
+    if(title) {
+      query += ` OR post.titulo = $${index}`;
+      values.push(title);
+      index++;
     }
 
-    query += `;`;
+    if(local) {
+      query += ` OR post.local = $${index}`;
+      values.push(local);
+      index++;
+    }
+
+    if(tag) {
+      query += ` OR tag.titulo = $${index}`;
+      values.push(tag);
+      index++;
+    }
 
 
     const result = await
@@ -48,27 +61,3 @@ class eventsModel {
 }
 
 export default new eventsModel();
-
-/*
-
-let query = `
-SELECT *
-FROM post
-JOIN post_tag on post_tag.idPost = post.idPost
-JOIN tag on tag.tag_id = post_tag.tag_id
-`;
-const values = [tags, limit || "ALL"];
-if(tags != []){
-  query += ` WHERE tag.title = ANY($1)`;
-}
-query += ` LIMIT $2`;
-
-const result = await
-pool
-.query(query, values)
-.then( res => res.rows[0])
-.catch( err => console.error("ERROR GET EVENTS ON SEARCH: ", err));
-
-return result;
-
-*/
