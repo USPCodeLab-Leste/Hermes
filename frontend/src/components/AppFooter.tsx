@@ -14,11 +14,11 @@ export default function AppFooter() {
 
       <nav className="bg-violet-dark max-w h-16 flex justify-evenly items-center">
  
-        <NavLink to="/" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-4 -translate-y-6' : 'rounded-full p-2'}> <IconHome/> </NavLink>
+        <NavLink to="/" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-4 -translate-y-8 transition-transform duration-300 ease-[cubic-bezier(0.23, 1, 0.32, 1)]' : 'translate-y-0 rounded-full p-2'}> <IconHome/> </NavLink>
     
-        <NavLink to="/info" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-4 -translate-y-6' : 'rounded-full p-2 '}><IconBook2/></NavLink>
+        <NavLink to="/info" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-4 -translate-y-8 transition-transform duration-300 ease-[cubic-bezier(0.23, 1, 0.32, 1)]' : 'translate-y-0 rounded-full p-2 '}><IconBook2/></NavLink>
 
-        <NavLink to="/perfil" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-4 -translate-y-6' : 'rounded-full p-2 '}><IconUser/></NavLink>
+        <NavLink to="/perfil" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-4 -translate-y-8 transition-transform duration-300 ease-[cubic-bezier(0.23, 1, 0.32, 1)]' : 'translate-y-0 rounded-full p-2 '}><IconUser/></NavLink>
       </nav>
 
 
