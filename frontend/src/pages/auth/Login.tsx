@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-// import { AnimatePresence, motion } from "motion/react";
+import { toast } from 'react-toastify';
 import { Link, Navigate, useSearchParams } from "react-router";
 
 // components
@@ -15,8 +15,12 @@ export default function Login() {
   const [searchParams] = useSearchParams()
 
   // Hooks de autenticação
-  const [signIn, user, signInLoading, signInError] = useSignIn(auth)
-  const [formError, setFormError] = useState<string | null>(null) // Novo estado para erros em vez de alert
+  const [signIn, user, signInLoading] = useSignIn(auth)
+
+  const [errors, setErrors] = useState({
+    email: false,
+    password: false,
+  });
 
   const [formData, setFormData] = useState({
     email: searchParams.get("email") || "",
@@ -25,30 +29,60 @@ export default function Login() {
 
   // Helper para atualizar inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //Salva os dados ao digitar
     setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }))
-    setFormError(null) // Limpa erro ao digitar
+
+    // Limpa erro ao digitar
+    if (errors[e.target.id as keyof typeof errors]) {
+      setErrors({ ...errors, [e.target.id]: false })
+    }
   }
 
   const handleLogin = async () => {
-    if (formData.password.length < 8) {
-      setFormError("Credenciais inválidas.");
-      return;
+    const newErrors = { email: false, password: false };
+    let hasLocalError = false;
+
+    //Validação email
+    if (!formData.email) {
+      toast.error("O campo e-mail é obrigatório!")
+      newErrors.email = true;
+      hasLocalError = true;
+    } else if (!formData.email.endsWith("@usp.br")) {
+      toast.error("Por favor, utilize seu e-mail institucional (@usp.br).");
+      newErrors.email = true;
+      hasLocalError = true;
     }
 
-    signIn({ email: formData.email, password: formData.password })
+    //Validação senha
+    if (formData.password.length < 8) {
+      toast.error("Credenciais inválidas!")
+      newErrors.email = true;
+      newErrors.password = true;
+      hasLocalError = true;
+    }
+
+    if (hasLocalError) {
+      setErrors(newErrors);
+      return;
+    };
+
+    // Chamada ao hook de login
+    try {
+      setErrors({ email: false, password: false });
+      await signIn({ email: formData.email, password: formData.password });
+
+    } catch (error) {
+      // Tratamento de erro no login
+      console.error(error);
+      toast.error("Credenciais inválidas!"); // Ou use error.message se vier do back
+      setErrors({ email: true, password: true });
+    }
   }
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setFormError(null)
     handleLogin()
   }
-
-  useEffect(() => {
-    if (signInError) {
-      setFormError(signInError.message)
-    }
-  }, [signInError])
 
   const isLoading = signInLoading;
 
@@ -59,7 +93,7 @@ export default function Login() {
   }
 
   return (
-    <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
+    <form onSubmit={handleFormSubmit} noValidate={true} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
 
       <div className="flex flex-col gap-1">
         <InputEmail
@@ -69,8 +103,7 @@ export default function Login() {
           onChange={handleChange}
           isLoading={isLoading}
           placeholder="E-mail USP"
-          pattern=".+@usp\.br"
-          title="Por favor, utilize um e-mail com domínio @usp.br"
+          hasError={errors.email}
         />
       </div>
 
@@ -84,17 +117,11 @@ export default function Login() {
             disabled={isLoading}
             placeholder="Senha"
             validation={false}
+            hasError={errors.password}
           />
           <Link to={{ pathname: "/auth/reset-password", search: formData.email ? `?email=${formData.email}` : "" }} className="text-sm text-paper text-right mb-2 hover:underline">Esqueci minha senha</Link>
         </div>
       </div>
-
-      {/* Mensagem de Erro Inline PROVISORIO*/}
-      {formError && (
-        <p className="text-red-300 text-sm font-bold text-center bg-red-900/20 p-2 rounded-lg">
-          {formError}
-        </p>
-      )}
 
       <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Entrar"} />
 
