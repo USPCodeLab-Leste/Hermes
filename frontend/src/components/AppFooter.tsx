@@ -10,7 +10,7 @@ export default function AppFooter() {
  
   return (
     <footer className="w-full bottom-0">
-      <nav className="bg-violet-dark w-full h-16 flex justify-evenly items-center">
+      <nav className="bg-violet-dark max-w h-16 flex justify-evenly items-center">
  
         <NavLink to="/" className={({ isActive }) => isActive ? ' bg-teal-mid rounded-full p-2 -translate-y-6' : 'rounded-full p-2'}> <IconHome/> </NavLink>
     
