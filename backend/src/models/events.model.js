@@ -4,19 +4,7 @@ class eventsModel {
   
   // Precisa devolver com base em um limite e tags
   // Na falta de tag na requisição, não filtrar 
-  async findAll({ limit = 10, tags = [] }) {
-
-  }
-
-  async findById(id) {
-
-  }
-
-  async create() {
-
-  }
-
-  async searchEvent({title, local, tag}) {
+  async findAll({ title, local, tags = [], limit = 10 }) {
     let query = `
       SELECT DISTINCT post.*
       FROM post
@@ -40,7 +28,7 @@ class eventsModel {
       index++;
     }
 
-    if(tag) {
+    if(tags) {
       query += ` OR tag.titulo = $${index}`;
       values.push(tag);
       index++;
@@ -54,8 +42,17 @@ class eventsModel {
     .catch( err => console.error("ERROR GET EVENTS: ", err));
 
     return result;
+  }
 
+  async findById(id) {
 
+  }
+
+  async create() {
+
+  }
+
+  async searchEvent() {
   }
 
 }
