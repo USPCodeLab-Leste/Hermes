@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Watch from '../assets/icons/watch.svg?react';
 import WatchOff from '../assets/icons/watch-off.svg?react';
 
-export const InputPassword = ({ id, label, value, onChange, disabled, placeholder, validation, onValidationChange }: any) => {
+export const InputPassword = ({ id, label, value, onChange, disabled, placeholder, validation, onValidationChange, hasError }: any) => {
   const [visible, setVisible] = useState(false);
 
   const validations = [
@@ -37,18 +37,18 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
     }
   }, [allValid, onValidationChange, validation]);
 
+  const showVisualError = hasError || (validation && !allValid && value.length > 0);
+
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={id} className="text-paper font-semibold select-none">{label}</label>
 
       <div
-        className={`
-          border-3 h-10 rounded-2xl p-2 bg-transparent flex items-center gap-2 transition-colors duration-300
-          ${validation && !allValid && value.length > 0
-            ? 'border-red-300 text-red-800' // Feedback sutil de erro na borda
-            : 'border-paper text-paper focus-within:border-teal-light'
-          }
-        `}
+        className={`border-3 h-10 rounded-2xl p-2 bg-transparent flex items-center gap-2 transition-colors duration-300
+          ${showVisualError
+            ? 'border-red-300 text-red-800' // Visual de Erro
+            : 'border-paper text-paper focus-within:border-teal-light' // Visual Padrão
+          }`}
       >
         <input
           type={visible ? "text" : "password"}
@@ -58,7 +58,6 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
           disabled={disabled}
           placeholder={placeholder}
           className="flex-1 bg-transparent outline-none w-full"
-          required
         />
         {value && (
           <ShowPassword
@@ -84,8 +83,8 @@ export const InputPassword = ({ id, label, value, onChange, disabled, placeholde
               >
                 {/* Ícone */}
                 <div className={`mr-2 shrink-0 flex items-center justify-center w-5 h-5 rounded-full border transition-colors duration-300 ${item.isValid
-                  ? 'bg-green-100 border-green-700'
-                  : 'bg-transparent border-paper/80'
+                  ? 'bg-green-100 border-green-700' // Ícone de check verde
+                  : 'bg-transparent border-paper/80' // Círculo cinza
                   }`}>
                   {item.isValid ? (
                     <CheckIcon />

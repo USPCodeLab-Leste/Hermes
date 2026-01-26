@@ -96,7 +96,6 @@ export default function Register() {
             disabled={isLoading}
             placeholder="Usuário"
             autocomplete="username"
-            required={true}
           />
           <InputPassword
             id="password"
