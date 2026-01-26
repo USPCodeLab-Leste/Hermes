@@ -3,9 +3,9 @@ import { toast } from 'react-toastify';
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router";
 
 // components
-import { MemoizedInputPassword as InputPassword } from "../../components/InputPassword";
-import { MemoizedInputText as InputText } from "../../components/InputText";
-import { SubmitButton } from "../../components/SubmitButton";
+import { MemoizedInputPassword as InputPassword } from "../../components/forms/InputPassword";
+import { MemoizedInputText as InputText } from "../../components/forms/InputText";
+import { SubmitButton } from "../../components/forms/SubmitButton";
 
 // hooks
 import { auth } from "../../services/auth"

@@ -2,7 +2,7 @@ import { Navigate, useSearchParams } from "react-router-dom";
 import { useTimer } from "react-timer-hook";
 
 // components
-import { SubmitButton } from "../../components/SubmitButton";
+import { SubmitButton } from "../../components/forms/SubmitButton";
 
 const getDate = (seconds: number) => {
   const time = new Date()

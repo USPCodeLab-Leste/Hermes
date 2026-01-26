@@ -1,8 +1,8 @@
 import { memo } from "react";
-import { ErrorMessage } from "./forms/ErrorMessage";
-import { InputWrapper } from "./forms/InputWrapper";
-import { Input } from "./forms/Input";
-import { Label } from "./forms/Label"
+import { ErrorMessage } from "./ErrorMessage";
+import { InputWrapper } from "./InputWrapper";
+import { Input } from "./Input";
+import { Label } from "./Label"
 
 const InputText = ({ id, label, value, onChange, disabled, placeholder, autocomplete, hasError, errorMessage, required }: any) => {
   console.log("InputText render!");

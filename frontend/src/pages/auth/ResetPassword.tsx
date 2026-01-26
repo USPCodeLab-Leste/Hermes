@@ -1,8 +1,8 @@
 import { Link, useSearchParams } from "react-router-dom";
 
 // components
-import { SubmitButton } from "../../components/SubmitButton";
-import { MemoizedInputText as InputText } from "../../components/InputText";
+import { SubmitButton } from "../../components/forms/SubmitButton";
+import { MemoizedInputText as InputText } from "../../components/forms/InputText";
 import { useState } from "react";
 
 

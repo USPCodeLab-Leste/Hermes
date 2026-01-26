@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 // components
-import { MemoizedInputText as InputText } from "../../components/InputText";
-import { MemoizedInputPassword as InputPassword } from "../../components/InputPassword";
-import { SubmitButton } from "../../components/SubmitButton";
+import { MemoizedInputText as InputText } from "../../components/forms/InputText";
+import { MemoizedInputPassword as InputPassword } from "../../components/forms/InputPassword";
+import { SubmitButton } from "../../components/forms/SubmitButton";
 
 // hooks
 import { auth } from "../../services/auth";
