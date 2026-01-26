@@ -29,10 +29,12 @@ class eventsModel {
     }
 
     if(tags) {
-      query += ` OR tag.titulo = $${index}`;
-      values.push(tag);
+      query += ` OR tag.titulo IN $${index}`;
+      values.push(tags);
       index++;
     }
+
+    query += ` LIMIT ${index};`;
 
 
     const result = await
