@@ -1,16 +1,34 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // import { motion, AnimatePresence } from "motion/react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 // components
-import { InputText } from "../../components/InputText";
-import { InputPassword } from "../../components/InputPassword";
-import { InputEmail } from "../../components/InputEmail";
+import { MemoizedInputText as InputText } from "../../components/InputText";
+import { MemoizedInputPassword as InputPassword } from "../../components/InputPassword";
 import { SubmitButton } from "../../components/SubmitButton";
 
 // hooks
 import { auth } from "../../services/auth";
 import { useRegister } from "../../hooks/useRegister";
+
+const defaultFormErrors = {
+  email: {
+    hasError: false,
+    message: ''
+  },
+  name: {
+    hasError: false,
+    message: ''
+  }, 
+  password: {
+    hasError: false,
+    message: ''
+  },
+  confirmPassword: {
+    hasError: false,
+    message: ''
+  }
+}
 
 export default function Register() {
   const [searchParams] = useSearchParams()
@@ -18,7 +36,7 @@ export default function Register() {
 
   // Hooks de autenticação
   const [register, regLoading, regError] = useRegister(auth);
-  const [formError, setFormError] = useState<string | null>(null);
+  const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
 
   const [isPasswordValid, setIsPasswordValid] = useState(false);
 
@@ -30,20 +48,50 @@ export default function Register() {
   });
 
   // Helper para atualizar inputs
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    // Salva os dados ao digitar
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-    setFormError(null); // Limpa erro ao digitar
-  };
 
-  const handleRegister = async () => {
+    // Limpa erro ao digitar
+    setErrors({ 
+      ...errors, 
+      [e.target.id]: { hasError: false, message: '' } 
+    });
+  }, [errors]);
+
+  const handleRegister = useCallback(async () => {
+    let hasLocalError = false;
+    const newErrors = structuredClone(defaultFormErrors);
+
     if (!isPasswordValid) {
-      // TODO: fazer a mensagem de erro ser pop-up
-      setFormError("A senha não atende aos requisitos de segurança.");
-      return;
+      newErrors.password.hasError = true;
+      hasLocalError = true;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setFormError("As senhas não conferem!");
+      newErrors.confirmPassword.hasError = true;
+      newErrors.confirmPassword.message = "As senhas não conferem!";
+      hasLocalError = true;
+    }
+
+    if (formData.email.trim() === "") {
+      newErrors.email.hasError = true;
+      newErrors.email.message = "O campo e-mail é obrigatório!";
+      hasLocalError = true;
+    } else if (!formData.email.endsWith("@usp.br")) {
+      newErrors.email.hasError = true;
+      newErrors.email.message = "Por favor, utilize seu e-mail institucional (@usp.br).";
+      hasLocalError = true;
+    }
+
+    if (formData.name.trim() === "") {
+      newErrors.name.hasError = true;
+      newErrors.name.message = "O campo nome é obrigatório!";
+      hasLocalError = true;
+    }
+
+    if (hasLocalError) {
+      setErrors(newErrors);
       return;
     }
 
@@ -52,21 +100,24 @@ export default function Register() {
       name: formData.name,
       password: formData.password,
     });
-    // TODO: chamar função de envio de email de verificação e só então navegar
-    navigate(`/auth/verify-email?email=${encodeURIComponent(formData.email)}`);
-  };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+    navigate("/auth/login", {
+      state: { fromRegisterSucess: true }
+    });
+  }, [formData, isPasswordValid, navigate, register]);
+
+  const handleFormSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormError(null);
     handleRegister()
-  };
+  }, [handleRegister]);
 
   useEffect(() => {
     if (regError) {
-      setFormError(regError.message);
+      // TODO: tratar erros vindos do backend de acordo com difrentes status codes
     }
   }, [regError]);
+
+  console.log("Register render!");
 
   const isLoading = regLoading;
 
@@ -74,15 +125,18 @@ export default function Register() {
     <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
 
       <div className="flex flex-col gap-1">
-        <InputEmail
+        <InputText
+          type="text"
+          autocomplete="email"
           id="email"
           label="E-mail USP"
           value={formData.email}
           onChange={handleChange}
-          isLoading={isLoading}
+          disabled={isLoading}
           placeholder="E-mail USP"
-          pattern=".+@usp\.br"
-          title="Por favor, utilize um e-mail com domínio @usp.br"
+          hasError={errors.email.hasError}
+          errorMessage={errors.email.message}
+          required={true}
         />
       </div>
 
@@ -96,6 +150,9 @@ export default function Register() {
             disabled={isLoading}
             placeholder="Usuário"
             autocomplete="username"
+            hasError={errors.name.hasError}
+            errorMessage={errors.name.message}
+            required={true}
           />
           <InputPassword
             id="password"
@@ -105,7 +162,10 @@ export default function Register() {
             disabled={isLoading}
             placeholder="Senha"
             validation={true}
+            autocomplete="new-password"
             onValidationChange={setIsPasswordValid}
+            hasError={errors.password.hasError}
+            required={true}
           />
           <InputPassword
             id="confirmPassword"
@@ -115,16 +175,12 @@ export default function Register() {
             disabled={isLoading}
             placeholder="Confirme a senha"
             validation={false}
+            autocomplete="new-password"
+            hasError={errors.confirmPassword.hasError}
+            errorMessage={errors.confirmPassword.message}
           />
         </div>
       </div>
-
-      {/* Mensagem de Erro Inline PROVISORIO*/}
-      {formError && (
-        <p className="text-red-300 text-sm font-bold text-center bg-red-900/20 p-2 rounded-lg">
-          {formError}
-        </p>
-      )}
 
       <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Cria Conta"} />
 

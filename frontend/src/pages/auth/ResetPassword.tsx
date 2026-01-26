@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 
 // components
 import { SubmitButton } from "../../components/SubmitButton";
-import { InputEmail } from "../../components/InputEmail";
+import { MemoizedInputText as InputText } from "../../components/InputText";
 import { useState } from "react";
 
 
@@ -30,7 +30,9 @@ export default function VerifyEmail() {
         <p className="text-center text-paper mt-4 mb-6 max-w-70">Insira seu e-mail USP para receber o link de redefinição de senha</p>
         <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
           <div className="flex flex-col gap-1">
-            <InputEmail
+            <InputText
+              type="text"
+              autocomplete="email"
               id="email"
               label="E-mail USP"
               value={email}

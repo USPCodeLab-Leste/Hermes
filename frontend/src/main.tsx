@@ -8,11 +8,11 @@ import { ThemeProvider } from './contexts/ThemeContext.tsx'
 const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     </ThemeProvider>
-  </StrictMode>,
+  // </StrictMode>,
 )

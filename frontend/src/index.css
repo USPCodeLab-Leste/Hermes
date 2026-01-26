@@ -14,6 +14,8 @@
   --color-teal-mid: #2D799F;
 
   --font-sans: "Montserrat", system-ui, sans-serif;
+
+  --inset-shadow-violet: inset 0 0 0 100px var(--color-violet-light)
 }
 
 /*Reset & root*/
@@ -51,4 +53,12 @@ body, button, textarea, input {
 
 img {
   max-width: 100%;
+}
+
+input:is(:-webkit-autofill, :autofill) {
+  @apply inset-shadow-violet
+}
+
+.Toastify {
+  position: absolute;
 }

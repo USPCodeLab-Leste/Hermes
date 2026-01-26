@@ -27,6 +27,7 @@ import FeedSeguindo from './pages/FeedSeguindo'
 import FeedParaVoce from './pages/FeedParaVoce'
 import FeedLayout from './layouts/FeedLayout'
 import AppLayout from './layouts/AppLayout'
+import { useTheme } from './hooks/useTheme';
 
 
 /* =========================
@@ -79,9 +80,11 @@ export const router = createHashRouter(
 )
 
 export default function App() {
+  const { theme } = useTheme()
   return (
     <AuthProvider>
       <ToastContainer
+        className="absolute"
         position="top-right"     // Posição na tela
         autoClose={3000}         // 3 segundos
         hideProgressBar={false}  // Mostrar ou esconder a barrinha de tempo
@@ -90,8 +93,8 @@ export default function App() {
         rtl={false}              // Right to Left (para árabe/hebraico)
         pauseOnFocusLoss         // Pausa o tempo se o usuário mudar de aba
         draggable                // Arrastar para fechar
-        theme="light"            // 'light', 'dark', ou 'colored' (colored = fundo colorido)
-        /> 
+        theme={theme}            // 'light', 'dark', ou 'colored' (colored = fundo colorido)
+      /> 
 
       <RouterProvider router={router} />
     </AuthProvider>

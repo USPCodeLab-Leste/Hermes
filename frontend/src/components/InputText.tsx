@@ -1,24 +1,29 @@
-export const InputText = ({ id, label, value, onChange, disabled, placeholder, autocomplete, hasError }: any) => (
-  <div className="flex flex-col gap-1">
-    <label htmlFor={id} className="text-paper font-semibold select-none">{label}</label>
-    <div
-      className={` border-3 h-10 rounded-2xl p-2 bg-transparent flex items-center gap-2 transition-colors duration-300
-        ${hasError
-          ? 'border-red-300 text-red-800' // Visual de Erro
-          : 'border-paper text-paper focus-within:border-teal-light' // Visual Padrão
-        }`}
-    >
-      <input
-        type="text"
-        id={id}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        placeholder={placeholder}
-        className="flex-1 bg-transparent text-paper outline-none appearance-none"
-        autoComplete={autocomplete}
-      />
-    </div>
+import { memo } from "react";
+import { ErrorMessage } from "./forms/ErrorMessage";
+import { InputWrapper } from "./forms/InputWrapper";
+import { Input } from "./forms/Input";
+import { Label } from "./forms/Label"
 
-  </div>
-);
+const InputText = ({ id, label, value, onChange, disabled, placeholder, autocomplete, hasError, errorMessage, required }: any) => {
+  console.log("InputText render!");
+
+  return (
+    <div className="flex flex-col gap-1">
+      <Label id={id} label={label} required={required} />
+      <InputWrapper hasError={hasError} disabled={disabled}>
+        <Input 
+          type="text"
+          id={id}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          autocomplete={autocomplete}
+          readonly={disabled}
+        />
+      </InputWrapper>
+      <ErrorMessage hasError={hasError} errorMessage={errorMessage} />
+    </div>
+  )
+}
+
+export const MemoizedInputText = memo(InputText);
