@@ -44,7 +44,7 @@ const variantsChild: Variants = {
 export default function Perfil() {
   const [signOut] = useSignOut(auth);
   const { theme , toggleTheme } = useTheme();
-  const { data: user, isLoading } = useMe(auth);
+  // const { data: user, isLoading } = useMe(auth);
   const isDark = theme === 'dark';
 
   // onClick Functions (alterar para as funcoes ou router corretos)
@@ -73,9 +73,8 @@ export default function Perfil() {
     { id: 6, label: "Sair", icon: LogoutIcon, onClick: signOut },
   ];
 
-  const navigate = useNavigate();
-
-  if (isLoading) return <p>Loading ...</p>
+  // const navigate = useNavigate();
+  // if (isLoading) return <p>Loading ...</p>
 
   return (
     <>
@@ -95,7 +94,7 @@ export default function Perfil() {
       </header>
       <main className="main-app flex flex-col justify-center">
         <motion.section 
-          className="flex flex-col items-center justify-center"
+          className="flex flex-col items-center justify-center gap-4"
           variants={variants}
           initial="hidden"
           animate="visible"

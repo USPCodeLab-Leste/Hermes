@@ -38,7 +38,7 @@ const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType<
                 stiffness: 500, 
                 damping: 30,
               }}
-              className="absolute -top-3.5 aspect-124/39 w-28"
+              className="absolute -top-[15px] aspect-124/39 w-28"
             >
               <Ondinha 
                 className="dark:text-violet-mid text-paper"

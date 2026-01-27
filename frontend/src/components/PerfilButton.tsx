@@ -18,7 +18,7 @@ export default function PerfilButton({
     return (
         <motion.button
             className="bg-violet-light cursor-pointer text-[20px]/[24px] flex items-center justify-between max-w-95 w-[90%] h-11.25 border-2 px-2 py-4 
-                         rounded-2xl mb-4 mx-6 transition-colors duration-200 ease-in hover:bg-violet-mid/50 focus:bg-violet-mid/50 outline-none group"
+                         rounded-2xl transition-colors duration-200 ease-in hover:bg-violet-mid/50 focus:bg-violet-mid/50 outline-none group"
             onClick={onClick}
             variants={variants}
         >
