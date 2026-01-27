@@ -51,7 +51,7 @@ html:has(.modal-open) {
 
 #root:has(> .main-app) {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
 }
 
 img {
@@ -79,5 +79,5 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .main-app {
-  @apply p-4 my-0 mx-auto max-w-2xl w-9/10
+  @apply p-4 my-0 mx-auto mb-30 max-w-2xl w-9/10
 }
