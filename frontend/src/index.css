@@ -46,7 +46,7 @@ body, button, textarea {
 
 #root:has(> .main-app) {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
 }
 
 img {
