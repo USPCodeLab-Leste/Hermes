@@ -22,7 +22,7 @@ export default function AppFooter() {
   )
 }
 
-const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType }) => {
+const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }) => {
   return (
     <NavLink 
       to={to}
@@ -41,7 +41,7 @@ const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType 
               className="absolute -top-3.5 aspect-124/39 w-28"
             >
               <Ondinha 
-                className="dark:text-violet-mid"
+                className="dark:text-violet-mid text-paper"
               />
             </motion.div>
           )}
@@ -65,7 +65,7 @@ const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType 
               scale: isActive ? 1.1 : 1,
             }}
           >
-            <Icon />
+            <Icon className="text-paper" />
           </motion.div>
         </>
       )}
