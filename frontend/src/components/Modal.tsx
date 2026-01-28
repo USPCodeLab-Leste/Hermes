@@ -49,7 +49,7 @@ function Modal({ children, onClose, ref }: ModalProps) {
       >
         <motion.div
           ref={scope}
-          className='p-6 pt-2 bg-violet-mid rounded-t-2xl md:rounded-2xl modal-card absolute 
+          className='p-6 pt-2 bg-paper dark:bg-violet-mid rounded-t-2xl md:rounded-2xl modal-card absolute 
                      md:relative bottom-0 w-full md:w-9/10 md:max-w-120 origin-bottom md:origin-center'
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.8, opacity: 0 }}
@@ -67,12 +67,12 @@ function Modal({ children, onClose, ref }: ModalProps) {
           aria-modal="true"
         >
           <button 
-            className='cursor-grab block py-4 px-12 m-auto touch-none active:cursor-grabbing select-none'
+            className='cursor-grab block py-4 px-12 m-auto touch-none active:cursor-grabbing select-none relative z-12 '
             onPointerDown={(e) => dragControls.start(e)}
             onClick={onClose}
             aria-label="Fechar modal"
           >
-            <div className='h-2 w-15 bg-violet-dark rounded-full m-auto' aria-hidden="true"></div>
+            <div className='h-1.5 w-15 bg-violet-light dark:bg-paper shadow-md shadow-black/30 rounded-full m-auto' aria-hidden="true"/>
           </button>
           {children}
         </motion.div>

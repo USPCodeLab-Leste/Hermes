@@ -1,10 +1,16 @@
 import { useCallback, useMemo, useState, memo } from "react"
-import type { Event } from "../types/events"
 import { motion, stagger, type Variants } from "framer-motion"
 
+// Icons
 import PlusIcon from "../assets/icons/plus.svg?react"
 import CheckIcon from "../assets/icons/check.svg?react"
+
+// Types
+import type { Event } from "../types/events"
 import type { Tag as TagInterface, TagType } from "../types/tag"
+
+// Components
+import { Date } from "./Date"
 
 interface EventCardProps {
   event: Event;
@@ -39,7 +45,7 @@ export function EventCard({ event, selectEvent, variants }: EventCardProps) {
       className={`aspect-5/3 w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat 
                  bg-center justify-between cursor-pointer hover:-translate-y-2 shadow-lg hover:shadow-2xl 
                  outline-2 hover:outline-paper focus:outline-paper outline-transparent ${isReady ? 'transition-all' : ''}`}
-      style={{ backgroundImage: `url('https://picsum.photos/600/200?random=${event.id}')`}}
+      style={{ backgroundImage: `url('${event.banner}')` }}
       onClick={() => selectEvent(event.id)}
       onAnimationComplete={() => setIsReady(true)}
       aria-label={`Selecionar evento ${event.title}`}
@@ -48,7 +54,7 @@ export function EventCard({ event, selectEvent, variants }: EventCardProps) {
       <Tags tags={tags} className="p-4" />
       <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b">
         <h2 className="font-bold text-[18px] md:text-xl text-paper">{event.title}</h2>
-        <p className="text-[16px] md:text-[18px] text-paper">{event.date}</p>
+        <Date dateString={event.date} />
       </div>
     </motion.button>
   )

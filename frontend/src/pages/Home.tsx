@@ -6,7 +6,6 @@ import { useEvents } from "../hooks/useEvents"
 import { useTags } from "../hooks/useTags"
 
 // Types
-import type { Event } from "../types/events"
 import type { TagType } from "../types/tag"
 
 // Componentes
@@ -14,6 +13,8 @@ import { ModalWrapper } from "../components/Modal"
 import AppHeader from "../components/AppHeader"
 import { EventCard, Tags } from "../components/Events"
 import SearchBar from "../components/SearchBar"
+import { SelectedEventDetails } from "../components/SelectedEventDetails"
+import { GenericButton as Button } from "../components/GenericButton"
 
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
@@ -26,8 +27,8 @@ const eventVariants: Variants = {
 }
 
 const filterVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
 }
 
 export default function Home() {
@@ -151,7 +152,7 @@ export default function Home() {
           onClose={handleModalFilterClose}
         >
           <section className="flex flex-col gap-4 max-h-[70dvh]">
-            <h2 className="font-bold text-xl text-center text-paper">Filtros de Busca</h2>
+            <h2 className="font-bold text-xl text-center">Filtros de Busca</h2>
             <div className="overflow-y-auto">
               {isTagsLoading ? <p>Carregando tags...</p> : (
                 <>
@@ -161,7 +162,7 @@ export default function Home() {
                       initial="hidden"
                       animate="visible"
                     >
-                      <h3 className="capitalize font-medium mb-1 text-paper/75">{type}</h3>
+                      <h3 className="capitalize font-medium mb-1 text-ink/75 dark:text-paper/75">{type}</h3>
                       <Tags tags={tags} activeTags={activeTagsCopy} canSelect={true} onClick={handleFilterTagClick} />
                     </motion.div>
                   ))}
@@ -169,19 +170,19 @@ export default function Home() {
               )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <button 
-                className="p-4 rounded-xl bg-teal-mid hover:bg-teal-light transition-colors cursor-pointer"
+              <Button 
                 onClick={handleApplyFilter}
               >
+
                 <span className="text-paper">Aplicar Filtros</span>
-              </button>
-              <button 
-                className="p-4 rounded-xl bg-transparent border-4 border-teal-light hover:border-teal-mid 
-                           transition-colors cursor-pointer"
+              </Button>
+              <Button
+                className="bg-transparent border-4 border-teal-light hover:border-teal-mid "
                 onClick={handleClean}
               >
-                <span className="text-paper">Limpar Filtros</span>
-              </button>
+
+                <span className="">Limpar Filtros</span>
+              </Button>
             </div>
           </section>
         </ModalWrapper>
@@ -197,18 +198,5 @@ export default function Home() {
         )}
       </main>
     </>
-  )
-}
-
-function SelectedEventDetails({ event }: { event: Event | null }) {
-  return (
-    <div>
-      <div className="flex flex-col gap-2">
-        <h2 className="text-2xl font-bold mb-2">{event?.title}</h2>
-        <p><strong>Data:</strong> {event?.date}</p>
-        <p><strong>Localização:</strong> {event?.location}</p>
-        <p><strong>Descrição:</strong> {event?.description}</p>
-      </div>
-    </div>
   )
 }
