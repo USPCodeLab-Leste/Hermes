@@ -14,6 +14,9 @@
   --color-teal-mid: #2D799F;
 
   --font-sans: "Montserrat", system-ui, sans-serif;
+
+  --shadow-violet-top: 0px -10px 60px 55px var(--color-violet-mid);
+  --shadow-paper-top: 0px -10px 60px 55px var(--color-paper);
 }
 
 /*Reset & root*/
