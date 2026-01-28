@@ -5,4 +5,5 @@ export interface Event {
   location: string
   description: string
   tags: string[]
+  banner: string
 }

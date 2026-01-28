@@ -35,6 +35,9 @@ export const mockTags = [
   // Outros
   { name: 'Festa', type: 'outro' },
   { name: 'Música', type: 'outro' },
+  { name: 'Competição', type: 'outro' },
+  { name: 'Wokshop', type: 'outro' },
+
 ].map((tag, index) => ({ ...tag, id: String(index) })) as Tag[];
 
 export const tagsByType = mockTags.reduce((acc, tag) => {
