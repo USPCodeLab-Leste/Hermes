@@ -1,8 +1,13 @@
 import { motion, type Variants } from "framer-motion"
-import { useCallback, useRef, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 
+// Hooks
 import { useEvents } from "../hooks/useEvents"
+import { useTags } from "../hooks/useTags"
+
+// Types
 import type { Event } from "../types/events"
+import type { TagType } from "../types/tag"
 
 // Componentes
 import { ModalWrapper } from "../components/Modal"
@@ -12,8 +17,8 @@ import SearchBar from "../components/SearchBar"
 
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
-import { useTags } from "../hooks/useTags"
-import type { TagType } from "../types/tag"
+import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
+import { toast } from "react-toastify"
 
 const eventVariants: Variants = {
   hidden: { opacity: 0, y: 40, scale: 0.85 },
@@ -34,6 +39,8 @@ export default function Home() {
 
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
+
+  // Tag States
   const [activeTags, setActiveTags] = useState<Record<TagType, string[]>>({} as Record<TagType, string[]>)
   const [activeTagsCopy, setActiveTagsCopy] = useState<Record<TagType, string[]>>({} as Record<TagType, string[]>)
   const { data: tagsData, isLoading: isTagsLoading } = useTags()
@@ -62,9 +69,9 @@ export default function Home() {
 
   // Limpa todos os filtros ativos
   const handleClean = useCallback(() => {
-    setActiveTags({} as Record<TagType, string[]>)
+    // setActiveTags({} as Record<TagType, string[]>)
     setActiveTagsCopy({} as Record<TagType, string[]>)
-    // TODO: botar notificação com toastify
+    toast.success("Filtros limpos com sucesso!")
   }, [])
 
   // Aplica os filtros selecionados
@@ -96,6 +103,11 @@ export default function Home() {
     });
   }, [])
 
+  // ===================
+  // == Memos
+  // ===================
+
+  const hasAnyFilter = useMemo(() => Object.values(activeTags).some(tags => tags.length > 0), [activeTags])
   const selectedEventData = useMemo(() => data?.find((e) => e.id === selectedEventId) ?? null, [data, selectedEventId])
   const tagsEntries = useMemo(() => Object.entries(tagsData ?? {}), [tagsData])
 
@@ -106,9 +118,17 @@ export default function Home() {
           <SearchBar search={searchQuery} setSearch={setSearchQuery} />
           <button 
             onClick={handleFilterClick}
-            className="cursor-pointer bg-teal-mid border-2 border-teal-mid p-2 rounded-xl hover:border-teal-light hover:bg-teal-light transition-colors group"
+            className="cursor-pointer bg-teal-mid border-2 border-teal-mid p-2 rounded-xl
+                       hover:border-teal-light hover:bg-teal-light aria-expanded:border-teal-light aria-expanded:bg-teal-light
+                        transition-colors group"
+            aria-label="Abrir filtros de busca"
+            aria-expanded={isFilterModalOpen}
           >
-            <FilterIcon className="text-paper transition-colors"/>
+            {hasAnyFilter ? (
+              <FilterSparkIcon className="text-paper transition-colors"/>
+            ) : (
+              <FilterIcon className="text-paper transition-colors"/>
+            )}
           </button>
         </div>
       </AppHeader>
@@ -124,6 +144,7 @@ export default function Home() {
             />
           )}
         </ModalWrapper>
+
         {/* Modal Filter */}
         <ModalWrapper
           isOpen={isFilterModalOpen}
@@ -164,10 +185,10 @@ export default function Home() {
             </div>
           </section>
         </ModalWrapper>
+
         {isLoading ? <p>Carregando eventos...</p> : (
           <>
             <section className="m-auto mt-10 flex flex-col items-center gap-8">
-            {/* <section className="m-auto mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8"> */}
               {data?.map((event) => (
                 <EventCard event={event} selectEvent={handleEventCardClick} variants={eventVariants} />
               ))}

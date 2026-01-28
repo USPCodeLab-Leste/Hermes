@@ -66,12 +66,14 @@ function Modal({ children, onClose, ref }: ModalProps) {
           role="dialog"
           aria-modal="true"
         >
-          <div 
-            className='cursor-grab py-4 px-12 m-auto touch-none active:cursor-grabbing select-none'
+          <button 
+            className='cursor-grab block py-4 px-12 m-auto touch-none active:cursor-grabbing select-none'
             onPointerDown={(e) => dragControls.start(e)}
+            onClick={onClose}
+            aria-label="Fechar modal"
           >
-            <div className='h-2 w-15 bg-violet-dark rounded-full m-auto'></div>
-          </div>
+            <div className='h-2 w-15 bg-violet-dark rounded-full m-auto' aria-hidden="true"></div>
+          </button>
           {children}
         </motion.div>
       </FocusTrap>

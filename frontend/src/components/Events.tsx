@@ -23,7 +23,7 @@ export function EventCard({ event, selectEvent, variants }: EventCardProps) {
   const tags = useMemo(() => event.tags.map(tag => ({ name: tag } as Partial<TagInterface>)), [event.tags])
 
   return (  
-    <motion.div
+    <motion.button
       variants={variants ?? defaultVariants}
       initial="hidden"
       whileInView="visible"
@@ -43,14 +43,14 @@ export function EventCard({ event, selectEvent, variants }: EventCardProps) {
       onClick={() => selectEvent(event.id)}
       onAnimationComplete={() => setIsReady(true)}
       aria-label={`Selecionar evento ${event.title}`}
-      role="button"
+      // role="button"
     >
       <Tags tags={tags} className="p-4" />
       <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b">
         <h2 className="font-bold text-[18px] md:text-xl text-paper">{event.title}</h2>
         <p className="text-[16px] md:text-[18px] text-paper">{event.date}</p>
       </div>
-    </motion.div>
+    </motion.button>
   )
 }
 
@@ -116,13 +116,17 @@ export const Tag = memo(function Tag({ tag, canSelect, onClick, active }: TagPro
     }
   }, [canSelect, onClick, tag])
 
+  const Component = useMemo(() => canSelect ? motion.button : motion.div, [canSelect]);
+
   return (
-    <motion.button
+    <Component
       className={`px-2 md:px-3 py-2 rounded-full text-[12px] md:text-sm font-medium text-paper transition-colors
                  inline-flex items-center justify-center gap-1 cursor-pointer min-w-12 shadow-md shadow-black/20
                  ${active ? 'bg-violet-dark' : 'bg-teal-light '}`}
       variants={tagVariants}
       onClick={handleClick}
+      aria-pressed={canSelect ? active : undefined}
+      disabled={canSelect ? false : undefined}
     >
       {canSelect && (
         <>
@@ -135,7 +139,7 @@ export const Tag = memo(function Tag({ tag, canSelect, onClick, active }: TagPro
         </>
       )}
       <span className="text-paper">{tag.name!}</span>
-    </motion.button>
+    </Component>
   )
 }, (prevProps, nextProps) => {
   return prevProps.active === nextProps.active && prevProps.tag.id === nextProps.tag.id;
