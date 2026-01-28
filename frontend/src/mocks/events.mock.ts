@@ -8,6 +8,7 @@ export const events: Event[] = [
     location: 'Localização do Evento',
     description: 'Descrição do evento de exemplo.',
     tags: [
+      'SI',
       'CodeLab',
       'Vôlei'
     ]
@@ -19,6 +20,7 @@ export const events: Event[] = [
     location: 'Outro Local',
     description: 'Descrição de outro evento.',
     tags: [
+      'SI',
       'CodeLab',
       'Festa'
     ]
@@ -30,6 +32,7 @@ export const events: Event[] = [
     location: 'Tech Hub',
     description: 'Descrição do hackathon.',
     tags: [
+      'SI',
       'CodeLab',
       'Hackathon'
     ]
