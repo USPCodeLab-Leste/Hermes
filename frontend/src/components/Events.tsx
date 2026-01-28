@@ -1,6 +1,10 @@
-import { useState } from "react"
+import { useCallback, useMemo, useState, memo } from "react"
 import type { Event } from "../types/events"
 import { motion, stagger, type Variants } from "framer-motion"
+
+import PlusIcon from "../assets/icons/plus.svg?react"
+import CheckIcon from "../assets/icons/check.svg?react"
+import type { Tag as TagInterface, TagType } from "../types/tag"
 
 interface EventCardProps {
   event: Event;
@@ -16,8 +20,10 @@ const defaultVariants: Variants = {
 export function EventCard({ event, selectEvent, variants }: EventCardProps) {
   const [isReady, setIsReady] = useState(false)
 
+  const tags = useMemo(() => event.tags.map(tag => ({ name: tag } as Partial<TagInterface>)), [event.tags])
+
   return (  
-    <motion.button
+    <motion.div
       variants={variants ?? defaultVariants}
       initial="hidden"
       whileInView="visible"
@@ -37,13 +43,14 @@ export function EventCard({ event, selectEvent, variants }: EventCardProps) {
       onClick={() => selectEvent(event.id)}
       onAnimationComplete={() => setIsReady(true)}
       aria-label={`Selecionar evento ${event.title}`}
+      role="button"
     >
-      <Tags tags={event.tags} />
+      <Tags tags={tags} className="p-4" />
       <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b">
-        <h2 className="font-bold text-[16px] md:text-xl text-paper">{event.title}</h2>
-        <p className="text-[12px] md:text-[18px] text-paper">{event.date}</p>
+        <h2 className="font-bold text-[18px] md:text-xl text-paper">{event.title}</h2>
+        <p className="text-[16px] md:text-[18px] text-paper">{event.date}</p>
       </div>
-    </motion.button>
+    </motion.div>
   )
 }
 
@@ -66,28 +73,70 @@ const tagVariants: Variants = {
   },
 }
 
-function Tags({ tags }: { tags: string[] }) {
+interface TagsProps {
+  tags: Partial<TagInterface>[];
+  className?: string;
+  canSelect?: boolean;
+  activeTags?: Record<TagType, string[]>;
+  onClick?: (tag: Partial<TagInterface>) => void;
+}
+
+export function Tags({ tags, className, canSelect, activeTags, onClick }: TagsProps) {
+  const isActive = useCallback((tag: Partial<TagInterface>) => {
+    if (!activeTags) return false;
+
+    const tagType = tag.type as TagType;
+    const activeTagNames = activeTags[tagType] || [];
+    return activeTagNames.includes(tag.name!);
+  }, [activeTags]);
+
   return (
     <motion.div 
-      className="flex flex-row gap-2 p-4"
-      // animate="jump"
+      className={`flex flex-row gap-2 flex-wrap ${className}`}
       variants={tagsVariants}
     >
       {tags.map((tag, index) => (
-        <Tag key={index} tag={tag} />
+        <Tag key={index} tag={tag} canSelect={canSelect} active={isActive(tag)} onClick={onClick} />
       ))}
     </motion.div>
   )
 }
 
-function Tag({ tag }: { tag: string }) {
-  return (
-    <motion.span 
-      className="bg-teal-light outline-teal-mid outline-2 px-3 py-1 rounded-full 
-                  text-[10px] md:text-sm font-medium inline-block text-paper"
-      variants={tagVariants}
-    >
-      {tag}
-    </motion.span>
-  )
+interface TagProps {
+  tag: Partial<TagInterface>;
+  canSelect?: boolean;
+  active?: boolean;
+  onClick?: (tag: Partial<TagInterface>) => void;
 }
+
+export const Tag = memo(function Tag({ tag, canSelect, onClick, active }: TagProps) {
+  const handleClick = useCallback(() => {
+    if (canSelect) {
+      onClick && onClick(tag)
+    }
+  }, [canSelect, onClick, tag])
+
+  return (
+    <motion.button
+      className={`px-2 md:px-3 py-2 rounded-full text-[12px] md:text-sm font-medium text-paper transition-colors
+                 inline-flex items-center justify-center gap-1 cursor-pointer min-w-12 shadow-md shadow-black/20
+                 ${active ? 'bg-violet-dark' : 'bg-teal-light '}`}
+      variants={tagVariants}
+      onClick={handleClick}
+    >
+      {canSelect && (
+        <>
+          {!active ? (
+            <PlusIcon className="size-4 text-paper" />
+
+          ) : (
+            <CheckIcon className="size-4 text-paper" />
+          )}
+        </>
+      )}
+      <span className="text-paper">{tag.name!}</span>
+    </motion.button>
+  )
+}, (prevProps, nextProps) => {
+  return prevProps.active === nextProps.active && prevProps.tag.id === nextProps.tag.id;
+})
