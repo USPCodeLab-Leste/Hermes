@@ -1,8 +1,8 @@
 import { useState, useEffect, memo } from 'react';
 import { Label } from './Label';
 
-import Watch from '../assets/icons/watch.svg?react';
-import WatchOff from '../assets/icons/watch-off.svg?react';
+import Watch from '../../assets/icons/watch.svg?react';
+import WatchOff from '../../assets/icons/watch-off.svg?react';
 import { Input } from './Input';
 import { ErrorMessage } from './ErrorMessage';
 import { InputWrapper } from './InputWrapper';
