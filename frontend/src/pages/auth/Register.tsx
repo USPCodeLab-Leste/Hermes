@@ -19,7 +19,7 @@ const defaultFormErrors = {
   name: {
     hasError: false,
     message: ''
-  }, 
+  },
   password: {
     hasError: false,
     message: ''
@@ -53,9 +53,9 @@ export default function Register() {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
 
     // Limpa erro ao digitar
-    setErrors({ 
-      ...errors, 
-      [e.target.id]: { hasError: false, message: '' } 
+    setErrors({
+      ...errors,
+      [e.target.id]: { hasError: false, message: '' }
     });
   }, [errors]);
 
@@ -184,7 +184,9 @@ export default function Register() {
 
       <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Cria Conta"} />
 
-      <p className="text-paper text-center">ou faça <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Login</Link></p>
+      <p className="text-paper text-center">
+        ou faça <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Login</Link>
+      </p>
 
     </form>
   );

@@ -35,12 +35,12 @@ export default function Login() {
     setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }))
 
     // Limpa erro ao digitar
-    setErrors(prev => ({ 
-      ...prev, 
-      [e.target.id]: false 
+    setErrors(prev => ({
+      ...prev,
+      [e.target.id]: false
     }))
   }, [])
-  
+
   const handleLogin = useCallback(async () => {
     const newErrors = { email: false, password: false };
     let hasLocalError = false;
@@ -60,7 +60,7 @@ export default function Login() {
       newErrors.password = true;
       hasLocalError = true;
     }
-    
+
     if (hasLocalError) {
       setErrors(newErrors);
       return;
@@ -69,14 +69,14 @@ export default function Login() {
     // Chamada ao hook de login
     setErrors({ email: false, password: false });
     await signIn({ email: formData.email, password: formData.password });
-    
+
   }, [formData, signIn])
 
   const handleFormSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     handleLogin()
   }, [handleLogin])
-  
+
   const isLoading = signInLoading;
   const passwordShort = formData.password.length < 8 && formData.password.length >= 0;
 
@@ -87,7 +87,7 @@ export default function Login() {
       setErrors({ email: true, password: true });
     }
   }, [signInError]);
-  
+
   useEffect(() => {
     if (location.state?.fromRegisterSucess) {
       toast.success("Registro realizado com sucesso! Verifique seu e-mail para ativar sua conta.");
@@ -141,7 +141,9 @@ export default function Login() {
 
       <SubmitButton waiting={isLoading || passwordShort} text={isLoading ? "Carregando..." : "Entrar"} />
 
-      <p className="text-paper text-center">ou <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Registre-se</Link></p>
+      <p className="text-paper text-center">
+        ou <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Registre-se</Link>
+      </p>
 
     </form>
   )
