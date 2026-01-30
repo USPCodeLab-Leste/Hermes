@@ -18,6 +18,9 @@ O **Hermes** (em referência ao deus mensageiro) é uma plataforma web que atua 
 * **Node.js:** Ambiente de execução do backend.
 * **PostgreSQL:** Banco de dados relacional robusto para integridade das relações entre Usuários, Posts e Tags.
 * **Express:** Framework para estruturação da API Rest.
+* **React:** Biblioteca para construção de interfaces dinâmicas e reativas no Frontend.
+* **Tailwind CSS:** Framework de estilização para um design ágil e responsivo.
+* **TypeScript:** Superset do JavaScript que garante tipagem estática e maior segurança no código.
 * **Zod:** Validação de esquemas e dados de entrada (Schema Validation).
 * **JWT & Crypto:** Autenticação segura e criptografia de identificadores (UUID).
 
