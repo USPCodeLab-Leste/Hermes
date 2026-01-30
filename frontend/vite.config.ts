@@ -10,4 +10,7 @@ export default defineConfig({
     tailwindcss(),
     svgr(),
   ],
+  server: {
+    host: true,
+  },
 })

@@ -1,41 +1,50 @@
 import type { RegisterPayload, LoginPayload } from '../types/payloads'
-import { 
-  checkEmail as checkEmailAPI, 
+import {  
   register as registerAPI, 
   signIn as signInAPI, 
   signOut as signOutAPI
 } from '../api/auth'
 
-const TOKEN_KEY = 'auth_token'
+import {
+  getMe as getMeAPI
+} from '../api/users'
+import type { UserMe } from '../types/user'
 
-export type AuthListener = (token: string | null) => void
+// const TOKEN_KEY = 'auth_token'
+const USER_KEY = 'auth_user'
+
+export type AuthListener = (user: UserMe | null) => void
 
 export interface AuthService {
   register: (data: RegisterPayload) => Promise<{ message: string, uuid: string }>
-  signIn: (data: LoginPayload) => Promise<string>
+  signIn: (data: LoginPayload) => Promise<UserMe>
   signOut: () => Promise<boolean>
-  checkEmail: (email: string) => Promise<{ message: string }>
-  getToken: () => string | null
   onAuthStateChanged: (cb: AuthListener) => () => void
 }
 
 export function createAuthService(): AuthService {
   let listeners: AuthListener[] = []
-  let currentToken: string | null = localStorage.getItem(TOKEN_KEY)
+  // let currentToken: string | null = localStorage.getItem(TOKEN_KEY)
+  let currentUser: UserMe | null = localStorage.getItem(USER_KEY) ? JSON.parse(localStorage.getItem(USER_KEY)!) : null
 
   function notify() {
-    listeners.forEach(cb => cb(currentToken))
+    // listeners.forEach(cb => cb(currentToken))
+    listeners.forEach(cb => cb(currentUser))
   }
 
-  function saveAuth(token: string) {
-    localStorage.setItem(TOKEN_KEY, token)
-    currentToken = token
+  function saveAuth(user: UserMe) {
+    // localStorage.setItem(TOKEN_KEY, token)
+    // currentToken = user
+    localStorage.setItem(USER_KEY, JSON.stringify(user))
+    currentUser = user
     notify()
   }
 
   function removeAuth() {
-    localStorage.removeItem(TOKEN_KEY)
-    currentToken = null
+    // localStorage.removeItem(TOKEN_KEY)
+    // currentToken = null
+    localStorage.removeItem(USER_KEY)
+    currentUser = null
     notify()
   }
 
@@ -45,10 +54,11 @@ export function createAuthService(): AuthService {
   }
 
   async function signIn(data: LoginPayload) {
-    const { token } = await signInAPI(data)
-    saveAuth(token)
+    await signInAPI(data)
+    const user = await getMeAPI()
 
-    return token
+    saveAuth(user)
+    return user
   }
 
   async function signOut() {
@@ -58,17 +68,9 @@ export function createAuthService(): AuthService {
     return response
   }
 
-  async function checkEmail(email: string) {
-    return await checkEmailAPI(email)
-  }
-
-  function getToken() {
-    return currentToken
-  }
-
   function onAuthStateChanged(cb: AuthListener) {
     listeners.push(cb)
-    cb(currentToken)
+    cb(currentUser)
 
     return () => {
       listeners = listeners.filter(l => l !== cb)
@@ -79,8 +81,6 @@ export function createAuthService(): AuthService {
     register,
     signIn,
     signOut,
-    checkEmail,
-    getToken,
     onAuthStateChanged,
   }
 }
