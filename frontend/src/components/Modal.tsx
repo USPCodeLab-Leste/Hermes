@@ -13,22 +13,37 @@ interface ModalProps {
 function Modal({ children, onClose, ref }: ModalProps) {
   const [dragOffset, setDragOffset] = useState(0)
   const [scope, animate] = useAnimate()
+  const isDraggingRef = useRef(false)
   const dragControls = useDragControls()
-  
+
+  // Handlers
   const handleDrag = useCallback((_: any, info: any) => {
     if (info.offset.y < 0) return
     
     setDragOffset(info.offset.y)
   }, [])
 
+  const handleDragStart = useCallback(() => {
+    isDraggingRef.current = true
+  }, [])
+
   const handleDragEnd = useCallback(() => {
     if (dragOffset > 150) {
       onClose()
-      return
     }
-    animate(scope.current, { y: 0, opacity: 1 }, { type: 'spring', stiffness: 300, damping: 25 })
+    
+    isDraggingRef.current = false
     setDragOffset(0)
+    animate(scope.current, { y: 0, opacity: 1 }, { type: 'spring', stiffness: 300, damping: 25 })
   }, [animate, dragOffset, onClose, scope])
+  
+  const handleClose = useCallback(() => {
+    if (dragOffset > 0 || isDraggingRef.current) return
+
+    isDraggingRef.current = false
+    dragControls.stop()
+    onClose()
+  }, [dragOffset, onClose])
   
   return (
     <motion.div
@@ -36,7 +51,7 @@ function Modal({ children, onClose, ref }: ModalProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      onClick={onClose}
+      onClick={handleClose}
       ref={ref}
     >
       <FocusTrap
@@ -61,6 +76,7 @@ function Modal({ children, onClose, ref }: ModalProps) {
           dragConstraints={{ top: 0, bottom: 0 }}
           dragElastic={{ top: 0, bottom: 0.5 }}
           onDrag={handleDrag}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           role="dialog"
@@ -69,7 +85,7 @@ function Modal({ children, onClose, ref }: ModalProps) {
           <button 
             className='cursor-grab block py-4 px-12 m-auto touch-none active:cursor-grabbing select-none relative z-12 '
             onPointerDown={(e) => dragControls.start(e)}
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Fechar modal"
           >
             <div className='h-1.5 w-15 bg-violet-light dark:bg-paper shadow-md shadow-black/30 rounded-full m-auto' aria-hidden="true"/>
