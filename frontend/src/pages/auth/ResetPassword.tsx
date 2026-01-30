@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useTimer } from "react-timer-hook";
 import { toast } from "react-toastify";
@@ -16,11 +16,11 @@ export default function ResetPassword() {
   const [emailError, setEmailError] = useState(false);
 
   // Helper para obter tempo de expiração
-  const getExpiryTime = (seconds: number) => {
+  const getExpiryTime = useCallback((seconds: number) => {
     const time = new Date();
     time.setSeconds(time.getSeconds() + seconds);
     return time;
-  };
+  }, []);
 
   // Configuração do timer
   const {
@@ -55,7 +55,7 @@ export default function ResetPassword() {
     setEmailError(false);
   }
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!email) {
@@ -75,13 +75,13 @@ export default function ResetPassword() {
 
 
     // Salvar o tempo de expiração no localStorage
-    const expiryTime = getExpiryTime(60); // 60 segundos de cooldown
+    const expiryTime = getExpiryTime(59);
+    toast.success("Link de redefinição de senha enviado para seu e-mail!");
     localStorage.setItem("reset_password_cooldown", expiryTime.toISOString());
     restart(expiryTime);
 
-
     setIsSending(false);
-  }
+  }, [email, getExpiryTime, restart]);
 
   const token = searchParams.get("token") || "";
 

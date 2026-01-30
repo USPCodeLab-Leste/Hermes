@@ -5,5 +5,6 @@ import { authMiddleware } from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 router.get("/users/me", authMiddleware, UserController.getInfoMe);
+router.patch("/users/me", authMiddleware, UserController.patchInfoMe);
 
 export default router;

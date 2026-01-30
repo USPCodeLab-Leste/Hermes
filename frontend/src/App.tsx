@@ -19,14 +19,13 @@ import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import VerifyEmail from './pages/auth/VerifyEmail'
 import ResetPassword from './pages/auth/ResetPassword'
+import AppLayout from './layouts/AppLayout'
 
 // Páginas protegidas
 import Info from './pages/Info'
 import Perfil from './pages/Perfil'
-import FeedSeguindo from './pages/FeedSeguindo'
-import FeedParaVoce from './pages/FeedParaVoce'
-import FeedLayout from './layouts/FeedLayout'
-import AppLayout from './layouts/AppLayout'
+import Home from './pages/Home'
+
 import { useTheme } from './hooks/useTheme';
 
 
@@ -62,12 +61,8 @@ export const router = createHashRouter(
           </PrivateRoute>
         }
       >
-        {/* Feed com variações */}
-        <Route path="/" element={<FeedLayout />}>
-          <Route index element={<Navigate to="/feed/para-voce" replace />} />
-          <Route path="/feed/seguindo" element={<FeedSeguindo />} />
-          <Route path="/feed/para-voce" element={<FeedParaVoce />} />
-        </Route>
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="home" element={<Home />} />
 
         <Route path="/info" element={<Info />} />
         <Route path="/perfil" element={<Perfil />} />
