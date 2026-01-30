@@ -19,7 +19,7 @@ export default function AuthLayout() {
     <main className="min-h-screen w-full flex flex-col md:flex-row">
 
       {/* LOGO E DESCRIÇÃO DO HERMES */}
-      <section className="w-full flex flex-3 flex-col justify-center items-center pt-20 pb-25 px-8 md:p-4">
+      <section className="w-full flex flex-1 flex-col justify-center items-center p-6 md:p-4">
         <img src={logoHermes} alt="Logo do Hermes" className="w-48 md:w-64 max-w-xs object-contain" />
 
         <p className="text-base md:text-center max-w-md pb-1 pt-6">
@@ -28,7 +28,7 @@ export default function AuthLayout() {
       </section>
 
       {/* FORMULÁRIO DE LOGIN E RODAPÉ */}
-      <section className="w-full flex flex-1 basis-50 flex-col justify-center items-center p-5 bg-violet-dark rounded-t-3xl md:rounded-t-none md:rounded-l-3xl">
+      <section className="w-full flex flex-2 basis-50 flex-col justify-center items-center p-6 bg-violet-dark rounded-t-3xl md:rounded-t-none md:rounded-l-3xl">
         <Outlet />
         <FooterSocials />
       </section>
