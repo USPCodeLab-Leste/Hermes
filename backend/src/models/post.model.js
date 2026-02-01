@@ -26,16 +26,26 @@ class PostModel {
     }
   }
 
-  // pra buscar todos (Feed) - Ja trazendo os dados do Autor
-  async findAll() {
-    const query = `
+  // buscar todos (Feed) com filtro opcional por titulo, e se ele for undefined ou vazio, traz tudo
+  async findAll(titulo) {
+    let query = `
       SELECT p.*, u.name as autor_nome 
       FROM tb_post p
       JOIN tb_user u ON p.autor_id = u.id
-      ORDER BY p.data_inicio ASC;
     `;
     
-    const result = await pool.query(query);
+    const values = [];
+
+    // caso o usuario tenha digitado algo na busca
+    if (titulo) {
+      query += ` WHERE p.titulo ILIKE $1`;
+      values.push(`%${titulo}%`);
+    }
+
+    // sempre ordena pela data mais prox
+    query += ` ORDER BY p.data_inicio ASC`;
+    
+    const result = await pool.query(query, values);
     return result.rows;
   }
 
