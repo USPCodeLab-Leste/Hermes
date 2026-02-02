@@ -38,7 +38,8 @@ export const createEventSchema = z.object({
     .array(
       z.string().min(1, "Tag não pode ser vazia")
     )
-    .min(1, "Evento precisa ter pelo menos uma tag"),
+    .min(1, "Evento precisa ter pelo menos uma tag")
+    .optional(),
 
   img_banner: z
     .url("Link inválido")

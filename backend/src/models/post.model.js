@@ -27,7 +27,8 @@ class PostModel {
   }
 
   // pra buscar todos (Feed) com filtros opcionais, que caso sejam undefined ou vazio, tudo é retornado
-  async findAll({ titulo, tag } = {}) {
+  async findAll({ titulo, tag, limit = 10, offset = 0 } = {}) {
+    
     let query = `
       SELECT DISTINCT p.*, u.name as autor_nome 
       FROM tb_post p
@@ -54,8 +55,15 @@ class PostModel {
       index++;
     }
 
-    query += ` ORDER BY p.data_inicio ASC`;
-    
+    // ordenação + paginação
+    query += `
+      ORDER BY p.data_inicio ASC
+      LIMIT $${values.length + 1}
+      OFFSET $${values.length + 2}
+    `;
+
+    values.push(limit, offset);
+
     const result = await pool.query(query, values);
     return result.rows;
   }
