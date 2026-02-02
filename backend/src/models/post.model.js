@@ -7,7 +7,7 @@ class PostModel {
   async create({ titulo, descricao, local, data_inicio, data_fim, img_banner, autor_id }) {
     try {
       const id = crypto.randomUUID();
-      const status = "PUBLICADO"; // Ou 'RASCUNHO', depedendo de como definimos a regra
+      const status = "PUBLICADO"; 
 
       const query = `
         INSERT INTO tb_post (id, titulo, descricao, local, data_inicio, data_fim, img_banner, status, autor_id)
@@ -26,42 +26,53 @@ class PostModel {
     }
   }
 
-  // buscar todos (Feed) com filtro opcional por titulo, e se ele for undefined ou vazio, traz tudo
-  async findAll(titulo) {
+  // pra buscar todos (Feed) com filtros opcionais, que caso sejam undefined ou vazio, tudo é retornado
+  async findAll({ titulo, tag } = {}) {
     let query = `
-      SELECT p.*, u.name as autor_nome 
+      SELECT DISTINCT p.*, u.name as autor_nome 
       FROM tb_post p
       JOIN tb_user u ON p.autor_id = u.id
+      LEFT JOIN tb_post_tag pt ON p.id = pt.post_id
+      LEFT JOIN tb_tag t ON pt.tag_id = t.id
+      WHERE 1=1
     `;
     
     const values = [];
+    let index = 1;
 
-    // caso o usuario tenha digitado algo na busca
+    // filtro por titulo (busca parcial e case insensitive)
     if (titulo) {
-      query += ` WHERE p.titulo ILIKE $1`;
+      query += ` AND p.titulo ILIKE $${index}`;
       values.push(`%${titulo}%`);
+      index++;
     }
 
-    // sempre ordena pela data mais prox
+    // filtro por tag especifica (exemplo: trazer so "Workshop")
+    if (tag) {
+      query += ` AND t.titulo = $${index}`;
+      values.push(tag);
+      index++;
+    }
+
     query += ` ORDER BY p.data_inicio ASC`;
     
     const result = await pool.query(query, values);
     return result.rows;
   }
 
-  // pra buscar um Post pelo ID
+  // pra buscar um post pelo id
   async findById(id) {
     const query = `SELECT * FROM tb_post WHERE id = $1`;
     const result = await pool.query(query, [id]);
     return result.rows[0];
   }
 
-  // pra associar uma Tag a um Post (Preencher a tabela pivô)
+  // pra associar uma tag a um post
   async addTag(postId, tagId) {
     const query = `
       INSERT INTO tb_post_tag (post_id, tag_id)
       VALUES ($1, $2)
-      ON CONFLICT DO NOTHING; -- Evita erro se já tiver a tag
+      ON CONFLICT DO NOTHING;
     `;
     await pool.query(query, [postId, tagId]);
   }
