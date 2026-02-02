@@ -15,6 +15,8 @@
 
   --font-sans: "Montserrat", system-ui, sans-serif;
 
+  --shadow-violet-top: 0px -10px 60px 55px var(--color-violet-mid);
+  --shadow-paper-top: 0px -10px 60px 55px var(--color-paper);
   --inset-shadow-violet: inset 0 0 0 100px var(--color-violet-light)
 }
 
@@ -39,7 +41,7 @@ html, body {
   @apply bg-paper dark:bg-violet-mid;
 }
 
-body, button, textarea, input {
+body {
   @apply font-sans dark:text-paper text-ink outline-none;
 }
 
@@ -88,5 +90,5 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .main-app {
-  @apply p-4 my-0 mx-auto mb-30 max-w-2xl w-9/10
+  @apply p-4 my-0 mx-auto mb-30 max-w-2xl w-95/100
 }
