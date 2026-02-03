@@ -8,7 +8,7 @@ const router = express.Router();
  * /api/auth/register:
  *   post:
  *     summary: Registro de usuário
- *     description: Cria um novo usuário com email ainda não confirmado
+ *     description: Cria um novo usuário com email ainda não confirmado.
  *     tags:
  *       - Auth
  *     requestBody:
@@ -26,6 +26,10 @@ const router = express.Router();
  *               $ref: '#/components/schemas/AuthRegisterResponse'
  *       400:
  *         description: Dados inválidos
+ *       409:
+ *         description: Email já está em uso
+ *       500:
+ *         description: Falha ao criar usuario
  */
 router.post("/register", AuthController.register);
 
@@ -34,7 +38,7 @@ router.post("/register", AuthController.register);
  * /api/auth/login:
  *   post:
  *     summary: Login do usuário
- *     description: Autentica o usuário e cria um cookie HttpOnly com JWT
+ *     description: Autentica o usuário e cria um cookie HttpOnly com JWT.
  *     tags:
  *       - Auth
  *     requestBody:
@@ -46,10 +50,17 @@ router.post("/register", AuthController.register);
  *     responses:
  *       200:
  *         description: Login realizado com sucesso
+ *         headers:
+ *           Set-Cookie:
+ *             description: Cookie HttpOnly com o token JWT
+ *             schema:
+ *               type: string
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/DefaultMessageResponse'
+ *               $ref: '#/components/schemas/AuthLoginResponse'
+ *       400:
+ *         description: Dados inválidos ou falha no login
  *       401:
  *         description: Credenciais inválidas
  */

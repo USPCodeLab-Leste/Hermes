@@ -5,17 +5,20 @@ export const authSchemas = {
     properties: {
       name: {
         type: "string",
-        example: "Usuario"
+        minLength: 3,
+        example: "Hermes"
       },
       email: {
         type: "string",
         format: "email",
-        example: "usuario@usp.br"
+        pattern: ".*@usp\\.br$",
+        example: "hermes@usp.br",
+        description: "O email deve terminar com @usp.br"
       },
       password: {
         type: "string",
         minLength: 8,
-        example: "12345678"
+        example: "12345678",
       }
     }
   },
@@ -42,16 +45,19 @@ export const authSchemas = {
       email: {
         type: "string",
         format: "email",
-        example: "usuario@usp.br"
+        pattern: ".*@usp\\.br$",
+        example: "hermes@usp.br",
+        description: "O email deve terminar com @usp.br"
       },
       password: {
         type: "string",
-        example: "12345678"
+        minLength: 8,
+        example: "12345678",
       }
     }
   },
 
-  DefaultMessageResponse: {
+  AuthLoginResponse: {
     type: "object",
     properties: {
       message: {
@@ -59,5 +65,6 @@ export const authSchemas = {
         example: "Login realizado com sucesso"
       }
     }
-  }
+  },
+
 };
