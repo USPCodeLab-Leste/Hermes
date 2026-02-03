@@ -1,10 +1,10 @@
-import type { Tag, TagType } from "../types/tag";
-import { getTagsByType } from "../api/tags";
+import type { EventTag, EventTagType } from "../types/tag";
+import { getEventTagsByType } from "../api/tags";
 import { useQuery } from "@tanstack/react-query";
 
 export function useTags() {
-  return useQuery<Record<TagType, Tag[]>>({
+  return useQuery<Record<EventTagType, EventTag[]>>({
     queryKey: ['tagsByType'],
-    queryFn: () => getTagsByType()
+    queryFn: () => getEventTagsByType()
   });
 }

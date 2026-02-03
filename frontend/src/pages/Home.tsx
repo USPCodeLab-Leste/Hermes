@@ -157,7 +157,8 @@ export default function Home() {
               {isTagsLoading ? <p>Carregando tags...</p> : (
                 <>
                   {tagsEntries.map(([type, tags]) => (
-                    <motion.div className="mb-6" key={`${type}-tags-filter`}
+                    <motion.div 
+                      className="mb-6" key={`${type}-tags-filter`}
                       variants={filterVariants}
                       initial="hidden"
                       animate="visible"
@@ -191,7 +192,7 @@ export default function Home() {
           <>
             <section className="m-auto mt-10 flex flex-col items-center gap-8">
               {data?.map((event) => (
-                <EventCard event={event} selectEvent={handleEventCardClick} variants={eventVariants} />
+                <EventCard key={event.id} event={event} selectEvent={handleEventCardClick} variants={eventVariants} />
               ))}
             </section>
           </>

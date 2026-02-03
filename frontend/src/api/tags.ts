@@ -1,10 +1,10 @@
 import { fakeRequest } from "./client";
-import { mockTags, tagsByType } from "../mocks/tags.mock";
+import { eventTagsByType, mockEventTags } from "../mocks/tags.mock";
 
-export function getTagsByType() {
-  return fakeRequest(tagsByType);
+export function getEventTagsByType() {
+  return fakeRequest(eventTagsByType);
 }
 
-export function getTags() {
-  return fakeRequest(mockTags);
+export function getEventTags() {
+  return fakeRequest(mockEventTags);
 }

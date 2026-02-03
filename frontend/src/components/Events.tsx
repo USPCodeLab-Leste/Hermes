@@ -7,10 +7,10 @@ import CheckIcon from "../assets/icons/check.svg?react"
 
 // Types
 import type { Event } from "../types/events"
-import type { Tag as TagInterface, TagType } from "../types/tag"
+import type { GenericTag, EventTagType, InfoTagType, TagType } from "../types/tag"
 
 // Components
-import { Date } from "./Date"
+import { DateWrapper } from "./Date"
 
 interface EventCardProps {
   event: Event;
@@ -26,8 +26,6 @@ const defaultVariants: Variants = {
 export function EventCard({ event, selectEvent, variants }: EventCardProps) {
   const [isReady, setIsReady] = useState(false)
 
-  const tags = useMemo(() => event.tags.map(tag => ({ name: tag } as Partial<TagInterface>)), [event.tags])
-
   return (  
     <motion.button
       variants={variants ?? defaultVariants}
@@ -41,20 +39,19 @@ export function EventCard({ event, selectEvent, variants }: EventCardProps) {
         duration: 0.5,
         delayChildren: 0.2,
       }}
-      key={event.id} 
       className={`aspect-5/3 w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat 
                  bg-center justify-between cursor-pointer hover:-translate-y-2 shadow-lg hover:shadow-2xl 
                  outline-2 hover:outline-paper focus:outline-paper outline-transparent ${isReady ? 'transition-all' : ''}`}
-      style={{ backgroundImage: `url('${event.banner}')` }}
+      style={{ backgroundImage: `url('${event.img_banner}')` }}
       onClick={() => selectEvent(event.id)}
       onAnimationComplete={() => setIsReady(true)}
       aria-label={`Selecionar evento ${event.title}`}
       // role="button"
     >
-      <Tags tags={tags} className="p-4" />
+      <Tags tags={event.tags} className="p-4" />
       <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b">
         <h2 className="font-bold text-[18px] md:text-xl text-paper">{event.title}</h2>
-        <Date dateString={event.date} />
+        <DateWrapper start={event.data_inicio} end={event.data_fim} textClass="text-paper/75" />
       </div>
     </motion.button>
   )
@@ -80,18 +77,18 @@ const tagVariants: Variants = {
 }
 
 interface TagsProps {
-  tags: Partial<TagInterface>[];
+  tags: GenericTag[];
   className?: string;
   canSelect?: boolean;
   activeTags?: Record<TagType, string[]>;
-  onClick?: (tag: Partial<TagInterface>) => void;
+  onClick?: (tag: GenericTag) => void;
 }
 
 export function Tags({ tags, className, canSelect, activeTags, onClick }: TagsProps) {
-  const isActive = useCallback((tag: Partial<TagInterface>) => {
+  const isActive = useCallback((tag: GenericTag) => {
     if (!activeTags) return false;
 
-    const tagType = tag.type as TagType;
+    const tagType = tag.type;
     const activeTagNames = activeTags[tagType] || [];
     return activeTagNames.includes(tag.name!);
   }, [activeTags]);
@@ -109,10 +106,10 @@ export function Tags({ tags, className, canSelect, activeTags, onClick }: TagsPr
 }
 
 interface TagProps {
-  tag: Partial<TagInterface>;
+  tag: GenericTag;
   canSelect?: boolean;
   active?: boolean;
-  onClick?: (tag: Partial<TagInterface>) => void;
+  onClick?: (tag: GenericTag) => void;
 }
 
 export const Tag = memo(function Tag({ tag, canSelect, onClick, active }: TagProps) {
