@@ -23,6 +23,8 @@ const router = express.Router();
  *               $ref: '#/components/schemas/UserResponse'
  *       401:
  *         description: Usuário não autenticado
+ *       400:
+ *         description: Erro ao pegar informações do usuario
  */
 router.get("/users/me", authMiddleware, UserController.getInfoMe);
 
@@ -51,6 +53,8 @@ router.get("/users/me", authMiddleware, UserController.getInfoMe);
  *               $ref: '#/components/schemas/UpdateUserResponse'
  *       401:
  *         description: Usuário não autenticado
+ *       400:
+ *         description: Erro ao atualizar informações do usuario
  */
 router.patch("/users/me", authMiddleware, UserController.patchInfoMe);
 
