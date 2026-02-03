@@ -12,19 +12,22 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { useAuth } from './hooks/useAuth'
 
-// Auth
-import { AuthProvider } from './contexts/AuthContext'
+// Layouts
 import AuthLayout from './layouts/AuthLayout'
+import AppLayout from './layouts/AppLayout'
+import InfoLayout from './layouts/InfoLayout'
+
+// Contexts
+import { AuthProvider } from './contexts/AuthContext'
+
+// Pages
+import Info from './pages/Info'
+import Perfil from './pages/Perfil'
+import Home from './pages/Home'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import VerifyEmail from './pages/auth/VerifyEmail'
 import ResetPassword from './pages/auth/ResetPassword'
-import AppLayout from './layouts/AppLayout'
-
-// Páginas protegidas
-import Info from './pages/Info'
-import Perfil from './pages/Perfil'
-import Home from './pages/Home'
 
 import { useTheme } from './hooks/useTheme';
 
@@ -64,7 +67,20 @@ export const router = createHashRouter(
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="home" element={<Home />} />
 
-        <Route path="/info" element={<Info />} />
+        <Route path="/info" element={<InfoLayout />} >
+          <Route index element={<Navigate to="/info/estudos" replace />} />
+          <Route path="estudos" element={<Info />} />
+          <Route path="estudos/:tagName" element={<Info />} />
+
+          <Route path="campus" element={<Info />} />
+          <Route path="campus/:tagName" element={<Info />} />
+
+          <Route path="apoios" element={<Info />} />
+          <Route path="apoios/:tagName" element={<Info />} />
+
+          <Route path="carreira" element={<Info />} />
+          <Route path="carreira/:tagName" element={<Info />} />
+        </Route>
         <Route path="/perfil" element={<Perfil />} />
       </Route>
 
