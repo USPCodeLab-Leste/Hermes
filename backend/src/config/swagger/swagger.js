@@ -1,6 +1,7 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import { authSchemas } from "./schemas/auth.schema.js";
 import { userSchemas } from "./schemas/user.schema.js";
+import { eventSchemas } from "./schemas/events.schema.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -27,7 +28,8 @@ const swaggerSpec = swaggerJSDoc({
       },
       schemas: {
         ...authSchemas,
-        ...userSchemas
+        ...userSchemas,
+        ...eventSchemas
       }
     }
   },
