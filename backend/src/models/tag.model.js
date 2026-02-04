@@ -3,28 +3,29 @@ import crypto from "crypto";
 
 class TagModel {
   
-  // pra buscar Tag pelo Nome (para não duplicar "Tech" e "tech")
-  async findByTitle(titulo) {
-    const query = `SELECT * FROM tb_tag WHERE LOWER(titulo) = LOWER($1)`;
-    const result = await pool.query(query, [titulo]);
+  // pra buscar tag pelo nome
+  async findByName(name) {
+    const query = `SELECT * FROM tb_tag WHERE LOWER(name) = LOWER($1)`;
+    const result = await pool.query(query, [name]);
     return result.rows[0];
   }
 
-  // pra criar Tag
-  async create(titulo) {
+  // pra criar tag
+  async create(name, type) {
     const id = crypto.randomUUID();
     const query = `
-      INSERT INTO tb_tag (id, titulo)
-      VALUES ($1, $2)
+      INSERT INTO tb_tag (id, name, type)
+      VALUES ($1, $2, $3)
       RETURNING *
     `;
-    const result = await pool.query(query, [id, titulo]);
+    const result = await pool.query(query, [id, name, type]);
     return result.rows[0];
   }
   
-  // buscar todas as tags (para listar no filtro depois)
+  // para buscar todas as tags ativas
   async findAll() {
-    const result = await pool.query("SELECT * FROM tb_tag WHERE active = true");
+    // ORDER BY name ASC para ficar organizado alfabeticamente
+    const result = await pool.query("SELECT * FROM tb_tag WHERE active = true ORDER BY name ASC");
     return result.rows;
   }
 }

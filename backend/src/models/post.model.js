@@ -4,13 +4,13 @@ import crypto from "crypto";
 class PostModel {
   
   // pra criar um Post
-  async create({ titulo, descricao, local, data_inicio, data_fim, img_banner, autor_id }) {
+  async create({ title, body, local, data_inicio, data_fim, img_banner, autor_id }) {
     try {
       const id = crypto.randomUUID();
-      const status = "PUBLICADO"; 
+      const status = "published"; 
 
       const query = `
-        INSERT INTO tb_post (id, titulo, descricao, local, data_inicio, data_fim, img_banner, status, autor_id)
+        INSERT INTO tb_post (id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING *
       `;
@@ -27,7 +27,7 @@ class PostModel {
   }
 
   // pra buscar todos (Feed) com filtros opcionais, que caso sejam undefined ou vazio, tudo é retornado
-  async findAll({ titulo, tag } = {}) {
+  async findAll({ title, tag } = {}) {
     let query = `
       SELECT DISTINCT p.*, u.name as autor_nome 
       FROM tb_post p
@@ -41,15 +41,15 @@ class PostModel {
     let index = 1;
 
     // filtro por titulo (busca parcial e case insensitive)
-    if (titulo) {
-      query += ` AND p.titulo ILIKE $${index}`;
-      values.push(`%${titulo}%`);
+    if (title) {
+      query += ` AND p.title ILIKE $${index}`;
+      values.push(`%${title}%`);
       index++;
     }
 
     // filtro por tag especifica (exemplo: trazer so "Workshop")
     if (tag) {
-      query += ` AND t.titulo = $${index}`;
+      query += ` AND t.title = $${index}`;
       values.push(tag);
       index++;
     }
