@@ -10,25 +10,40 @@ interface LazySvgProps extends ComponentProps<"svg"> {
 }
 
 // This hook can be used to create your own wrapper component.
+const SIMULATED_DELAY_MS = 1500;
+
 const useLazySvgImport = (name: string) => {
   const importRef = useRef<FC<ComponentProps<"svg">> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | undefined>();
 
   useEffect(() => {
+    let cancelled = false;
+
     setLoading(true);
     const importIcon = async () => {
       try {
+        await new Promise((resolve) => setTimeout(resolve, SIMULATED_DELAY_MS));
+        if (cancelled) return;
+
         importRef.current = (
           await import(`../assets/icons/${name}.svg?react`)
         ).default; // We use `?react` here following `vite-plugin-svgr`'s convention.
       } catch (err) {
-        setError(err as Error);
+        if (!cancelled) {
+          setError(err as Error);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
     importIcon();
+
+    return () => {
+      cancelled = true;
+    };
   }, [name]);
 
   return {
@@ -39,20 +54,24 @@ const useLazySvgImport = (name: string) => {
 };
 
 // Example wrapper component using the hook.
-export const LazySvg = ({ name, ...props }: LazySvgProps) => {
+export const LazySvg = ({ name, className, ...props }: LazySvgProps) => {
   const { loading, error, Svg } = useLazySvgImport(name);
 
   if (error) {
-    return <UnkownIcon {...props} />;
+    return <UnkownIcon className={className} {...props} />;
   }
 
   if (loading) {
-    return "Loading...";
+    return (
+      <div className={`flex items-center justify-center relative ${className}`}>
+        <div aria-hidden="true" className='loader size-full'></div>
+      </div>
+    );
   }
 
   if (!Svg) {
     return null;
   }
 
-  return <Svg {...props} />;
+  return <Svg className={className} {...props} />;
 };
