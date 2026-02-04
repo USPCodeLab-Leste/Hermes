@@ -30,6 +30,8 @@ import VerifyEmail from './pages/auth/VerifyEmail'
 import ResetPassword from './pages/auth/ResetPassword'
 
 import { useTheme } from './hooks/useTheme';
+// Components
+import Loading from './components/Loading'
 
 
 /* =========================
@@ -37,7 +39,12 @@ import { useTheme } from './hooks/useTheme';
 ========================= */
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, loading } = useAuth()
+
+  if (loading) {
+    return <Loading />
+  }
+
   return isAuthenticated ? children : <Navigate to="/auth" replace />
 }
 
