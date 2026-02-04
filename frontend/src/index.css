@@ -102,11 +102,11 @@ input:is(:-webkit-autofill, :autofill) {
 /* Brilho */
 
 .shimmer {
-  --color-muted: #3c3d3f;
-  --color-strong: #292929;
+  --color-muted: rgb(120, 89, 158);
+  --color-strong: #71497e;
 
 	background: linear-gradient(
-		90deg,
+		45deg,
 		var(--color-strong) 30%,
 		var(--color-muted) 50%,
 		var(--color-strong) 70%

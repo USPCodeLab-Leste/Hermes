@@ -115,7 +115,7 @@ export default function Home() {
   return (
     <>
       <AppHeader>
-        <div className="flex items-center gap-4 mt-6 max-w-2xl w-9/10 m-auto">
+        <div className="flex items-center gap-4 w-full">
           <SearchBar search={searchQuery} setSearch={setSearchQuery} />
           <button 
             onClick={handleFilterClick}

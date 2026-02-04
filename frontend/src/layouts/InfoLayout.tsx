@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom'
+import { motion } from 'framer-motion';
 
 // Components
 import AppHeader from '../components/AppHeader'
 import SearchBar from "../components/SearchBar";
-import { motion } from 'framer-motion';
 
 export default function InfoLayout() {
   const [search, setSearch] = useState("");
@@ -12,13 +12,11 @@ export default function InfoLayout() {
   return (
     <>
       <AppHeader >
-        <div className="flex items-center gap-4 mt-6 max-w-2xl w-9/10 m-auto">
-          <SearchBar search={search} setSearch={setSearch} />
-        </div>
+        <SearchBar search={search} setSearch={setSearch} />
       </AppHeader>
       <main className="main-app">
         <nav className="outline-1 rounded-full">
-          <ul className="flex items-center gap-4 mb-6 justify-between py-2 px-4">
+          <ul className="flex items-center gap-4 mb-6 justify-between py-2 md:py-1.5 px-4">
             <li><NavItem to="estudos" label="Estudos" /></li>
             <li><NavItem to="campus" label="Campus" /></li>
             <li><NavItem to="apoios" label="Apoios" /></li>
@@ -50,14 +48,18 @@ const NavItem = ({ to, label }: { to: string; label: string }) => {
               className="absolute z-5"
             >
               <span 
-                className='bg-teal-mid relative z-5 py-1 px-3 rounded-full text-transparent'
+                className='bg-teal-mid relative z-5 py-1 px-3 rounded-full md:text-lg text-sm font-medium text-transparent'
                 aria-hidden="true"
               >
                 {label}
               </span>
             </motion.div>
           )}
-          <span className='relative z-6'>
+          <span 
+            className={`relative z-6 md:text-lg text-sm font-medium
+                        ${isActive ? 'text-paper' : 'dark:text-paper/75 dark:hover:text-paper text-ink/75 hover:text-ink transition-colors'}`
+                      }
+          >
             {label}
           </span>
         </>
