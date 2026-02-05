@@ -24,6 +24,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import Info from './pages/Info'
 import Perfil from './pages/Perfil'
 import Home from './pages/Home'
+import Error from './pages/Error'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import VerifyEmail from './pages/auth/VerifyEmail'
@@ -85,7 +86,7 @@ export const router = createHashRouter(
       </Route>
 
       {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Error />} />
     </>
   )
 )
