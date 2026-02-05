@@ -1,7 +1,7 @@
 import NotificationButton from "./NotificationButton";
 import ProfilePic from "./ProfilePic";
 
-export default function AppHeader() {
+export default function AppHeader({children}: {children?: React.ReactNode}) {
   const campus = "EACH";
 
   return (
@@ -16,6 +16,7 @@ export default function AppHeader() {
         </div>
         <NotificationButton />
       </div>
+      {children}
     </header>
   );
 }

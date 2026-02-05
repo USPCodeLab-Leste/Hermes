@@ -10,10 +10,14 @@
   --color-violet-mid: #494266;
   --color-violet-light: #8B8BAE;
 
-  --color-teal-light: #5FAC9D;
+  --color-teal-light: #5FA9C9;
   --color-teal-mid: #2D799F;
 
   --font-sans: "Montserrat", system-ui, sans-serif;
+
+  --shadow-violet-top: 0px -10px 60px 55px var(--color-violet-mid);
+  --shadow-paper-top: 0px -10px 60px 55px var(--color-paper);
+  --inset-shadow-violet: inset 0 0 0 100px var(--color-violet-light)
 }
 
 /*Reset & root*/
@@ -37,8 +41,8 @@ html, body {
   @apply bg-paper dark:bg-violet-mid;
 }
 
-body, button, textarea {
-  @apply font-sans dark:text-paper text-ink;
+body {
+  @apply font-sans dark:text-paper text-ink outline-none;
 }
 
 html:has(.modal-open) {
@@ -58,6 +62,16 @@ img {
   max-width: 100%;
 }
 
+.main-app {
+  @apply p-4 my-0 mx-auto mb-30 max-w-2xl w-95/100
+}
+
+/* react-toastify */
+.Toastify {
+  position: absolute;
+}
+
+/* Reset Scrollbar */
 ::-webkit-scrollbar {
   width: 12px;
 }
@@ -71,13 +85,40 @@ img {
   @apply bg-violet-light;
   border-radius: 6px;
 }
+
+/* Resets Inputs */
+
 input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance:none;
 }
+input:is(:-webkit-autofill, :autofill) {
+  @apply inset-shadow-violet
+}
 
-.main-app {
-  @apply p-4 my-0 mx-auto mb-30 max-w-2xl w-9/10
+
+/* Brilho */
+
+.shimmer {
+  --color-muted: #3c3d3f;
+  --color-strong: #292929;
+
+	background: linear-gradient(
+		90deg,
+		var(--color-strong) 30%,
+		var(--color-muted) 50%,
+		var(--color-strong) 70%
+	);
+	background-size: 400%;
+	animation: shimmer 1.5s infinite linear;
+}
+@keyframes shimmer {
+	0% {
+		background-position: 100% 100%;
+	}
+	100% {
+		background-position: 0 0;
+	}
 }
