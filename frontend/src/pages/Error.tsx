@@ -1,30 +1,42 @@
 import AppHeader from "../components/AppHeader"
 import AppFooter from "../components/AppFooter";
-import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import NotFoundIcon from "../assets/notfound.svg?react";
 
 export default function Error() {
-  const navigate = useNavigate();
-
   return (
     <>
     <AppHeader />
-    <body className="mb-32">
-      <h1 className="mt-8 ml-8 m-4 font-bold text-paper text-4xl justify-self-left drop-shadow-2xl">Opsss!</h1>
-      <h2 className="break-normal text-paper wrap-normal pr-8 pl-8 text-xl mb-0 font-medium justify-self-left">Página não encontrada</h2>
-      
-      <img src="public/notfound.svg" className="justify-self-center h-80"></img>
-      
-      <div className="max-w-sm break-normal text-paper wrap-normal mr-2 ml-2 text-sm justify-self-center pl-8 pr-8 p-4">A página que você está tentando acessar não foi encontrada. Verifique o link e tente novamente. Se o problema persistir, por favor, relate o problema.</div>
-      <div className="flex justify-center">
-        <button
-        onClick={() => navigate("/home")}
-        className="bg-teal-mid hover:bg-teal-light text-paper font-bold p-2 rounded ml-4 m-2 drop-shadow-lg">Página Inicial</button>
-        
-        <button className="bg-teal-mid hover:bg-teal-light text-paper font-bold p-2 mr-4 rounded m-2 drop-shadow-lg">Reportar Problema</button>
-      
-      </div>
-    </body>
+      <main className="main-app flex flex-col md:flex-row-reverse items-center justify-center gap-4">
+        <NotFoundIcon className="size-100 text-violet-light p-4 flex-3" />
+        <section className="flex flex-col justify-center gap-4 flex-2">
+          <div>
+            <h2 className="font-black md:text-2xl text-3xl md:text-left text-center">Opsss!</h2>
+            <h2 className="font-black md:text-xl text-2xl md:text-left text-center whitespace-nowrap">Página não encontrada</h2>
+          </div>
+          
+          <div className="max-w-sm mb-6">
+            <p className="text-sm md:text-left text-center mb-1">Essa página ou não existe ou o link está incorreto.</p>
+            <p className="text-xs md:text-left text-center">Se o problema persistir, por favor, relate o problema.</p>
+          </div>
+          <div className="grid md:grid-cols-2 grid-cols-1 gap-x-4 gap-y-2 max-w-sm">
+            <Link 
+              to="/"
+              className="bg-teal-mid hover:bg-teal-light text-paper font-bold p-2 rounded drop-shadow-lg text-center cursor-pointer transition-colors"
+            >
+              Voltar
+            </Link>
+            <a
+              href="https://forms.gle/coS8sQid3S9JGeKk9"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-teal-mid/50 hover:bg-teal-light/50 text-paper font-bold p-2 rounded drop-shadow-lg text-center cursor-pointer transition-colors"
+            >
+              Reportar
+            </a>
+          </div>
+        </section>
+      </main>
     <AppFooter />
     </> 
   );
