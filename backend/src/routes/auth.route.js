@@ -5,7 +5,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * /api/auth/register:
+ * /auth/register:
  *   post:
  *     summary: Registro de usuário
  *     description: Cria um novo usuário com email ainda não confirmado.
@@ -35,7 +35,7 @@ router.post("/register", AuthController.register);
 
 /**
  * @openapi
- * /api/auth/login:
+ * /auth/login:
  *   post:
  *     summary: Login do usuário
  *     description: Autentica o usuário e cria um cookie HttpOnly com JWT.

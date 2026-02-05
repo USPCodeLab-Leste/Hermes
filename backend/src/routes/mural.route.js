@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * /api/mural:
+ * /mural:
  *   get:
  *     summary: Retorna o mural personalizado do usuário
  *     description:

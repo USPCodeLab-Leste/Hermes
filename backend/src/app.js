@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 app.use(userRoutes);
 app.use(eventsRoutes);
 app.use(muralRoutes);

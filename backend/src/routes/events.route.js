@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * /api/events:
+ * /events:
  *   get:
  *     summary: Lista eventos
  *     description: Retorna o feed de eventos com paginação e filtro opcional por título
@@ -47,7 +47,7 @@ router.get("/events", eventsController.getEvents);
 
 /**
  * @openapi
- * /api/events:
+ * /events:
  *   post:
  *     summary: Cria um novo evento
  *     description: Cria um evento (rota restrita a administradores)
