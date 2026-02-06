@@ -19,6 +19,11 @@ const router = express.Router();
  *           type: string
  *         description: Filtra eventos pelo título
  *       - in: query
+ *         name: tag
+ *         schema:
+ *           type: string
+ *         description: Filtra eventos por uma tag específica
+ *       - in: query
  *         name: limit
  *         schema:
  *           type: integer

@@ -3,22 +3,47 @@ import crypto from "crypto";
 
 class PostModel {
   
-  // pra criar um Post
-  async create({ title, body, local, data_inicio, data_fim, img_banner, autor_id }) {
+  // pra criar um Post 
+  async create({ title, body, local, data_inicio, data_fim, img_banner, autor_id, tags }) {
     try {
       const id = crypto.randomUUID();
       const status = "published"; 
 
+      // cria o Post
       const query = `
         INSERT INTO tb_post (id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING *
       `;
 
-      const values = [id, titulo, descricao, local, data_inicio, data_fim, img_banner, status, autor_id];
+      const values = [id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id];
       
       const result = await pool.query(query, values);
-      return result.rows[0];
+      const post = result.rows[0];
+
+      //  Se tiver tags, salva elas tbm
+      if (tags && tags.length > 0) {
+        for (const tagName of tags) {
+            // A. Insere a Tag (ou recupera se já existir)
+            // estamos passando 'general' como type padrão, já que é obrigatório
+            const tagRes = await pool.query(
+                `INSERT INTO tb_tag (id, name, type, active) 
+                 VALUES ($1, $2, $3, $4) 
+                 ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name 
+                 RETURNING id`,
+                [crypto.randomUUID(), tagName, 'general', true]
+            );
+            const tagId = tagRes.rows[0].id;
+
+            //  liga o post à tag na tabela pivo
+            await pool.query(
+                `INSERT INTO tb_post_tag (post_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+                [post.id, tagId]
+            );
+        }
+      }
+
+      return post;
 
     } catch (err) {
       console.error("ERROR CREATE POST:", err);
@@ -26,8 +51,8 @@ class PostModel {
     }
   }
 
-  // pra buscar todos (Feed) com filtros opcionais, que caso sejam undefined ou vazio, tudo é retornado
-  async findAll({ titulo, tag, limit = 10, offset = 0 } = {}) {
+  // pra buscar todos (Feed) com filtros opcionais
+  async findAll({ title, tag, limit = 10, offset = 0 } = {}) {
     
     let query = `
       SELECT DISTINCT p.*, u.name as autor_nome 
@@ -41,16 +66,16 @@ class PostModel {
     const values = [];
     let index = 1;
 
-    // filtro por titulo (busca parcial e case insensitive)
+    // filtro por titulo
     if (title) {
       query += ` AND p.title ILIKE $${index}`;
       values.push(`%${title}%`);
       index++;
     }
 
-    // filtro por tag especifica (exemplo: trazer so "Workshop")
+    // filtro por tag
     if (tag) {
-      query += ` AND t.title = $${index}`;
+      query += ` AND t.name = $${index}`;
       values.push(tag);
       index++;
     }
@@ -58,8 +83,8 @@ class PostModel {
     // ordenação + paginação
     query += `
       ORDER BY p.data_inicio ASC
-      LIMIT $${values.length + 1}
-      OFFSET $${values.length + 2}
+      LIMIT $${index}
+      OFFSET $${index + 1}
     `;
 
     values.push(limit, offset);
@@ -75,7 +100,7 @@ class PostModel {
     return result.rows[0];
   }
 
-  // pra associar uma tag a um post
+  // escolhi manter esse metodo caso a gente precise usar separado, mas o create ja faz isso agora
   async addTag(postId, tagId) {
     const query = `
       INSERT INTO tb_post_tag (post_id, tag_id)

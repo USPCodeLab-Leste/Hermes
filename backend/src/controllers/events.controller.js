@@ -8,7 +8,7 @@ class eventsController {
 
   async getEvents(req, res) {
     try {
-      let { titulo, limit, offset } = req.query;
+      let { title, limit, offset, tag } = req.query;
 
       limit = Number(limit) || DEFAULT_LIMIT;
       offset = Number(offset) || 0;
@@ -16,7 +16,7 @@ class eventsController {
       if (limit > MAX_LIMIT) { limit = MAX_LIMIT; }
       if (limit < 1) { limit = DEFAULT_LIMIT; }
 
-      const events = await PostModel.findAll({ titulo, limit, offset });
+      const events = await PostModel.findAll({ title, limit, offset, tag });
 
       if(!events) return res.status(404).json({ error: "Events not found!"});
 

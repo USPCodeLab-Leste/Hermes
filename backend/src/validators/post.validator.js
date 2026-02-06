@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 export const createEventSchema = z.object({
-  titulo: z
+  title: z
     .string()
     .min(3, "Título precisa ter pelo menos 3 caracteres")
     .max(100),
 
-  autor_id: z.
-    uuid("autor_id precisa ser um UUID válido"),
+  //autor_id: z.
+   // uuid("autor_id precisa ser um UUID válido"),
 
   data_inicio: z
     .string()
@@ -28,7 +28,7 @@ export const createEventSchema = z.object({
     .min(3, "Local precisa ter pelo menos 3 caracteres")
     .max(100),
 
-  descricao: z
+  body: z
     .string()
     .min(10, "Descrição precisa ter pelo menos 10 caracteres")
     .max(1000)
