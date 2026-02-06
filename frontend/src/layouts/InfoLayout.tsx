@@ -15,14 +15,18 @@ export default function InfoLayout() {
         <SearchBar search={search} setSearch={setSearch} />
       </AppHeader>
       <main className="main-app">
-        <nav className="outline-1 rounded-full">
+        <motion.nav className="outline-1 rounded-full"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
           <ul className="flex items-center gap-4 mb-6 justify-between py-2 md:py-1.5 px-4">
             <li><NavItem to="estudos" label="Estudos" /></li>
             <li><NavItem to="campus" label="Campus" /></li>
             <li><NavItem to="apoios" label="Apoios" /></li>
             <li><NavItem to="carreira" label="Carreira" /></li>
           </ul>
-        </nav>
+        </motion.nav>
         <Outlet />
       </main>
     </>
@@ -48,7 +52,7 @@ const NavItem = ({ to, label }: { to: string; label: string }) => {
               className="absolute z-5"
             >
               <span 
-                className='bg-teal-mid relative z-5 py-1 px-3 rounded-full md:text-lg text-sm font-medium text-transparent'
+                className='bg-teal-mid relative z-5 py-1 px-2.5 rounded-full md:text-lg text-sm font-medium text-transparent'
                 aria-hidden="true"
               >
                 {label}
