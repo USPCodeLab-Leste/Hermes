@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
   RouterProvider,
+  useLocation
 } from 'react-router-dom'
 
 import { ToastContainer } from 'react-toastify';
@@ -53,6 +54,12 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
   return isAuthenticated ? children : <Navigate to="/auth" replace />
 }
 
+function InfoIndexRedirect({ pathname }: { pathname: string }) {
+  const { search } = useLocation();
+
+  return <Navigate to={{ pathname, search }} replace />;
+}
+
 /* =========================
    Router
 ========================= */
@@ -80,7 +87,7 @@ export const router = createHashRouter(
         <Route path="home" element={<Home />} />
 
         <Route path="/info" element={<InfoLayout />} >
-          <Route index element={<Navigate to="/info/estudos" replace />} />
+          <Route index element={<InfoIndexRedirect pathname="/info/estudos" />} />
           <Route path="estudos" element={<Estudos />} />
           <Route path="estudos/:tagName" element={<Info />} />
 

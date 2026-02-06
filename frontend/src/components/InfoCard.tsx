@@ -1,5 +1,5 @@
 import { motion, type Variants } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 // Components
 import { LazySvg } from './LazySvg';
@@ -15,6 +15,7 @@ interface InfoCardProps {
 
 export const InfoCard = ({ card, count, variants }: InfoCardProps) => {
   const isDisabled = typeof count !== 'number' || count <= 0;
+  const { search } = useLocation();
 
   return (
     <motion.div
@@ -25,7 +26,7 @@ export const InfoCard = ({ card, count, variants }: InfoCardProps) => {
                     items-baseline shadow-lg outline-2 outline-transparent transition-all
                     ${isDisabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer hover:-translate-y-2 hover:shadow-2xl hover:outline-paper focus:outline-paper'}`
                   }
-        to={isDisabled ? '.' : card.card}
+        to={isDisabled ? '.' : { pathname: card.card, search }}
         aria-disabled={isDisabled}
         onClick={(event) => {
           if (isDisabled) {

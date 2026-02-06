@@ -1,13 +1,15 @@
-import { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion';
 
 // Components
 import AppHeader from '../components/AppHeader'
 import SearchBar from "../components/SearchBar";
 
+// Hooks
+import { useSharedSearch } from '../hooks/useSharedSearch';
+
 export default function InfoLayout() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useSharedSearch()
   
   return (
     <>
@@ -34,9 +36,11 @@ export default function InfoLayout() {
 }
 
 const NavItem = ({ to, label }: { to: string; label: string }) => {
+  const { search } = useLocation()
+
   return (
     <NavLink 
-      to={to}
+      to={{pathname: to, search}}
       className="inline-flex items-center justify-center relative"
     >
       {({ isActive }) => (
