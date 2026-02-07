@@ -46,8 +46,9 @@ import TrashIcon from "../assets/icons/trash.svg?react";
 // }
 
 export default function Admin() {
-    // const [search, setSearch] = 
-    const eventoTeste: Event[]= [
+    const [search, setSearch] = useState("")
+    // lista de eventos setar depois
+    const events: Event[]= [ 
         {
             id: "1",
             title: "Title",
@@ -83,10 +84,10 @@ export default function Admin() {
         <>
             <AppHeader/>
             <div className="flex flex-col items-center w-screen">
-                <h1>Administração</h1>
-                <SearchBar search="Buscar posts..." setSearch={()=>{}}></SearchBar> // arrumar
+                <h1 className="max-w-200 w-full px-3 mt-10 mb-3 text-2xl font-bold">Administração</h1>
+                <SearchBar search={search} setSearch={setSearch} />
                 <AdminEventsGrid
-                    eventsList={eventoTeste}
+                    eventsList={events}
                 ></AdminEventsGrid>
             </div>
                 
@@ -198,7 +199,7 @@ function Tag({ tag }: { tag: string }) {
 function AdminEventsGrid({ eventsList }:{ eventsList : Event[]}) {
     const newEventHandler = ()=>{};
 
-    return  <ul className="grid grid-cols-1 sm:grid-cols-2 w-[90%] max-w-200 gap-4 mt-3">
+    return  <ul className="grid grid-cols-1 sm:grid-cols-2 w-[90%] max-w-200 gap-4 mt-6">
                 <li 
                     className={`max-w-180 h-45 sm:h-60 w-full sm:w-auto overflow-hidden bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat 
                     bg-center justify-center items-center hover:-translate-y-2 shadow-lg hover:shadow-2xl 
