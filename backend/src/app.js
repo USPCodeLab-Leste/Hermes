@@ -10,6 +10,7 @@ import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import eventsRoutes from "./routes/events.route.js";
 import muralRoutes from "./routes/mural.route.js";
+import tagRoutes from "./routes/tag.route.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/auth", authRoutes);
 app.use(userRoutes);
 app.use(eventsRoutes);
 app.use(muralRoutes);
+app.use(tagRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
