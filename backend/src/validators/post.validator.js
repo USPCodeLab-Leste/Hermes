@@ -6,9 +6,6 @@ export const createEventSchema = z.object({
     .min(3, "Título precisa ter pelo menos 3 caracteres")
     .max(100),
 
-  //autor_id: z.
-   // uuid("autor_id precisa ser um UUID válido"),
-
   data_inicio: z
     .string()
     .refine(
