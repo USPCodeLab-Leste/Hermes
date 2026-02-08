@@ -9,26 +9,31 @@ const router = express.Router();
  * /events:
  *   get:
  *     summary: Lista eventos
- *     description: Retorna o feed de eventos com paginação e filtro opcional por título
+ *     description: Retorna eventos com paginação e filtro opcional por título e/ou tags
  *     tags:
  *       - Events
  *     parameters:
  *       - in: query
- *         name: titulo
+ *         name: title
  *         schema:
  *           type: string
  *         description: Filtra eventos pelo título
+ *
  *       - in: query
  *         name: tag
  *         schema:
- *           type: string
- *         description: Filtra eventos por uma tag específica
+ *           type: array
+ *         description: >
+ *           Filtra eventos por uma ou mais tags.
+ *
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           example: 10
+ *           maximum: 20
  *         description: Quantidade máxima de resultados (máx 20)
+ *
  *       - in: query
  *         name: offset
  *         schema:
@@ -43,10 +48,9 @@ const router = express.Router();
  *             schema:
  *               $ref: "#/components/schemas/EventListResponse"
  *       404:
- *         description: Evento não encontrado
+ *         description: Eventos não encontrados
  *       400:
  *         description: Falha na busca de eventos
- * 
  */
 router.get("/events", eventsController.getEvents);
 
