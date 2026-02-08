@@ -53,9 +53,11 @@ class PostModel {
 
   // pra buscar todos (Feed) com filtros opcionais
   async findAll({ title, tag, limit = 10, offset = 0 } = {}) {
-    
     let query = `
-      SELECT DISTINCT p.*, u.name as autor_nome 
+      SELECT 
+        p.*,
+        u.name AS autor_nome,
+        COALESCE(ARRAY_AGG(DISTINCT t.name) FILTER (WHERE t.name IS NOT NULL), '{}') AS tags
       FROM tb_post p
       JOIN tb_user u ON p.autor_id = u.id
       LEFT JOIN tb_post_tag pt ON p.id = pt.post_id
@@ -82,6 +84,7 @@ class PostModel {
 
     // ordenação + paginação
     query += `
+      GROUP BY p.id, u.name
       ORDER BY p.data_inicio ASC
       LIMIT $${index}
       OFFSET $${index + 1}
