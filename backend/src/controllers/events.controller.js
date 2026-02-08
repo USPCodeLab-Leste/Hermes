@@ -12,18 +12,27 @@ class eventsController {
 
       limit = Number(limit) || DEFAULT_LIMIT;
       offset = Number(offset) || 0;
-      
-      if (limit > MAX_LIMIT) { limit = MAX_LIMIT; }
-      if (limit < 1) { limit = DEFAULT_LIMIT; }
 
-      const events = await PostModel.findAll({ title, limit, offset, tag });
+      if (limit > MAX_LIMIT) limit = MAX_LIMIT;
+      if (limit < 1) limit = DEFAULT_LIMIT;
 
-      if(!events) return res.status(404).json({ error: "Events not found!"});
+      // Normaliza tag para array
+      let tags = tag;
+      if (tags && !Array.isArray(tags)) {
+        tags = [tags];
+      }
+
+      const events = await PostModel.findAll({
+        title,
+        tags,
+        limit,
+        offset
+      });
 
       return res.status(200).json(events);
-    
+
     } catch (err) {
-      console.log(err);
+      console.error(err);
       res.status(400).json({ error: "Falha na busca de eventos" });
     }
   }
