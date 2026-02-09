@@ -65,7 +65,7 @@ function Modal({ children, onClose, ref }: ModalProps) {
         <motion.div
           ref={scope}
           className='p-6 pt-2 bg-paper dark:bg-violet-mid rounded-t-2xl md:rounded-2xl modal-card absolute 
-                     md:relative bottom-0 w-full md:w-9/10 md:max-w-120 origin-bottom md:origin-center'
+                     md:relative bottom-0 w-full md:w-9/10 md:max-w-120 origin-bottom md:origin-center max-h-[80dvh] overflow-auto shadow-lg shadow-black/30'
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 - Math.abs(dragOffset) / 1000 }}

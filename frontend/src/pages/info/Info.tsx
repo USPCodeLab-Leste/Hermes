@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useCallback, useMemo, useState } from "react";
+import { motion, stagger, type Variants } from "framer-motion";
 
 // Hooks
 import { useInfosByTag } from "../../hooks/infos/useInfosByTag";
@@ -8,7 +9,7 @@ import { useInfosByTag } from "../../hooks/infos/useInfosByTag";
 import PerfilButton from "../../components/PerfilButton";
 import { LazySvg } from "../../components/LazySvg";
 import { ModalWrapper } from "../../components/Modal";
-import { motion, stagger, type Variants } from "framer-motion";
+import MarkdownRenderer from "../../components/MarkdownRenderer";
 
 const variants: Variants = {
   visible: { 
@@ -71,10 +72,12 @@ export default function Info() {
       <>
         <h2 className="text-2xl font-bold mb-4">{selectedInfo?.title}</h2>
         {selectedInfo && (
-          <div className="h-50">
+          <section className="min-h-50 overflow-auto">
             {/* TODO: transformar o body que está em markdown para componente React */}
-            {selectedInfo.body}
-          </div>
+            <MarkdownRenderer >
+              {selectedInfo.body}
+            </MarkdownRenderer>
+          </section>
         )}
       </>
     </ModalWrapper>
