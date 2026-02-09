@@ -152,7 +152,7 @@ export default function Home() {
           isOpen={isFilterModalOpen}
           onClose={handleModalFilterClose}
         >
-          <section className="flex flex-col gap-4 max-h-[70dvh]">
+          <section className="flex flex-col gap-4">
             <h2 className="font-bold text-xl text-center">Filtros de Busca</h2>
             <div className="overflow-y-auto">
               {isTagsLoading ? <p>Carregando tags...</p> : (
