@@ -49,13 +49,13 @@ class AuthController {
       // Verificando Email 
       const user = await UserModel.findOne({ email: email });
       if(!user) {
-        return res.status(500).json({ error: "Email ou Password is incorrect" });
+        return res.status(401).json({ error: "Email ou Password is incorrect" });
       }
 
       // Verificando Password
       const isPasswordCorrect = await bcrypt.compare(password, user.password);
       if (!isPasswordCorrect) {
-        return res.status(500).json({ error: "Email or Password is incorrect" });
+        return res.status(401).json({ error: "Email or Password is incorrect" });
       }
 
       // Criando Token
