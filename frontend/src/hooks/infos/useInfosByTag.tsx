@@ -4,7 +4,7 @@ import type { Info } from '../../types/infos'
 
 export function useInfosByTag(tagId: string) {
   return useQuery<Info[]>({
-    queryKey: ['infos', tagId],
+    queryKey: ['info', tagId],
     queryFn: () => getInfosByTag(tagId)
   })
 }

@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
 // Ícones
@@ -24,9 +24,11 @@ export default function AppFooter() {
 }
 
 const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }) => {
+  const { search } = useLocation()
+  
   return (
     <NavLink 
-      to={to}
+      to={{pathname: to, search}}
       className="inline-flex items-center justify-center relative"
     >
       {({ isActive }) => (

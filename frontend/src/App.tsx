@@ -5,12 +5,15 @@ import {
   Route,
   Navigate,
   RouterProvider,
+  useLocation
 } from 'react-router-dom'
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Hooks
 import { useAuth } from './hooks/useAuth'
+import { useTheme } from './hooks/useTheme';
 
 // Layouts
 import AuthLayout from './layouts/AuthLayout'
@@ -21,7 +24,6 @@ import InfoLayout from './layouts/InfoLayout'
 import { AuthProvider } from './contexts/AuthContext'
 
 // Pages
-import Info from './pages/Info'
 import Perfil from './pages/Perfil'
 import Home from './pages/Home'
 import Error from './pages/Error'
@@ -29,8 +31,14 @@ import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import VerifyEmail from './pages/auth/VerifyEmail'
 import ResetPassword from './pages/auth/ResetPassword'
+import Estudos from './pages/info/Estudos';
+import Campus from './pages/info/Campus';
+import Apoios from './pages/info/Apoios';
+import Carreira from './pages/info/Carreira';
+import Info from './pages/info/Info'
 
-import { useTheme } from './hooks/useTheme';
+// Components
+import Loading from './components/Loading'
 
 
 /* =========================
@@ -38,8 +46,19 @@ import { useTheme } from './hooks/useTheme';
 ========================= */
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, loading } = useAuth()
+
+  if (loading) {
+    return <Loading />
+  }
+
   return isAuthenticated ? children : <Navigate to="/auth" replace />
+}
+
+function InfoIndexRedirect({ pathname }: { pathname: string }) {
+  const { search } = useLocation();
+
+  return <Navigate to={{ pathname, search }} replace />;
 }
 
 /* =========================
@@ -69,17 +88,17 @@ export const router = createHashRouter(
         <Route path="home" element={<Home />} />
 
         <Route path="/info" element={<InfoLayout />} >
-          <Route index element={<Navigate to="/info/estudos" replace />} />
-          <Route path="estudos" element={<Info />} />
+          <Route index element={<InfoIndexRedirect pathname="/info/estudos" />} />
+          <Route path="estudos" element={<Estudos />} />
           <Route path="estudos/:tagName" element={<Info />} />
 
-          <Route path="campus" element={<Info />} />
+          <Route path="campus" element={<Campus />} />
           <Route path="campus/:tagName" element={<Info />} />
 
-          <Route path="apoios" element={<Info />} />
+          <Route path="apoios" element={<Apoios />} />
           <Route path="apoios/:tagName" element={<Info />} />
 
-          <Route path="carreira" element={<Info />} />
+          <Route path="carreira" element={<Carreira />} />
           <Route path="carreira/:tagName" element={<Info />} />
         </Route>
         <Route path="/perfil" element={<Perfil />} />

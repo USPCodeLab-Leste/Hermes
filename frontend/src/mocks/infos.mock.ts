@@ -1,4 +1,4 @@
-import type { Info } from '../types/infos';
+import type { Info, InfoCard } from '../types/infos';
 import type { Tag, InfoTagType } from '../types/tag';
 import { getInfoTagByName } from './tags.mock'
 
@@ -10,7 +10,7 @@ export const mockInfos = [
       'Matrícula'
     ],
     body: "Sistema de gestão acadêmica utilizado pela universidade para controle de matrículas, notas e frequência dos alunos.",
-    icon_name: 'saturn'
+    icon_name: 'planet'
   },
   {
     title: 'Disciplinas',
@@ -55,19 +55,53 @@ export const mockInfos = [
 })) as Info[];
 
 // Icons para cada tag de Info, agrupados pelo tipo da tag
-export const infoTagIcons: Record<InfoTagType, Record<string, string>> = {
-  'estudos': {
-    'Matrícula': 'book',
-    'Avaliações': 'abacus',
-    'Progressão': 'clock',
-    'Conclusão': 'graduation-cap',
-  },
-  'campus': {
-    'Alimentação': 'apple',
-    'Transporte': 'bus',
-    'Biblioteca': 'library',
-    'Saúde': 'heart-pulse',
-  },
-  'apoios': {},
-  'carreira': {}
+export const infoTagIcons: Record<InfoTagType, InfoCard[]> = {
+  'estudos': [
+    {
+      card: 'Matrícula',
+      icon: 'book'
+    },
+    {
+      card: 'Avaliações',
+      icon: 'abacus'
+    },
+    {
+      card: 'Progressão',
+      icon: 'clock'
+    },
+    {
+      card: 'Conclusão',
+      icon: 'graduation'
+    }
+  ],
+  'campus': [
+    {
+      card: 'Alimentação',
+      icon: 'apple'
+    },
+    {
+      card: 'Transporte',
+      icon: 'bus'
+    },
+    {
+      card: 'Biblioteca',
+      icon: 'books'
+    },
+    {
+      card: 'Saúde',
+      icon: 'first-aid'
+    }
+  ],
+  'apoios': [
+    {
+      card: 'Bolsas',
+      icon: 'money-bill-wave'
+    }
+  ],
+  'carreira': [
+    {
+      card: 'Estágios',
+      icon: 'briefcase'
+    }
+  ]
 }

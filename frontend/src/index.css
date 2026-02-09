@@ -102,17 +102,17 @@ input:is(:-webkit-autofill, :autofill) {
 /* Brilho */
 
 .shimmer {
-  --color-muted: #3c3d3f;
-  --color-strong: #292929;
+  --color-muted: var(--color-violet-dark);
+  --color-strong: var(--color-violet-mid);
 
 	background: linear-gradient(
-		90deg,
+		60deg,
 		var(--color-strong) 30%,
 		var(--color-muted) 50%,
 		var(--color-strong) 70%
 	);
 	background-size: 400%;
-	animation: shimmer 1.5s infinite linear;
+	animation: shimmer 1.5s infinite alternate-reverse ease-in-out;
 }
 @keyframes shimmer {
 	0% {
@@ -121,4 +121,24 @@ input:is(:-webkit-autofill, :autofill) {
 	100% {
 		background-position: 0 0;
 	}
+}
+
+/* Loader */
+
+.loader {
+  @apply border-paper border-[5px];
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

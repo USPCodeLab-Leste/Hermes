@@ -10,3 +10,8 @@ export interface Info<T = InfoTagType> {
   autor_id: string
   icon_name?: string
 }
+
+export interface InfoCard {
+  card: string
+  icon: string
+}

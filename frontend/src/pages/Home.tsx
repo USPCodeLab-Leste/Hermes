@@ -20,6 +20,7 @@ import { GenericButton as Button } from "../components/GenericButton"
 import FilterIcon from "../assets/icons/filter.svg?react"
 import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
 import { toast } from "react-toastify"
+import { useSharedSearch } from "../hooks/useSharedSearch"
 
 const eventVariants: Variants = {
   hidden: { opacity: 0, y: 40, scale: 0.85 },
@@ -39,7 +40,7 @@ export default function Home() {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
 
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useSharedSearch()
 
   // Tag States
   const [activeTags, setActiveTags] = useState<Record<TagType, string[]>>({} as Record<TagType, string[]>)
@@ -115,8 +116,8 @@ export default function Home() {
   return (
     <>
       <AppHeader>
-        <div className="flex items-center gap-4 mt-6 max-w-2xl w-9/10 m-auto">
-          <SearchBar search={searchQuery} setSearch={setSearchQuery} />
+        <div className="flex items-center gap-4 w-full">
+          <SearchBar search={searchQuery} setSearch={setSearchQuery}/>
           <button 
             onClick={handleFilterClick}
             className="cursor-pointer bg-teal-mid border-2 border-teal-mid p-2 rounded-xl

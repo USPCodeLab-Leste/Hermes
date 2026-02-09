@@ -1,5 +1,5 @@
 import { fakeRequest } from './client'
-import { mockInfos as infos } from '../mocks/infos.mock'
+import { mockInfos as infos, infoTagIcons } from '../mocks/infos.mock'
 
 export function getInfos() {
   return fakeRequest(infos)
@@ -25,9 +25,14 @@ export function getInfosCountByType(type: string) {
 }
 
 export function getInfosByTag(tagId: string) {
-  return fakeRequest(infos.filter(info => info.tags.some(tag => tag.id === tagId)))
+  // TODO: trocar por ID de fato(?)
+  return fakeRequest(infos.filter(info => info.tags.some(tag => tag.name === tagId)))
 }
 
 export function getInfoById(id: string) {
   return fakeRequest(infos.find(e => e.id === id))
+}
+
+export function getInfosCardsByType(type: string) {
+  return fakeRequest(infoTagIcons[type as keyof typeof infoTagIcons] || {})
 }
