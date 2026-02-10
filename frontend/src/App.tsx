@@ -55,6 +55,24 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
   return isAuthenticated ? children : <Navigate to="/auth" replace />
 }
 
+export function RequireAdmin({ children }: { children: JSX.Element }) {
+  const { user, loading, isAuthenticated } = useAuth();
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (user!.role !== "ADMIN") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+}
+
 function InfoIndexRedirect({ pathname }: { pathname: string }) {
   const { search } = useLocation();
 
@@ -101,8 +119,18 @@ export const router = createHashRouter(
           <Route path="carreira" element={<Carreira />} />
           <Route path="carreira/:tagName" element={<Info />} />
         </Route>
-        <Route path="/perfil" element={<Perfil />} />
-        <Route path="/admin" element={<Admin />} />
+
+        <Route path="/perfil" >
+          <Route index element={<Perfil />} />
+          <Route 
+            path="admin" 
+            element={
+              <RequireAdmin>
+                <Admin />
+              </RequireAdmin>
+            } 
+          />
+        </Route>
       </Route>
 
       {/* Fallback */}
