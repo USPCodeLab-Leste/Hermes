@@ -36,10 +36,10 @@ import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
 import Info from './pages/info/Info'
+import Admin from './pages/Admin'
 
 // Components
 import Loading from './components/Loading'
-
 
 /* =========================
    Guards de Autenticação
@@ -102,6 +102,7 @@ export const router = createHashRouter(
           <Route path="carreira/:tagName" element={<Info />} />
         </Route>
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/admin" element={<Admin />} />
       </Route>
 
       {/* Fallback */}

@@ -83,7 +83,7 @@ function Modal({ children, onClose, ref }: ModalProps) {
           aria-modal="true"
         >
           <button 
-            className='cursor-grab block py-4 px-12 m-auto touch-none active:cursor-grabbing select-none relative z-12 '
+            className='cursor-grab block py-4 px-12 m-auto touch-none active:cursor-grabbing select-none sticky z-12 top-0'
             onPointerDown={(e) => dragControls.start(e)}
             onClick={handleClose}
             aria-label="Fechar modal"
