@@ -19,6 +19,6 @@ export async function getMe(): Promise<UserMe> {
     id: authUser.uuid,
     name: authUser.name,
     email: authUser.email,
-    role: 'USER',
+    role: authUser.role,
   })
 }

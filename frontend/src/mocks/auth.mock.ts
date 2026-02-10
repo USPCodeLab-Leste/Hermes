@@ -11,5 +11,6 @@ export const authUsers: AuthUser[] = [
     name: 'hermes',
     email: 'hermes@usp.br',
     password: 'password123',
+    role: 'ADMIN',
   },
 ]

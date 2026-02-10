@@ -22,11 +22,6 @@ import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
 import { toast } from "react-toastify"
 import { useSharedSearch } from "../hooks/useSharedSearch"
 
-const eventVariants: Variants = {
-  hidden: { opacity: 0, y: 40, scale: 0.85 },
-  visible: { opacity: 1, y: 0, scale: 1 },
-}
-
 const filterVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
@@ -193,7 +188,7 @@ export default function Home() {
           <>
             <section className="m-auto mt-10 flex flex-col items-center gap-8">
               {data?.map((event) => (
-                <EventCard key={event.id} event={event} selectEvent={handleEventCardClick} variants={eventVariants} />
+                <EventCard key={event.id} event={event} selectEvent={handleEventCardClick}/>
               ))}
             </section>
           </>
