@@ -1,6 +1,7 @@
 export interface User {
   uuid: string
   name: string
+  role: 'USER' | 'ADMIN'
 }
 
 export type UserCredential = {
