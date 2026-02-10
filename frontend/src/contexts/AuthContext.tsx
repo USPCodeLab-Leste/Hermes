@@ -1,9 +1,10 @@
 import { createContext } from 'react'
 import { auth } from '../services/auth'
 import { useAuthState } from '../hooks/useAuthState'
+import type { UserMe } from '../types/user'
 
 interface AuthContextData {
-  token: string | null
+  user: UserMe | null
   isAuthenticated: boolean
   loading: boolean
   error: string | null
@@ -13,7 +14,7 @@ export const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [
-    token,
+    user,
     loading,
     error
   ] = useAuthState(auth);
@@ -21,8 +22,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{ 
-        token,
-        isAuthenticated: !!token,
+        user,
+        isAuthenticated: !!user,
         loading,
         error
       }}

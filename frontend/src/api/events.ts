@@ -1,5 +1,5 @@
 import { fakeRequest } from './client'
-import { events } from '../mocks/events.mock'
+import { mockEvents as events } from '../mocks/events.mock'
 
 export function getEvents() {
   return fakeRequest(events)

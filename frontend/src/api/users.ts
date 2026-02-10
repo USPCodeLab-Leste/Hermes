@@ -1,31 +1,23 @@
 import { fakeRequest } from './client'
-import { users } from '../mocks/users.mock'
 import { authUsers } from '../mocks/auth.mock'
 import type { UserMe } from '../types/user'
 
-function parseUuidFromToken(token: string): string | null {
-  if (!token || typeof token !== 'string') return null
-  const prefix = 'jwt-'
-  if (!token.startsWith(prefix)) return null
-  return token.substring(prefix.length)
-}
-
-export async function getMe(token: string): Promise<UserMe> {
-  const uuid = parseUuidFromToken(token)
+export async function getMe(): Promise<UserMe> {
+  const uuid = localStorage.getItem('fake-cookie')
+  
   if (!uuid) {
-    throw new Error('Token inválido')
+    throw new Error('Usuário não autenticado')
   }
 
-  const baseUser = users.find(u => u.uuid === uuid)
   const authUser = authUsers.find(u => u.uuid === uuid)
 
-  if (!baseUser || !authUser) {
+  if (!authUser) {
     throw new Error('Usuário não encontrado')
   }
 
   return fakeRequest({
-    id: baseUser.uuid,
-    nome: baseUser.username,
+    id: authUser.uuid,
+    name: authUser.name,
     email: authUser.email,
     role: 'USER',
   })
