@@ -67,6 +67,62 @@ class eventsController {
       
     }
   }
+
+  async patchEvents(req, res) {
+    try {
+      const body = req.body;
+      const id = req.params.id;
+
+      let patchResponse;
+
+      if(id) patchResponse = eventsModel.patchEvents(id, body);
+      else return res.status(400).json({error: "ID faltando"});
+
+      if(!patchResponse) {
+        console.error("Error to patch event.", patchResponse);
+        return res.status(400).json({error: "Error to patch!"});
+      }
+
+      return res.status(200).json({results: patchResponse});
+
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async getEventId(req, res) {
+    const id = req.params.id;
+
+    let response;
+
+    if(id) response = eventsModel.findById(id);
+    else return res.status(404).json({error: "ID não informado"});
+
+    if(!response){
+      console.error("Error to get event.", response);
+      return res.status(404).json({error: "Event Not Found!"});
+    }
+
+    return res.status(200).json(response);
+  }
+
+  async deleteEvent(req, res) {
+    const id = req.id;
+
+    let response;
+
+    if(id) response = eventsModel.deleteEvent(id);
+    else return res.status(400).json({error: "ID não informado"});
+
+    if(!response){
+      console.error("Error to delete events.", response);
+      return res.status(400).json({error: "Error to delete events"});
+
+    }
+
+    return res.status(200).json(response);
+
+  }
   
 }
 

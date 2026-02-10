@@ -98,9 +98,23 @@ class PostModel {
 
   // pra buscar um post pelo id
   async findById(id) {
-    const query = `SELECT * FROM tb_post WHERE id = $1`;
-    const result = await pool.query(query, [id]);
-    return result.rows[0];
+    let query = `
+      SELECT DISTINCT tb_post.*
+      FROM tb_post
+      JOIN tb_post_tag. ON tb_post_tag.post_id = tb_post.id
+      JOIN tb_tag on tb_post_tag.id_tag = tb_tag.id
+      WHERE id = $1
+    `;
+
+    let values = [id];
+
+    const result = await
+    pool
+    .query(query, values)
+    .then( res => res.rows[0])
+    .catch( err => console.error("ERROR GET EVENT: ", err));
+
+    return result;
   }
 
   // escolhi manter esse metodo caso a gente precise usar separado, mas o create ja faz isso agora
@@ -111,6 +125,107 @@ class PostModel {
       ON CONFLICT DO NOTHING;
     `;
     await pool.query(query, [postId, tagId]);
+  }
+
+  async patchEvents(id, info) {
+    let queryUpdate = `
+    UPDATE tb_post
+    SET 1=1,
+    `;
+
+    const values = [];
+    let idx = 1;
+
+    if(info.title) {
+      queryUpdate += `title = $${idx}`;
+      values.push(info.titulo);
+      idx++;
+    }
+
+    if(info.data_inicio) {
+      queryUpdate += `data_inicio = $${idx}`;
+      values.push(info.data_inicio);
+      idx++;
+    }
+
+    if(info.data_fim) {
+      queryUpdate += `data_fim = $${idx}`;
+      values.push(info.data_fim);
+      idx++;
+    }
+
+    if(info.status) {
+      queryUpdate += `status = $${idx}`;
+      values.push(info.status);
+      idx++;
+    }
+
+    if(info.img_banner) {
+      queryUpdate += `img_banner = $${idx}`;
+      values.push(info.img_banner);
+      idx++;
+    }
+
+    if(info.body) {
+      queryUpdate += `descricao = $${idx}`;
+      values.push(info.body);
+      idx++;
+    }
+
+    queryUpdate += `WHERE id = ${id}`;
+
+    let queryDeletePostTags = `
+    DELETE tb_post_tags
+    WHERE post_id = ${id};
+    `;
+
+    let queryInsertPostTags;
+    let idxPostTags = 1;
+    const valuesPostTags = [];
+
+    for(let tag of info.tags){
+      queryInsertPostTags += `INSERT INTO tb_post_tags (post_id, tag_id) VALUES (${idxPostTags},${++idxPostTags});`;
+      valuesPostTags.push(id, tag);
+      idxPostTags++;
+    }
+
+
+    const result = []
+    result.push(
+      await
+      pool
+      .query(queryUpdate, values)
+      .then( res => res.rows[0])
+      .catch( err => console.error("ERROR GET EVENTS: ", err))
+    );
+
+    result.push(
+      await
+      pool
+      .query(queryInsertPostTags, valuesPostTags)
+      .then( res => res.rows[0])
+      .catch( err => console.error("ERROR GET EVENTS: ", err))
+    );
+
+    return result;
+
+  }
+
+  async deleteEvent(id, user_id) {
+    const query = `
+    DELETE FROM tb_post WHERE id = $1;
+    DELETE FROM tb_post_tag WHERE post_id = $1;
+    `;
+
+    const values = [id];
+
+    const result = await
+    pool
+    .query(query, values)
+    .then( res => res.rows[0])
+    .catch( err => console.error("ERROR DELETE EVENT: ", err));
+
+    return result;
   }
 }
 
