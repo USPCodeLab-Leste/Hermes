@@ -117,6 +117,7 @@ export default function App() {
     <AuthProvider>
       <ToastContainer
         className="absolute"
+        toastClassName="dark:bg-violet-dark! bg-violet-light! text-paper! rounded-lg shadow-lg"
         position="top-right"     // Posição na tela
         autoClose={3000}         // 3 segundos
         hideProgressBar={false}  // Mostrar ou esconder a barrinha de tempo
