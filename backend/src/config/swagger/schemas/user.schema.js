@@ -23,6 +23,10 @@ export const userSchemas = {
           role: {
             type: "string",
             example: "USER"
+          },
+          is_verified: {
+            type: "boolean",
+            example: "false"
           }
         },
         required: ["id", "name", "email", "role"]

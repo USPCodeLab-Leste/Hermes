@@ -28,7 +28,7 @@ export const authSchemas = {
     properties: {
       message: {
         type: "string",
-        example: "Usuário criado"
+        example: "Usuario criado. Um email de verificação foi enviado"
       },
       userId: {
         type: "string",
