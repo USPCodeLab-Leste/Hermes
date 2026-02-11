@@ -8,14 +8,12 @@ import {
 } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 
-import FeedLayout from './layouts/FeedLayout'
 import AppLayout from './layouts/AppLayout'
 
 import Login from './pages/Login'
 import Info from './pages/Info'
 import Perfil from './pages/Perfil'
-import FeedSeguindo from './pages/FeedSeguindo'
-import FeedParaVoce from './pages/FeedParaVoce'
+import Home from './pages/Home'
 
 import { AuthProvider } from './contexts/AuthContext'
 
@@ -45,12 +43,8 @@ export const router = createHashRouter(
           </PrivateRoute>
         }
       >
-        {/* Feed com variações */}
-        <Route path="/" element={<FeedLayout />}>
-          <Route index element={<Navigate to="/feed/para-voce" replace />} />
-          <Route path="/feed/seguindo" element={<FeedSeguindo />} />
-          <Route path="/feed/para-voce" element={<FeedParaVoce />} />
-        </Route>
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="home" element={<Home />} />
 
         <Route path="/info" element={<Info />} />
         <Route path="/perfil" element={<Perfil />} />
