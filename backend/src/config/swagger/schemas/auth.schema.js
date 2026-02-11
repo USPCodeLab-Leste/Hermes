@@ -67,4 +67,14 @@ export const authSchemas = {
     }
   },
 
+  AuthRefreshResponse: {
+    type: "object",
+    properties: {
+      message: {
+        type: "string",
+        example: "Token renovado com sucesso"
+      }
+    }
+  }
+
 };

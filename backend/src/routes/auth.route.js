@@ -66,6 +66,38 @@ router.post("/register", AuthController.register);
  *         description: Credenciais inválidas
  */
 router.post("/login", AuthController.login);
+
+/**
+ * @openapi
+ * /auth/refresh:
+ *   get:
+ *     summary: Renovar token JWT
+ *     description: >
+ *       Valida o refresh token enviado via cookie HttpOnly e gera um novo access token.
+ *       O novo token é retornado em cookie HttpOnly.
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - refreshCookie: []
+ *     responses:
+ *       200:
+ *         description: Token renovado com sucesso
+ *         headers:
+ *           Set-Cookie:
+ *             description: Novo cookie HttpOnly com o **access token**
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthRefreshResponse'
+ *       401:
+ *         description: Refresh token não fornecido
+ *       403:
+ *         description: Refresh token inválido ou expirado
+ *       500:
+ *         description: Erro interno ao renovar token
+ */
 router.get("/refresh", JWTController.refresh);
 
 export default router;
