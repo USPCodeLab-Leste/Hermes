@@ -13,7 +13,7 @@ export async function sendVerificationEmail(userEmail,token) {
         },
     });
 
-    const verificationLink = `https://localhost:3000/auth/verify-email?token={token}`;
+    const verificationLink = `https://localhost:3000/auth/verify-email?token=${token}`;
     const info = await transporter.sendMail({
         from: '"Sistema Hermes" <no-reply@hermes.com>',
         to: userEmail,

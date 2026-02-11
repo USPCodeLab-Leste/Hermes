@@ -12,7 +12,6 @@ import eventsRoutes from "./routes/events.route.js";
 import muralRoutes from "./routes/mural.route.js";
 import tagRoutes from "./routes/tag.route.js";
 
-dotenv.config();
 const app = express();
 
 app.use(express.json());

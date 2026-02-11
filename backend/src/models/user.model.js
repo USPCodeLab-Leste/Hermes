@@ -88,6 +88,17 @@ class UserModel {
     const result = await pool.query(query, values);
     return result.rows[0];
   }
+
+  async verifyUserEmail(id) {
+    const sql = `
+      UPDATE tb_user
+      SET is_verified = TRUE
+      WHERE id = $1
+      RETURNING id, email, is_verified
+    `;
+    const result = await pool.query(sql, [id]);
+    return result.rows[0];
+  }
   
 }
 
