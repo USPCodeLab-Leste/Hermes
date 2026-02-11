@@ -1,43 +1,54 @@
 import jwt from "jsonwebtoken";
 
-class eventsController {
+class JwtController {
 
   async refresh(req, res) {
-    const token = req.cookie.token;
+    try {
+      const refreshToken = req.cookies.refresh_token;
 
-    if(!token) return res.sendStatus(401);
+      if (!refreshToken) {
+        return res.status(401).json({
+          error: "Refresh token não fornecido"
+        });
+      }
 
-    jwt.verify(token, process.env.ACESS_TOKEN_SECRET, (err, user) => {
-
-      if(err && err !== "TokenExpiredError") return res.sendStatus(403);
-
-      const newToken = jwt.sign(
-        {
-          data:{
-            id: user.id,
-            role: user.role || "USER"
+      jwt.verify(
+        refreshToken,
+        process.env.ACCESS_TOKEN_REFRESH_SECRET,
+        (err, payload) => {
+          if (err) {
+            return res.status(403).json({
+              error: "Refresh token inválido ou expirado"
+            });
           }
-        },
-        process.env.ACESS_TOKEN_SECRET_REFRESH,
-        {
-          expiresIn: "1h"
+
+          const newAccessToken = jwt.sign(
+            {
+              id: payload.id,
+              role: payload.role || "USER"
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: "1h" }
+          );
+
+          res.cookie("access_token", newAccessToken, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false // true em produção
+          });
+
+          return res.status(200).json({
+            message: "Access token renovado com sucesso"
+          });
         }
       );
 
-      res.cookie("token", newToken, {
-        httpOnly: true,
-        secure: false,   // true - em produção
-        sameSite: "lax"
-      });
-
-      res.status(200).json({ message: "Token atualizado" });
-
-    })
-
-
-
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Erro interno ao renovar token" });
+    }
   }
-  
+
 }
 
-export default new eventsController();
+export default new JwtController();
