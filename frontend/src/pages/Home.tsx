@@ -1,5 +1,7 @@
 import { motion, type Variants } from "framer-motion"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useMemo, useState, useEffect } from "react"
+import { useSearchParams } from "react-router-dom"
+import { toast } from "react-toastify"
 
 // Hooks
 import { useEvents } from "../hooks/useEvents"
@@ -14,12 +16,12 @@ import AppHeader from "../components/AppHeader"
 import { EventCard, Tags } from "../components/Events"
 import SearchBar from "../components/SearchBar"
 import { SelectedEventDetails } from "../components/SelectedEventDetails"
+import { SelectedEventDetailsSkeleton } from "../components/skeletons/SelectedEventDetailsSkeleton"
 import { GenericButton as Button } from "../components/GenericButton"
 
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
 import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
-import { toast } from "react-toastify"
 import { useSharedSearch } from "../hooks/useSharedSearch"
 
 const filterVariants: Variants = {
@@ -28,14 +30,15 @@ const filterVariants: Variants = {
 }
 
 export default function Home() {
-  const { data, isLoading } = useEvents()
+  const [searchQuery, setSearchQuery] = useSharedSearch()
+  const [params, setParams] = useSearchParams()
+  const { data, isLoading } = useEvents(searchQuery)
 
   // Modal States
   const [isCardModalOpen, setIsCardModalOpen] = useState(false)
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
 
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useSharedSearch()
 
   // Tag States
   const [activeTags, setActiveTags] = useState<Record<TagType, string[]>>({} as Record<TagType, string[]>)
@@ -48,9 +51,22 @@ export default function Home() {
 
   // Abre modal do evento selecionado
   const handleEventCardClick = useCallback((id: string) => {
-    setSelectedEventId(id)
-    setIsCardModalOpen(true)
-  }, [])
+    setParams(prev => {
+      prev.set("event", id);
+      return prev;
+    }, { replace: true });
+  }, [setParams])
+
+  // Fecha modal do evento
+  const handleModalEventClose = useCallback(() => {
+    setParams(prev => {
+      prev.delete("event");
+      return prev;
+    }, { replace: true });
+
+    setSelectedEventId(null);
+    setIsCardModalOpen(false);
+  }, [setParams, setSelectedEventId, setIsCardModalOpen])
 
   // Abre modal de filtros e 
   const handleFilterClick = useCallback(() => {
@@ -109,6 +125,19 @@ export default function Home() {
   const selectedEventData = useMemo(() => data?.find((e) => e.id === selectedEventId) ?? null, [data, selectedEventId])
   const tagsEntries = useMemo(() => Object.entries(tagsData ?? {}), [tagsData])
 
+  // ===================
+  // == Effects
+  // ===================
+
+  useEffect(() => {
+    const eventId = params.get("event");
+
+    if (eventId) {
+      setSelectedEventId(eventId);
+      setIsCardModalOpen(true);
+    }
+  }, [params])
+
   return (
     <>
       <AppHeader>
@@ -134,13 +163,16 @@ export default function Home() {
         {/* Modal Card Event */}
         <ModalWrapper
           isOpen={isCardModalOpen}
-          onClose={() => setIsCardModalOpen(false)}
+          onClose={handleModalEventClose}
         >
-          {selectedEventId && selectedEventData && (
+          {(selectedEventId && selectedEventData) ? (
             <SelectedEventDetails
               event={selectedEventData}
+              search={searchQuery}
             />
-          )}
+          ) : (
+            <SelectedEventDetailsSkeleton />
+          ) }
         </ModalWrapper>
 
         {/* Modal Filter */}
@@ -185,7 +217,7 @@ export default function Home() {
           </section>
         </ModalWrapper>
 
-        {isLoading ? <p>Carregando eventos...</p> : (
+        {isLoading ? <p>Carregando eventos...</p> : data!.length > 0 ? (
           <>
             <section className="m-auto mt-10 flex flex-col items-center gap-8">
               {data?.map((event) => (
@@ -193,6 +225,8 @@ export default function Home() {
               ))}
             </section>
           </>
+        ) : (
+          <p className="text-center font-medium p-4">Nenhum evento encontrado com essa busca.</p>
         )}
       </main>
     </>

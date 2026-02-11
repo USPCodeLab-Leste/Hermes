@@ -38,10 +38,10 @@ const variantsChild: Variants = {
 export default function Info() {
   const { tagName } = useParams()
   const { search } = useOutletContext<{ search: string }>();
+  const [params, setParams] = useSearchParams()
   const { data: infos, isLoading: isLoadingInfos } = useInfosByTag(tagName!, search);
   const [modalOpen, setModalOpen] = useState(false);
   const [articleId, setArticleId] = useState<string | null>(null);
-  const [params, setParams] = useSearchParams()
 
   // Memos
   const selectedInfo = useMemo(() => infos?.find(info => info.id === articleId), [articleId, infos]);
@@ -57,8 +57,8 @@ export default function Info() {
   }, [setParams]);
 
   const handleModalClose = useCallback(() => {
-    // setModalOpen(false);
-    // setArticleId(null);
+    setModalOpen(false);
+    setArticleId(null);
     setParams(prev => {
       prev.delete("article");
       return prev;
@@ -66,15 +66,12 @@ export default function Info() {
   }, [setParams]);
 
   // Effects
-
   useEffect(() => {
     const articleId = params.get("article");
+
     if (articleId) {
       setArticleId(articleId);
       setModalOpen(true);
-    } else {
-      setArticleId(null);
-      setModalOpen(false);
     }
   }, [params])
   

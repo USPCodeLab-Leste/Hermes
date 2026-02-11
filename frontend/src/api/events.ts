@@ -1,8 +1,14 @@
 import { fakeRequest } from './client'
 import { mockEvents as events } from '../mocks/events.mock'
 
-export function getEvents() {
-  return fakeRequest(events)
+export function getEvents(eventTitle?: string) {
+  if (eventTitle) {
+    const filteredEvents = events.filter(event =>
+      event.title.toLowerCase().includes(eventTitle.toLowerCase())
+    );
+    return fakeRequest(filteredEvents);
+  }
+  return fakeRequest(events);
 }
 
 export function getMyEvents() {

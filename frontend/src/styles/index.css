@@ -103,8 +103,8 @@ input:is(:-webkit-autofill, :autofill) {
 
 .shimmer {
   @apply opacity-50 dark:opacity-100;
-  --color-muted: var(--color-violet-dark);
-  --color-strong: var(--color-violet-mid);
+  --color-muted: color-mix(in srgb, var(--color-violet-dark), white 5%);
+  --color-strong: var(--color-violet-dark);
 
 	background: linear-gradient(
 		60deg,
