@@ -24,9 +24,10 @@ export function getInfosCountByType(type: string) {
   return fakeRequest(reduced)
 }
 
-export function getInfosByTag(tagId: string) {
-  // TODO: trocar por ID de fato(?)
-  return fakeRequest(infos.filter(info => info.tags.some(tag => tag.name === tagId)))
+export function getInfosByTag(tagName: string, infoTitle?: string) {
+  return fakeRequest(infos.filter(info => {
+    return info.tags.some(tag => tag.name === tagName) && (!infoTitle || info.title.toLowerCase().includes(infoTitle.toLowerCase()))
+  }))
 }
 
 export function getInfoById(id: string) {

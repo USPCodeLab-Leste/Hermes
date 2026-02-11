@@ -137,7 +137,7 @@ const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
           {infos && infos.length > 0 ? (
             <InfoSearchResultCards infos={infos} />
           ) : (
-            <p className="text-center font-medium">Nenhum artigo encontrado com essa busca em <em className="capitalize">{type}</em></p>
+            <p className="text-center font-medium p-4">Nenhum artigo encontrado com essa busca em <em className="capitalize">{type}</em></p>
           )}
         </>
       )}
@@ -148,6 +148,8 @@ const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
 const InfoSearchResultCards = ({ infos }: { infos: Info[] }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedInfo, setSelectedInfo] = useState<Info | undefined>(undefined);
+
+  // Handlers 
 
   const handleClick = useCallback((info: Info) => {
     setSelectedInfo(info);
@@ -192,7 +194,6 @@ const InfoSearchResultCard = ({
 }: InfoSearchResultCardProps) => {
   const tagName = info.tags[0].name;
   const { search } = useLocation();
-
 
   return (
     <motion.div className="flex flex-row gap-2 items-center">

@@ -142,3 +142,9 @@ You can render UML diagrams using [Mermaid](https://mermaidjs.github.io/). For e
 * Lists
 * [ ] todo
 * [x] done
+
+![Alt text](https://placehold.co/600x400 "a title")
+
+<p align="center">
+  <img src="https://placehold.co/600x400" width="1000px"/>
+</p>

@@ -1,5 +1,5 @@
-import { Link, useParams } from "react-router-dom";
-import { useCallback, useMemo, useState } from "react";
+import { Link, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, stagger, type Variants } from "framer-motion";
 
 // Hooks
@@ -37,25 +37,48 @@ const variantsChild: Variants = {
 
 export default function Info() {
   const { tagName } = useParams()
-  const { data: infos, isLoading: isLoadingInfos } = useInfosByTag(tagName!);
+  const { search } = useOutletContext<{ search: string }>();
+  const { data: infos, isLoading: isLoadingInfos } = useInfosByTag(tagName!, search);
   const [modalOpen, setModalOpen] = useState(false);
   const [articleId, setArticleId] = useState<string | null>(null);
+  const [params, setParams] = useSearchParams()
 
   // Memos
   const selectedInfo = useMemo(() => infos?.find(info => info.id === articleId), [articleId, infos]);
 
   // Handlers
   const handleClick = useCallback((id: string) => {
-    setArticleId(id);
-    setModalOpen(true);
-  }, []);
+    // setArticleId(id);
+    // setModalOpen(true);
+    setParams(prev => {
+      prev.set("article", id);
+      return prev;
+    }, { replace: true });
+  }, [setParams]);
 
   const handleModalClose = useCallback(() => {
-    setModalOpen(false);
-    setArticleId(null);
-  }, []);
+    // setModalOpen(false);
+    // setArticleId(null);
+    setParams(prev => {
+      prev.delete("article");
+      return prev;
+    }, { replace: true });
+  }, [setParams]);
+
+  // Effects
+
+  useEffect(() => {
+    const articleId = params.get("article");
+    if (articleId) {
+      setArticleId(articleId);
+      setModalOpen(true);
+    } else {
+      setArticleId(null);
+      setModalOpen(false);
+    }
+  }, [params])
   
-  if (!isLoadingInfos && infos?.length === 0) {
+  if (!isLoadingInfos && infos?.length === 0 && !search) {
     return (
       <section className="flex flex-col items-center justify-center gap-4 h-70">
         <div>A tag "{tagName}" não existe, tente novamente com outra tag</div>
@@ -66,13 +89,17 @@ export default function Info() {
   
   return (
     <>
-      <MarkdownModal modalOpen={modalOpen} handleModalClose={handleModalClose} selectedInfo={selectedInfo} />
+      <MarkdownModal 
+        modalOpen={modalOpen} 
+        handleModalClose={handleModalClose} 
+        selectedInfo={selectedInfo} 
+      />
       <section className="flex flex-col gap-4 h-70">
         <h2 className="text-2xl font-bold">{tagName}</h2>
         <section className="justify-start w-full">
           {isLoadingInfos ? (
             <div>Loading...</div>
-          ) : (
+          ) : infos!.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 gap-2"
               variants={variants}
@@ -89,6 +116,8 @@ export default function Info() {
                 />
               ))}
             </motion.div>
+          ) : (
+            <p className="text-center font-medium p-4">Nenhum artigo encontrado com essa busca em <em>{tagName}</em></p>
           )}
         </section>
       </section>
