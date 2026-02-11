@@ -28,14 +28,6 @@ O **Hermes** (em referência ao deus mensageiro) é uma plataforma web que atua 
 
 <br>
 
-## Documentação da API
-
-A documentação completa das rotas da API está disponível no link abaixo:
-
-👉 [Ver documentação das rotas](./backend/src/routes/README.md)
-
-<br>
-
 ## Fluxo de Branches
 
 - **Branch principal:** main
@@ -51,6 +43,7 @@ A documentação completa das rotas da API está disponível no link abaixo:
 2. Desenvolver
 3. Commitar
 4. Merge na main
+
 <br>
 
 ## Padrão de Commit
