@@ -102,6 +102,7 @@ input:is(:-webkit-autofill, :autofill) {
 /* Brilho */
 
 .shimmer {
+  @apply opacity-50 dark:opacity-100;
   --color-muted: var(--color-violet-dark);
   --color-strong: var(--color-violet-mid);
 

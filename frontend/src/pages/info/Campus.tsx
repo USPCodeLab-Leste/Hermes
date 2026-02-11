@@ -12,6 +12,6 @@ export default function Campus() {
   const isLoading = isLoadingCount || isLoadingCards;
   
   return (
-    <InfoType isLoading={isLoading} cards={cards} count={count} />
+    <InfoType isLoading={isLoading} cards={cards} count={count} type="campus" />
   );
 }

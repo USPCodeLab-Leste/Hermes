@@ -9,7 +9,7 @@ import { useTags } from "../hooks/useTags"
 import type { TagType } from "../types/tag"
 
 // Componentes
-import { ModalWrapper } from "../components/Modal"
+import { ModalWrapper } from "../components/modals/Modal"
 import AppHeader from "../components/AppHeader"
 import { EventCard, Tags } from "../components/Events"
 import SearchBar from "../components/SearchBar"
@@ -75,6 +75,7 @@ export default function Home() {
   const handleApplyFilter = useCallback(() => {
     setIsFilterModalOpen(false)
     setActiveTags(structuredClone(activeTagsCopy))
+    toast.success("Filtros aplicados com sucesso!")
   }, [activeTagsCopy])
 
   // Adiciona ou remove tag dos filtros ativos no modal
@@ -149,7 +150,7 @@ export default function Home() {
         >
           <section className="flex flex-col gap-4">
             <h2 className="font-bold text-xl text-center">Filtros de Busca</h2>
-            <div className="overflow-y-auto">
+            <div className="max-h-70 overflow-y-auto">
               {isTagsLoading ? <p>Carregando tags...</p> : (
                 <>
                   {tagsEntries.map(([type, tags]) => (

@@ -36,3 +36,9 @@ export function getInfoById(id: string) {
 export function getInfosCardsByType(type: string) {
   return fakeRequest(infoTagIcons[type as keyof typeof infoTagIcons] || {})
 }
+
+export function getInfoByTitleAndType(title: string, type: string) {
+  return fakeRequest(infos.filter(info => {
+    return info.tags.some(tag => tag.type === type) && info.title.toLowerCase().includes(title.toLowerCase())
+  }))
+}

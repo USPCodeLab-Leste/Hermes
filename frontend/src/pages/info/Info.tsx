@@ -8,8 +8,9 @@ import { useInfosByTag } from "../../hooks/infos/useInfosByTag";
 // Components
 import PerfilButton from "../../components/PerfilButton";
 import { LazySvg } from "../../components/LazySvg";
-import { ModalWrapper } from "../../components/Modal";
+import { ModalWrapper } from "../../components/modals/Modal";
 import MarkdownRenderer from "../../components/MarkdownRenderer";
+import { MarkdownModal } from "../../components/modals/MarkdownModal";
 
 const variants: Variants = {
   visible: { 
@@ -65,22 +66,7 @@ export default function Info() {
   
   return (
     <>
-    <ModalWrapper
-      isOpen={modalOpen}
-      onClose={handleModalClose}
-    >
-      <>
-        <h2 className="text-2xl font-bold mb-4">{selectedInfo?.title}</h2>
-        {selectedInfo && (
-          <section className="min-h-50 overflow-auto">
-            {/* TODO: transformar o body que está em markdown para componente React */}
-            <MarkdownRenderer >
-              {selectedInfo.body}
-            </MarkdownRenderer>
-          </section>
-        )}
-      </>
-    </ModalWrapper>
+      <MarkdownModal modalOpen={modalOpen} handleModalClose={handleModalClose} selectedInfo={selectedInfo} />
       <section className="flex flex-col gap-4 h-70">
         <h2 className="text-2xl font-bold">{tagName}</h2>
         <section className="justify-start w-full">

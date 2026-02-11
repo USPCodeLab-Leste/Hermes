@@ -6,7 +6,7 @@ import { EventCard } from "../components/Events";
 import AppHeader from "../components/AppHeader";
 import SearchBar from "../components/SearchBar";
 import { SelectedEventDetails } from "../components/SelectedEventDetails";
-import { ModalWrapper } from "../components/Modal";
+import { ModalWrapper } from "../components/modals/Modal";
 
 // Icons
 import PlusIcon from "../assets/icons/plus.svg?react";
