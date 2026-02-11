@@ -72,7 +72,7 @@ class AuthController {
           id: user.id,
           role: user.role || "USER"
         },
-        process.env.ACCESS_TOKEN_REFRESH_SECRET,
+        process.env.ACCESS_TOKEN_SECRET_REFRESH,
         { expiresIn: "7d" }
       );
 

@@ -14,11 +14,11 @@ class JwtController {
 
       jwt.verify(
         refreshToken,
-        process.env.ACCESS_TOKEN_REFRESH_SECRET,
+        process.env.ACCESS_TOKEN_SECRET_REFRESH,
         (err, payload) => {
           if (err) {
             return res.status(403).json({
-              error: "Refresh token inválido ou expirado"
+              error: "Refresh token inválido ou expirado " + err
             });
           }
 

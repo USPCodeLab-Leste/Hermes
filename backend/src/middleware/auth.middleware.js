@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export function authMiddleware(req, res, next) {
-  const token = req.cookies.token;
+  const token = req.cookies.access_token; 
 
   if (!token) {
     return res.status(401).json({ error: "Não autenticado" });
@@ -10,7 +10,7 @@ export function authMiddleware(req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    req.user = decoded.data;
+    req.user = decoded; 
     next();
   
   } catch (err) {
@@ -21,7 +21,11 @@ export function authMiddleware(req, res, next) {
 }
 
 export function adminMiddleware(req, res, next) {
-  
+
+  if (!req.user) {
+    return res.status(401).json({ error: "Não autenticado" });
+  }
+
   if (req.user.role !== "ADMIN") {
     return res.status(403).json({ error: "Acesso restrito a administradores" });
   }
