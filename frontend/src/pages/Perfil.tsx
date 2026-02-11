@@ -63,7 +63,7 @@ export default function Perfil() {
   const handleDarkMode = toggleTheme;
   const handleBug = () => {};
   const handleInfo = () => {};
-  const handleAdmin = () => navigate("/admin");
+  const handleAdmin = () => navigate("admin");
 
   const actions: PerfilAction[] = useMemo(() => [
     ...(user?.role === "ADMIN" ? [{ label: "Painel Admin", icon: PencilIcon, onClick: handleAdmin }] : []),
@@ -84,9 +84,19 @@ export default function Perfil() {
         </div>
         {/* <img src="" alt="iamgem de perfil" />*/}
         <div className="flex flex-col justify-center items-center">
-          <h5 className="text-[24px]/[28px] font-bold capitalize">{user?.name}</h5>
-          <span className="text-[16px]/[20px] lowercase">{user?.email}</span>
-          {user?.role === "ADMIN" && <span className="text-[14px]/[18px] text-teal-light font-medium">Administrador</span>}
+          {user?.name ? (
+            <div className="flex flex-row justify-center items-center gap-2">
+              <h5 className="text-[24px]/[28px] font-bold capitalize">{user?.name}</h5>
+              {user?.role === "ADMIN" && <span className="text-[10px] font-medium bg-teal-mid p-1 rounded">ADM</span>}
+            </div>
+          ) : (
+            <h5 className="text-[24px]/[28px] font-bold capitalize shimmer rounded-full text-transparent" aria-hidden="true">nome alguém</h5>
+          )}
+          {user?.email ? (
+            <span className="text-[16px]/[20px] lowercase">{user?.email}</span>
+          ) : (
+            <span className="text-[16px]/[20px] lowercase shimmer rounded-full text-transparent" aria-hidden="true">email_exe@usp.br</span>
+          )}
         </div>
         
       </header>
