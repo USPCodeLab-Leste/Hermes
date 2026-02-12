@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, memo } from "react"
+import { useCallback, useState, memo } from "react"
 import { motion, stagger, type Variants } from "framer-motion"
 
 // Icons
@@ -9,7 +9,7 @@ import TrashIcon from "../assets/icons/trash.svg?react";
 
 // Types
 import type { Event } from "../types/events"
-import type { GenericTag, TagType } from "../types/tag"
+import type { ActiveTags, GenericTag } from "../types/tag"
 
 // Components
 import { DateWrapper } from "./Date"
@@ -117,7 +117,7 @@ interface TagsProps {
   tags: GenericTag[];
   className?: string;
   canSelect?: boolean;
-  activeTags?: Record<TagType, string[]>;
+  activeTags?: ActiveTags;
   onClick?: (tag: GenericTag) => void;
 }
 
@@ -156,7 +156,7 @@ export const Tag = memo(function Tag({ tag, canSelect, onClick, active }: TagPro
     }
   }, [canSelect, onClick, tag])
 
-  const Component = useMemo(() => canSelect ? motion.button : motion.div, [canSelect]);
+  const Component = canSelect ? motion.button : motion.div
 
   return (
     <Component

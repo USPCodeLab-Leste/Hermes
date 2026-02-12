@@ -77,24 +77,6 @@ export const mockInfoTags = [
 // == Funções auxiliares
 // ==========================
 
-// Agrupa as event tags por tipo para facilitar o acesso
-export const eventTagsByType = mockEventTags.reduce((acc, tag) => {
-  if (!acc[tag.type]) {
-    acc[tag.type] = [];
-  }
-  acc[tag.type].push(tag);
-  return acc;
-}, {} as Record<EventTagType, Tag<EventTagType>[]>);
-
-// Agrupa as info tags por tipo para facilitar o acesso
-export const infoTagsByType = mockInfoTags.reduce((acc, tag) => {
-  if (!acc[tag.type]) {
-    acc[tag.type] = [];
-  }
-  acc[tag.type].push(tag);
-  return acc;
-}, {} as Record<InfoTagType, Tag<InfoTagType>[]>);
-
 // Retorna uma tag de evento pelo nome
 export const getEventTagByName = (name: string): Tag<EventTagType> | undefined => {
   return mockEventTags.find(tag => tag.name === name);
