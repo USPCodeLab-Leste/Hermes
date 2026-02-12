@@ -7,14 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { useMe } from "../hooks/useMe";
 
 // icones
-import UserIcon from "../assets/icons/userIcon.svg?react";
-import DarkModeIcon from "../assets/icons/DarkModeIcon.svg?react";
-import BellIcon from "../assets/icons/bellIcon.svg?react"
-import BugIcon from "../assets/icons/bugIcon.svg?react";
-import InfoIcon from "../assets/icons/infoIcon.svg?react";
-import PasswordIcon from "../assets/icons/passwordIcon.svg?react"
+import UserIcon from "../assets/icons/user.svg?react";
+import DarkModeIcon from "../assets/icons/moon.svg?react";
+import BellIcon from "../assets/icons/bell.svg?react"
+import BugIcon from "../assets/icons/bug.svg?react";
+import InfoIcon from "../assets/icons/info.svg?react";
+import PasswordIcon from "../assets/icons/lock.svg?react"
 import LogoutIcon from "../assets/icons/tabler_logout.svg?react"
-import LeftArrow from "../assets/icons/chevron-left.svg?react"
 import LightModeIcon from "../assets/icons/sun.svg?react"
 import PencilIcon from "../assets/icons/pencil.svg?react"
 import { motion, stagger, type Variants } from "framer-motion";

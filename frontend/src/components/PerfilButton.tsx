@@ -1,5 +1,5 @@
 import type { MouseEventHandler, ReactNode } from "react";
-import RightArrow from "../assets/icons/RightArrow.svg?react";
+import RightArrow from "../assets/icons/right-arrow.svg?react";
 import { motion, type Variants } from "framer-motion";
 
 interface PerfilButtonProps {
