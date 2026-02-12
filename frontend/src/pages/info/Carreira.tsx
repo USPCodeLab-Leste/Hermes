@@ -1,17 +1,15 @@
 // Hooks
-import { useInfosCountByType } from '../../hooks/infos/useInfosCountByType';
-import { useInfosCardsByType } from '../../hooks/infos/useInfosCardsByType';
+import { useInfosByType } from '../../hooks/infos/useInfosByType';
 
 // Components
 import { InfoType } from './InfoType';
 
 export default function Carreira() {
-  const { data: count, isLoading: isLoadingCount } = useInfosCountByType('carreira');
-  const { data: cards, isLoading: isLoadingCards } = useInfosCardsByType('carreira');
+  const { data: infos, isLoading: isLoadingInfos } = useInfosByType("carreira");
 
-  const isLoading = isLoadingCount || isLoadingCards;
+  const isLoading = isLoadingInfos;
   
   return (
-    <InfoType isLoading={isLoading} cards={cards} count={count} type="carreira" />
+    <InfoType isLoading={isLoading} infos={infos} type="carreira" />
   );
 }

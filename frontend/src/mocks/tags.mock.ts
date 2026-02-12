@@ -65,6 +65,7 @@ export const mockInfoTags = [
   { name: 'Psicológico', type: 'apoios' },
   { name: 'Financeiro', type: 'apoios' },
   { name: 'Acadêmico', type: 'apoios' },
+  { name: 'Bolsas', type: 'apoios' },
 
   // Carreiras
   { name: 'Estágios', type: 'carreira' },

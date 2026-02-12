@@ -9,20 +9,18 @@ import { InfoCardSkeleton } from "../../components/skeletons/InfoCardSkeleton";
 
 // Types
 import type { Info, InfoCard as InfoCardType } from "../../types/infos";
-import { useInfosByQueryAndType } from "../../hooks/infos/useInfosByQueryAndType";
 
 // Icons
 import SearchIcon from "../../assets/icons/search.svg?react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { MarkdownModal } from "../../components/modals/MarkdownModal";
 
-interface InfoCardProps {
-  isLoading: boolean;
-  cards: InfoCardType[] | undefined;
-  count: Record<string, number> | undefined;
-}
+// Hooks
+import { useInfosByType } from "../../hooks/infos/useInfosByType";
 
-interface InfoTypeProps extends InfoCardProps {
+interface InfoTypeProps {
+  isLoading: boolean;
+  infos?: Info[] | undefined;
   type: string;
 }
 
@@ -49,7 +47,7 @@ const infoCardVariants: Variants = {
   },
 };
 
-export function InfoType({ isLoading, cards, count, type }: InfoTypeProps) {
+export function InfoType({ isLoading, type, infos }: InfoTypeProps) {
   const { search } = useOutletContext<{ search: string }>();
 
   return (
@@ -73,7 +71,7 @@ export function InfoType({ isLoading, cards, count, type }: InfoTypeProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1, ease: "easeOut" }}
           >
-            <InfoCards isLoading={isLoading} cards={cards} count={count} />
+            <InfoCards isLoading={isLoading} infos={infos} type={type} />
           </motion.section>
         )}
       </AnimatePresence>
@@ -81,7 +79,34 @@ export function InfoType({ isLoading, cards, count, type }: InfoTypeProps) {
   );
 }
 
-const InfoCards = ({ isLoading, cards, count }: InfoCardProps) => {
+const InfoCards = ({ isLoading, infos, type }: InfoTypeProps) => {
+
+  const cards = useMemo(() => {
+    if (!infos) return []
+
+    const map = new Map<string, InfoCardType>()
+
+    for (const info of infos) {
+      for (const tag of info.tags) {
+        if (tag.type !== type) continue;
+
+        const existing = map.get(tag.name)
+
+        if (existing) {
+          existing.count! += 1
+        } else {
+          map.set(tag.name, {
+            cardName: tag.name,
+            icon: tag.name.toLocaleLowerCase(),
+            count: 1
+          })
+        }
+      }
+    }
+
+    return Array.from(map.values())
+  }, [infos, type])
+
   return (
     <>
       {isLoading ? (
@@ -107,7 +132,6 @@ const InfoCards = ({ isLoading, cards, count }: InfoCardProps) => {
               <InfoCard
                 key={`info-card-${index}`}
                 card={card}
-                count={count ? count[card.card] : undefined}
                 variants={infoCardVariants}
               />
             ))}
@@ -123,7 +147,7 @@ interface InfoSearchResultsProps {
 }
 
 const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
-  const { data: infos, isLoading } = useInfosByQueryAndType(search, type);
+  const { data: infos, isLoading } = useInfosByType(type, search);
 
   return (
     <motion.section className="flex flex-col gap-4">
