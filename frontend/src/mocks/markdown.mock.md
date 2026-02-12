@@ -145,6 +145,13 @@ You can render UML diagrams using [Mermaid](https://mermaidjs.github.io/). For e
 
 ![Alt text](https://placehold.co/600x400 "a title")
 
+Sem suporte para HTML!
 <p align="center">
-  <img src="https://placehold.co/600x400" width="1000px"/>
+  <img src="https://placehold.co/600x400" width="200px"/>
 </p>
+
+---
+
+Testando um `código em linha` tipo um `<React />`
+
+~~texto atravessado~~

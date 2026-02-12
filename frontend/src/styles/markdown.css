@@ -833,7 +833,7 @@
   margin: 0;
   font-size: 85%;
   white-space: break-spaces;
-  background-color: var(--bgColor-neutral-muted);
+  background-color: var(--color-violet-dark);
   border-radius: 6px;
 }
 
@@ -874,12 +874,12 @@
 
 .markdown-body .highlight pre,
 .markdown-body pre {
-  /* padding: var(--base-size-16); */
+  padding: var(--base-size-16);
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
   color: var(--fgColor-default);
-  /* background-color: var(--bgColor-muted); */
+  background-color: var(--color-violet-dark);
   border-radius: 6px;
 }
 

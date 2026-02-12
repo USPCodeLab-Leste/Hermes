@@ -20,10 +20,8 @@
     "react-highlight-words": "^0.21.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.11.0",
-    "react-syntax-highlighter": "^16.1.0",
     "react-timer-hook": "^4.0.5",
     "react-toastify": "^11.0.5",
-    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "tailwindcss": "^4.1.18",
     "vite-plugin-svgr": "^4.5.0"
