@@ -58,4 +58,70 @@ router.get("/users/me", authMiddleware, UserController.getInfoMe);
  */
 router.patch("/users/me", authMiddleware, UserController.patchInfoMe);
 
+/**
+ * @openapi
+ * /users/me/tags:
+ *   post:
+ *     summary: Seguir uma tag
+ *     description: Permite que o usuário autenticado siga uma tag específica.
+ *     tags:
+ *       - User
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/FollowTagRequest'
+ *     responses:
+ *       200:
+ *         description: Tag seguida com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FollowTagResponse'
+ *       401:
+ *         description: Usuário não autenticado
+ *       400:
+ *         description: tagId é obrigatório
+ *       500:
+ *         description: Erro ao seguir tag
+ */
+router.post("/users/me/tags", authMiddleware, UserController.followTag);
+
+/**
+ * @openapi
+ * /users/me/tags/{tagId}:
+ *   delete:
+ *     summary: Deixar de seguir uma tag
+ *     description: Remove uma tag da lista de favoritas do usuário autenticado.
+ *     tags:
+ *       - User
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: tagId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID da tag a ser removida
+ *     responses:
+ *       200:
+ *         description: Tag removida com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnfollowTagResponse'
+ *       401:
+ *         description: Usuário não autenticado
+ *       400:
+ *         description: tagId é obrigatório
+ *       500:
+ *         description: Erro ao remover tag
+ */
+router.delete("/users/me/tags/:tagId", authMiddleware, UserController.unfollowTag);
+
 export default router;
