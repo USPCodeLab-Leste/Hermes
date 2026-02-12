@@ -1,4 +1,4 @@
-import { useSignOut } from "../hooks/useSignOut";
+import { useSignOut } from "../hooks/auth/useSignOut";
 import { useTheme } from "../hooks/useTheme";
 import { auth } from "../services/auth";
 import PerfilButton from "../components/PerfilButton";

@@ -9,7 +9,7 @@ import { SubmitButton } from "../../components/forms/SubmitButton";
 
 // hooks
 import { auth } from "../../services/auth"
-import { useSignIn } from '../../hooks/useSignIn';
+import { useSignIn } from '../../hooks/auth/useSignIn';
 
 export default function Login() {
   const [searchParams] = useSearchParams()

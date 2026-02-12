@@ -9,7 +9,7 @@ import { SubmitButton } from "../../components/forms/SubmitButton";
 
 // hooks
 import { auth } from "../../services/auth";
-import { useRegister } from "../../hooks/useRegister";
+import { useRegister } from "../../hooks/auth/useRegister";
 
 const defaultFormErrors = {
   email: {

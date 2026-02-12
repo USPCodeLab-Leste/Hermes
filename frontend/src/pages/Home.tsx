@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom"
 import { toast } from "react-toastify"
 
 // Hooks
-import { useEvents } from "../hooks/useEvents"
+import { useEvents } from "../hooks/events/useEvents"
 import { useActiveTags } from "../hooks/tags/useActiveTags"
 
 // Types

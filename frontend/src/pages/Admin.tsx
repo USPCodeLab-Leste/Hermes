@@ -12,7 +12,7 @@ import { ModalWrapper } from "../components/modals/Modal";
 import PlusIcon from "../assets/icons/plus.svg?react";
 
 // Hooks
-import { useMyEvents } from "../hooks/useMyEvents";
+import { useMyEvents } from "../hooks/events/useMyEvents";
 
 export default function Admin() {
   const [search, setSearch] = useState("");

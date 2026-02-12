@@ -12,7 +12,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Hooks
-import { useAuth } from './hooks/useAuth'
+import { useAuth } from './hooks/auth/useAuth'
 import { useTheme } from './hooks/useTheme';
 
 // Layouts
