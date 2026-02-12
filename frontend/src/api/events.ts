@@ -10,8 +10,10 @@ export function getEvents(eventTitle?: string, tags?: string[]) {
   }));
 }
 
-export function getMyEvents() {
-  return fakeRequest(events)
+export function getMyEvents(eventTitle?: string) {
+  return fakeRequest(events.filter(e => {
+    return eventTitle ? e.title.toLowerCase().includes(eventTitle.toLowerCase()) : true;
+  }));
 }
 
 export function getEventById(id: string) {

@@ -13,10 +13,11 @@ import PlusIcon from "../assets/icons/plus.svg?react";
 
 // Hooks
 import { useMyEvents } from "../hooks/events/useMyEvents";
+import { useSharedSearch } from "../hooks/useSharedSearch";
 
 export default function Admin() {
-  const [search, setSearch] = useState("");
-  const { data: events = [] } = useMyEvents();
+  const [search, setSearch] = useSharedSearch();
+  const { data: events = [] } = useMyEvents(search);
 
   return (
     <>

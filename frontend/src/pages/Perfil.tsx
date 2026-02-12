@@ -2,8 +2,8 @@ import { useSignOut } from "../hooks/auth/useSignOut";
 import { useTheme } from "../hooks/useTheme";
 import { auth } from "../services/auth";
 import PerfilButton from "../components/PerfilButton";
-import { type MouseEventHandler, type SVGProps, type ComponentType, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { type MouseEventHandler, type SVGProps, type ComponentType, useMemo, useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMe } from "../hooks/useMe";
 
 // icones
@@ -54,15 +54,18 @@ export default function Perfil() {
   const { data: user } = useMe();
   const isDark = theme === 'dark';
 
+  // Search Params
+  const [searchParams] = useSearchParams();
+  const search = searchParams.toString() ? `?${searchParams.toString()}` : "";
 
   // onClick Functions (alterar para as funcoes ou router corretos)
-  const handlePerfil = () => console.log("Perfil ok");
-  const handleSenha = () => console.log("Senha ok");
-  const handleNotificacoes = () => console.log("Notificacoes");
-  const handleDarkMode = toggleTheme;
-  const handleBug = () => {};
-  const handleInfo = () => {};
-  const handleAdmin = () => navigate("admin");
+  const handlePerfil = useCallback(() => console.log("Perfil ok"), []);
+  const handleSenha = useCallback(() => console.log("Senha ok"), []);
+  const handleNotificacoes = useCallback(() => console.log("Notificacoes"), []);
+  const handleDarkMode = useCallback(() => toggleTheme(), [toggleTheme]);
+  const handleBug = useCallback(() => {}, []);
+  const handleInfo = useCallback(() => {}, []);
+  const handleAdmin = useCallback(() => navigate({ pathname: "admin", search }), [navigate, search]);
 
   const actions: PerfilAction[] = useMemo(() => [
     ...(user?.role === "ADMIN" ? [{ label: "Painel Admin", icon: PencilIcon, onClick: handleAdmin }] : []),
