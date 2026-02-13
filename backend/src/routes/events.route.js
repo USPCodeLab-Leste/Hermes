@@ -81,6 +81,8 @@ router.get("/events", eventsController.getEvents);
  *         description: Não autenticado
  *       403:
  *         description: Acesso restrito a administradores
+ *       400:
+ *         description: Dados invalidos
  *       500:
  *         description: Falha na criação do evento
  */

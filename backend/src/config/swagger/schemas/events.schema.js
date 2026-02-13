@@ -38,7 +38,7 @@ export const eventSchemas = {
         type: "string",
         example: "Hermes"
       },
-      tag: {
+      tags: {
         type: "array",
         items: {
           type: "string"
@@ -59,7 +59,7 @@ export const eventSchemas = {
 
   CreateEventRequest: {
     type: "object",
-    required: ["title", "data_inicio", "data_fim", "local"],
+    required: ["title", "data_inicio", "data_fim", "local", "tags"],
     properties: {
       title: { type: "string", minLength: 3, maxLength: 100 },
       body: { type: "string", minLength: 10, maxLength: 1000 },
@@ -67,11 +67,6 @@ export const eventSchemas = {
       data_inicio: { type: "string", format: "date-time" },
       data_fim: { type: "string", format: "date-time" },
 
-      tags: {
-        type: "array",
-        items: { type: "string" },
-        example: ["backend", "node"]
-      },
       img_banner: {
         type: "string",
         format: "uri",
