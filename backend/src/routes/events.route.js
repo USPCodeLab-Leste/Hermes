@@ -53,6 +53,7 @@ const router = express.Router();
  *         description: Falha na busca de eventos
  */
 router.get("/events", eventsController.getEvents);
+router.get("/events/:id", eventsController.getEventId);
 
 /**
  * @openapi
@@ -85,5 +86,8 @@ router.get("/events", eventsController.getEvents);
  *         description: Falha na criação do evento
  */
 router.post("/events", authMiddleware, adminMiddleware, eventsController.postEvents);
+
+router.patch("/events/:id", authMiddleware, adminMiddleware, eventsController.patchEvents);
+router.delete("/events/:id", authMiddleware, adminMiddleware, eventsController.deleteEvent);
 
 export default router;

@@ -46,10 +46,10 @@ class AuthController {
 
       const { email, password } = req.body;
 
-      // Verificando Email 
+      // Verificando Email
       const user = await UserModel.findOne({ email: email });
       if(!user) {
-        return res.status(401).json({ error: "Email ou Password is incorrect" });
+        return res.status(401).json({ error: "Email or Password is incorrect" });
       }
 
       // Verificando Password

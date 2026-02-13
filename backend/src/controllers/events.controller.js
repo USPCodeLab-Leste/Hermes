@@ -19,7 +19,7 @@ class eventsController {
       // Normaliza tag para array
       let tags = tag;
       if (tags && !Array.isArray(tags)) {
-        tags = [tags];
+        tags = tags.split(",").map(value => value.trim());
       }
 
       const events = await PostModel.findAll({
@@ -70,12 +70,33 @@ class eventsController {
 
   async patchEvents(req, res) {
     try {
-      const body = req.body;
+      // Verifica se os dados estão de acordo com as normas para postas
+      const body = createEventSchema.parse(req.body);
+
+      // recebem os ides do post e do usuário, respectivamente
       const id = req.params.id;
+      const id_user = req.user.id;
+
+      // tags normalizadas para arrray
+      const tags = Array.from(
+        new Set([...(body.tags ?? []), "event"])
+      );
+
+      // Cria um nova constante para enviar os dados
+      const content = {
+        title: body.title,
+        data_inicio: body.data_inicio,
+        data_fim: body.data_fim,
+        status: body.status,
+        img_banner: body.img_banner,
+        body: body.body,
+        user_id: id_user,
+        tags: tags,
+      };
 
       let patchResponse;
 
-      if(id) patchResponse = eventsModel.patchEvents(id, body);
+      if(id && id_user) patchResponse = PostModel.patchEvents(id, content);
       else return res.status(400).json({error: "ID faltando"});
 
       if(!patchResponse) {
@@ -86,7 +107,7 @@ class eventsController {
       return res.status(200).json({results: patchResponse});
 
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 
@@ -95,23 +116,23 @@ class eventsController {
 
     let response;
 
-    if(id) response = eventsModel.findById(id);
+    if(id) response = await PostModel.findById(id);
     else return res.status(404).json({error: "ID não informado"});
 
     if(!response){
       console.error("Error to get event.", response);
       return res.status(404).json({error: "Event Not Found!"});
     }
-
     return res.status(200).json(response);
   }
 
   async deleteEvent(req, res) {
-    const id = req.id;
+    const id = req.params.id;
+    const id_user = req.user.id;
 
     let response;
 
-    if(id) response = eventsModel.deleteEvent(id);
+    if(id && id_user) response = PostModel.deleteEvent(id, id_user);
     else return res.status(400).json({error: "ID não informado"});
 
     if(!response){

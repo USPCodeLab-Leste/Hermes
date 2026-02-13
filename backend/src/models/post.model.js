@@ -1,3 +1,4 @@
+import { serialize } from "v8";
 import pool from "../config/database.js";
 import crypto from "crypto";
 
@@ -52,7 +53,7 @@ class PostModel {
   }
 
   // pra buscar todos (Feed) com filtros opcionais
-  async findAll({ title, tag, limit = 10, offset = 0 } = {}) {
+  async findAll({ title, tags, limit = 10, offset = 0 } = {}) {
     let query = `
       SELECT 
         p.*,
@@ -64,7 +65,7 @@ class PostModel {
       LEFT JOIN tb_tag t ON pt.tag_id = t.id
       WHERE 1=1
     `;
-    
+
     const values = [];
     let index = 1;
 
@@ -76,9 +77,9 @@ class PostModel {
     }
 
     // filtro por tag
-    if (tag) {
-      query += ` AND t.name = $${index}`;
-      values.push(tag);
+    if (tags) {
+      query += ` AND t.name = ANY ($${index})`;
+      values.push(tags);
       index++;
     }
 
@@ -99,12 +100,22 @@ class PostModel {
   // pra buscar um post pelo id
   async findById(id) {
     let query = `
-      SELECT DISTINCT tb_post.*
-      FROM tb_post
-      JOIN tb_post_tag. ON tb_post_tag.post_id = tb_post.id
-      JOIN tb_tag on tb_post_tag.id_tag = tb_tag.id
-      WHERE id = $1
-    `;
+    SELECT 
+    p.id,
+    p.title,
+    p.body,
+    p.local,
+    p.img_banner,
+    p.status,
+    p.data_inicio,
+    p.data_fim,
+    p.created_at,
+    t.id,
+    t.name
+    FROM tb_post p
+    LEFT JOIN tb_post_tag pt ON pt.post_id = p.id
+    LEFT JOIN tb_tag t ON t.id = pt.tag_id
+    WHERE p.id = $1;`;
 
     let values = [id];
 
@@ -128,104 +139,155 @@ class PostModel {
   }
 
   async patchEvents(id, info) {
-    let queryUpdate = `
-    UPDATE tb_post
-    SET 1=1,
-    `;
+    // Pesquisa do criador daquele post
+    const querySearchPost = `SELECT autor_id FROM tb_post WHERE id = $1;`;
+    let searchPostAutorId = await pool.query(querySearchPost, [id]);
+    
+    // Verifica se o usuário é o criador do post
+    if(info.user_id !== searchPostAutorId.rows[0].autor_id) return {error: "ID do usuário não condiz com o do post"};
 
-    const values = [];
-    let idx = 1;
+    // Monsta a query para autalizar a tabela post;
+    let queryUpdateTbPost = `
+    UPDATE tb_post
+    SET id=$1`;
+
+    const values = [id];
+    let idx = 2;
 
     if(info.title) {
-      queryUpdate += `title = $${idx}`;
-      values.push(info.titulo);
+      queryUpdateTbPost += `, title = $${idx}`;
+      values.push(info.title);
       idx++;
     }
 
     if(info.data_inicio) {
-      queryUpdate += `data_inicio = $${idx}`;
+      queryUpdateTbPost += `, data_inicio = $${idx} `;
       values.push(info.data_inicio);
       idx++;
     }
 
     if(info.data_fim) {
-      queryUpdate += `data_fim = $${idx}`;
+      queryUpdateTbPost += `, data_fim = $${idx} `;
       values.push(info.data_fim);
       idx++;
     }
 
     if(info.status) {
-      queryUpdate += `status = $${idx}`;
+      queryUpdateTbPost += `, status = $${idx} `;
       values.push(info.status);
       idx++;
     }
 
     if(info.img_banner) {
-      queryUpdate += `img_banner = $${idx}`;
+      queryUpdateTbPost += `, img_banner = $${idx} `;
       values.push(info.img_banner);
       idx++;
     }
 
     if(info.body) {
-      queryUpdate += `descricao = $${idx}`;
+      queryUpdateTbPost += `, body = $${idx} `;
       values.push(info.body);
       idx++;
     }
 
-    queryUpdate += `WHERE id = ${id}`;
+    queryUpdateTbPost += `
+    WHERE id = $1`;
 
-    let queryDeletePostTags = `
-    DELETE tb_post_tags
-    WHERE post_id = ${id};
-    `;
+    ///
 
-    let queryInsertPostTags;
-    let idxPostTags = 1;
-    const valuesPostTags = [];
+    const result = [];
 
-    for(let tag of info.tags){
-      queryInsertPostTags += `INSERT INTO tb_post_tags (post_id, tag_id) VALUES (${idxPostTags},${++idxPostTags});`;
-      valuesPostTags.push(id, tag);
-      idxPostTags++;
+    // Atualiza tanto a tabela tags quanto a tabela de relacionamento entre tags e posts
+    if(info.tags){
+      let queryDeletePostTags = `DELETE FROM tb_post_tag WHERE post_id = $1;`; // query para deletar todas as antigas tags relacionadas ao post antes
+
+      await pool.query(queryDeletePostTags, [id]).catch(err => {
+        console.error("ERROR TO DELETE OLDS TAGS", err);
+        return {error: "Try to delete old tags"};
+      });
+
+      // vai passar por cada tag
+      for(const tag of info.tags){
+        // Tenta inserir na tabela de tags a nova tag e caso já exista, ela só retorna o id da tag já existente
+        const queryInsertTbTag = `INSERT INTO tb_tag (id, name, type, active)
+        VALUES ($1,$2,$3,$4)
+        ON CONFLICT (name)
+        DO UPDATE SET name = EXCLUDED.name
+        RETURNING id;`;
+
+        const values = [crypto.randomUUID(), tag, "generic", true];
+
+        const resultInsertTbTag = await pool.query(queryInsertTbTag, values)
+        .catch(err => {
+          console.error("ERROR TO TRY INSERT INTO TAG TABLE", err);
+          return {error: "TRY TO INSERT INTO TAG TABLE"};
+        });
+
+        if(resultInsertTbTag.error) return resultInsertTbTag.error;
+
+        const idTag = resultInsertTbTag.rows[0].id;
+
+        await this.addTag(id, idTag);
+      }
     }
 
-
-    const result = []
-    result.push(
-      await
-      pool
-      .query(queryUpdate, values)
+    // Roda o comando que atualiza a tabela dos posts
+    result.push(await pool
+      .query(queryUpdateTbPost, values)
       .then( res => res.rows[0])
-      .catch( err => console.error("ERROR GET EVENTS: ", err))
+      .catch( err => {
+        console.error("ERROR PATCH POST: ", err)
+        return {error: "Error to try Update Tb_post"};
+      })
     );
 
-    result.push(
-      await
-      pool
-      .query(queryInsertPostTags, valuesPostTags)
-      .then( res => res.rows[0])
-      .catch( err => console.error("ERROR GET EVENTS: ", err))
-    );
-
+    if(result.error) result.status = 400;
+    else result.status = 200;
     return result;
 
   }
 
   async deleteEvent(id, user_id) {
-    const query = `
-    DELETE FROM tb_post WHERE id = $1;
-    DELETE FROM tb_post_tag WHERE post_id = $1;
-    `;
+    // Resgata o autor do post
+    const search = await pool.query(
+      `SELECT autor_id FROM tb_post WHERE id = $1;`, [id]
+    ).then(res => res.rows[0]);
+
+    // Verifica se o id do autor e do usuário condiz
+    if(user_id !== search.autor_id) return {error: "ID do usuário não condiz com do POST"}
+
+    //  Query para deletar o post
+    const queryTb_post = `DELETE FROM tb_post WHERE id = $1;`;
+
+    // Query para deletas os relacionamentos do post com as tags
+    const queryTb_post_tag = `DELETE FROM tb_post_tag WHERE post_id = $1;`;
 
     const values = [id];
 
-    const result = await
-    pool
-    .query(query, values)
-    .then( res => res.rows[0])
-    .catch( err => console.error("ERROR DELETE EVENT: ", err));
+    const result = [];
 
-    return result;
+    result.push(await pool
+      .query(queryTb_post, values)
+      .then( res => res.rows[0])
+      .catch( err => {
+        console.error("ERROR DELETE EVENT: ", err)
+        return err;
+      })
+    );
+
+    result.push(
+      await pool
+      .query(queryTb_post_tag, values)
+      .then( res => res.rows[0])
+      .catch( err => {
+        console.error("ERROR DELETE RELATION TB_POST_TAG: ", err)
+        return err;
+      })
+    );
+
+    if(result) return result.status = 400;
+
+    return result.status = 200;
   }
 }
 
