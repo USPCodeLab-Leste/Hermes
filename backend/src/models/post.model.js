@@ -1,70 +1,96 @@
 import pool from "../config/database.js";
 import crypto from "crypto";
+import TagModel from "./tag.model.js";
 
 class PostModel {
   
   // pra criar um Post 
   async create({ title, body, local, data_inicio, data_fim, img_banner, autor_id, tags }) {
-    try {
-      const id = crypto.randomUUID();
-      const status = "published"; 
+    const client = await pool.connect();
 
-      // cria o Post
+    try {
+      await client.query("BEGIN");
+
+      const id = crypto.randomUUID();
+      const status = "published";
+
       const query = `
-        INSERT INTO tb_post (id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        INSERT INTO tb_post 
+        (id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
         RETURNING *
       `;
 
-      const values = [id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id];
-      
-      const result = await pool.query(query, values);
+      const values = [
+        id,
+        title,
+        body,
+        local,
+        data_inicio,
+        data_fim,
+        img_banner,
+        status,
+        autor_id
+      ];
+
+      const result = await client.query(query, values);
       const post = result.rows[0];
 
-      //  Se tiver tags, salva elas tbm
-      if (tags && tags.length > 0) {
-        for (const tagName of tags) {
-            // A. Insere a Tag (ou recupera se já existir)
-            // estamos passando 'general' como type padrão, já que é obrigatório
-            const tagRes = await pool.query(
-                `INSERT INTO tb_tag (id, name, type, active) 
-                 VALUES ($1, $2, $3, $4) 
-                 ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name 
-                 RETURNING id`,
-                [crypto.randomUUID(), tagName, 'general', true]
-            );
-            const tagId = tagRes.rows[0].id;
+      // relação post <-> tag
+      if (Array.isArray(tags) && tags.length > 0) {
 
-            //  liga o post à tag na tabela pivo
-            await pool.query(
-                `INSERT INTO tb_post_tag (post_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
-                [post.id, tagId]
-            );
+        for (const tagName of tags) {
+
+          // procura tag existente
+          let tag = await TagModel.findByName(tagName);
+
+          // se não existir, cria
+          if (!tag) {
+            tag = await TagModel.create(tagName, "general");
+          }
+
+          // cria relação post <-> tag
+          await client.query(
+            `INSERT INTO tb_post_tag (post_id, tag_id)
+             VALUES ($1, $2)
+             ON CONFLICT DO NOTHING`,
+            [post.id, tag.id]
+          );
         }
       }
+
+      await client.query("COMMIT");
 
       return post;
 
     } catch (err) {
+      await client.query("ROLLBACK");
       console.error("ERROR CREATE POST:", err);
+      
       throw err;
+    } finally {
+      client.release();
     }
   }
 
   // pra buscar todos (Feed) com filtros opcionais
-  async findAll({ title, tag, limit = 10, offset = 0 } = {}) {
+  async findAll({ title, tags, excludeIds, limit = 10, offset = 0 } = {}) {
     let query = `
       SELECT 
         p.*,
         u.name AS autor_nome,
-        COALESCE(ARRAY_AGG(DISTINCT t.name) FILTER (WHERE t.name IS NOT NULL), '{}') AS tags
+        COALESCE(
+          ARRAY_AGG(DISTINCT t.name) 
+          FILTER (WHERE t.name IS NOT NULL),
+          '{}'
+        ) AS tags
       FROM tb_post p
       JOIN tb_user u ON p.autor_id = u.id
       LEFT JOIN tb_post_tag pt ON p.id = pt.post_id
       LEFT JOIN tb_tag t ON pt.tag_id = t.id
       WHERE 1=1
     `;
-    
+
     const values = [];
     let index = 1;
 
@@ -75,25 +101,52 @@ class PostModel {
       index++;
     }
 
-    // filtro por tag
-    if (tag) {
-      query += ` AND t.name = $${index}`;
-      values.push(tag);
+    // filtro por nomes de tags
+    if (tags) {
+
+      // transforma em array se vier string
+      const tagArray = Array.isArray(tags) ? tags : [tags];
+
+      query += `
+        AND p.id IN (
+          SELECT pt.post_id
+          FROM tb_post_tag pt
+          JOIN tb_tag t2 ON pt.tag_id = t2.id
+          WHERE LOWER(t2.name) = ANY($${index})
+        )
+      `;
+
+      values.push(tagArray.map(tag => tag.toLowerCase()));
       index++;
     }
 
-    // ordenação + paginação
+    // excluir posts já carregados
+    if (excludeIds && excludeIds.length > 0) {
+      query += ` AND p.id <> ALL($${index})`;
+      values.push(excludeIds);
+      index++;
+    }
+
     query += `
       GROUP BY p.id, u.name
-      ORDER BY p.data_inicio ASC
+      ORDER BY p.data_inicio ASC NULLS LAST
       LIMIT $${index}
       OFFSET $${index + 1}
     `;
 
-    values.push(limit, offset);
+    values.push(limit + 1, offset);
 
     const result = await pool.query(query, values);
-    return result.rows;
+    const hasMore = result.rows.length > limit;
+
+    if (hasMore) {
+      result.rows.pop(); // remove o extra
+    }
+
+    return {
+      data: result.rows,
+      hasMore
+    };
   }
 
   // pra buscar um post pelo id
