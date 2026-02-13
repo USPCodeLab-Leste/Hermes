@@ -39,3 +39,11 @@ CREATE TABLE IF NOT EXISTS tb_post_tag (
     tag_id UUID REFERENCES tb_tag(id) ON DELETE CASCADE,
     PRIMARY KEY (post_id, tag_id)
 );
+
+-- tabela pivô (User <-> Tag) = tags favoritas
+CREATE TABLE IF NOT EXISTS tb_user_tag (
+    user_id UUID REFERENCES tb_user(id) ON DELETE CASCADE,
+    tag_id UUID REFERENCES tb_tag(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, tag_id)
+);
