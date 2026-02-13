@@ -58,28 +58,35 @@ export const eventSchemas = {
   },
 
   CreateEventRequest: {
-    type: "object",
-    required: ["title", "data_inicio", "data_fim", "local", "tags"],
-    properties: {
-      title: { type: "string", minLength: 3, maxLength: 100 },
-      body: { type: "string", minLength: 10, maxLength: 1000 },
-      local: { type: "string", minLength: 3, maxLength: 100 },
-      data_inicio: { type: "string", format: "date-time" },
-      data_fim: { type: "string", format: "date-time" },
-
-      img_banner: {
-        type: "string",
-        format: "uri",
-        maxLength: 200
-      }
+    "type": "object",
+    "required": ["title","data_inicio","data_fim","local","tags"],
+    "properties": {
+      "title": { "type":"string", "minLength":3, "maxLength":100, "example":"Workshop de Node.js" },
+      "body": { "type":"string", "minLength":10, "maxLength":1000, "example":"Evento sobre boas práticas em Node.js" },
+      "local": { "type":"string", "minLength":3, "maxLength":100, "example":"Auditório Central" },
+      "data_inicio": { "type":"string", "format":"date-time", "example":"2026-03-10T18:00:00Z" },
+      "data_fim": { "type":"string", "format":"date-time", "example":"2026-03-10T21:00:00Z" },
+      "img_banner": { "type":"string", "format":"uri", "maxLength":200, "example":"https://meusite.com/banner.png" },
+      "tags": { "type":"array", "items":{"type":"string"}, "example":["Hermes","Node"] }
     }
   },
 
   EventListResponse: {
-    type: "array",
-    items: {
-      $ref: "#/components/schemas/Event"
-    }
+    type: "object",
+    properties: {
+      data: {
+        type: "array",
+        items: {
+          "$ref": "#/components/schemas/Event"
+        }
+      },
+      hasMore: {
+        type: "boolean",
+        description: "Indica se há mais eventos para carregar",
+        example: false
+      }
+    },
+    "required": ["data", "hasMore"]
   },
 
   EventCreatedResponse: {

@@ -10,9 +10,10 @@ export const muralSchemas = {
         type: "integer",
         example: 0
       },
-      total: {
-        type: "integer",
-        example: 1
+      hasMore: {
+        type: "boolean",
+        description: "Indica se há mais eventos para carregar",
+        example: false
       },
       mural: {
         type: "array",
