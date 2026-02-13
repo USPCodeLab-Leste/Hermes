@@ -19,23 +19,44 @@ class muralController {
       if (limit < 1) { limit = DEFAULT_LIMIT; }
 
       const user = await UserModel.findOne({ id: userId });
-
       if (!user) {
         return res.status(404).json({ error: "Usuário não encontrado" });
       }
 
-      const userTags = user.tags;
-
-      const events = await PostModel.findAll({
-        tags: userTags,
+      const userTags = await UserModel.getUserTags(userId);
+      const tags = userTags.map(t => t.name);
+      
+      let result  = await PostModel.findAll({
+        tags,
         limit,
         offset
       });
 
+      let events = result.data;
+      let hasMore = result.hasMore;
+
+      // Se veio menos que o limite, completa o restante
+      if (events.length < limit) {
+
+        const remaining = limit - events.length;
+        const existingIds = events.map(e => e.id);
+
+        const extraResult = await PostModel.findAll({
+          limit: remaining,
+          offset: 0,
+          excludeIds: existingIds
+        });
+
+        events = [...events, ...extraResult.data];
+
+        // se o extra ainda tem mais
+        hasMore = hasMore || extraResult.hasMore;
+      }
+
       res.status(200).json({
         limit,
         offset,
-        total: events.length,
+        hasMore,
         mural: events
       });
 
