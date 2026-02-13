@@ -1,10 +1,10 @@
 import PostModel from "../models/post.model.js";
-import { createEventSchema } from "../validators/post.validator.js"
+import { createEventSchema } from "../validators/post.validator.js";
 
 const MAX_LIMIT = 20;
 const DEFAULT_LIMIT = 10;
 
-class eventsController {
+class EventsController {
 
   async getEvents(req, res) {
     try {
@@ -16,15 +16,14 @@ class eventsController {
       if (limit > MAX_LIMIT) limit = MAX_LIMIT;
       if (limit < 1) limit = DEFAULT_LIMIT;
 
-      // Normaliza tag para array
-      let tags = tag;
-      if (tags && !Array.isArray(tags)) {
-        tags = [tags];
-      }
+      // Normaliza tags para array
+      const normalizedTags = tag && tag !== ""
+        ? (Array.isArray(tag) ? tag : [tag])
+        : undefined;
 
       const events = await PostModel.findAll({
         title,
-        tags,
+        tags: normalizedTags,
         limit,
         offset
       });
@@ -33,7 +32,7 @@ class eventsController {
 
     } catch (err) {
       console.error(err);
-      res.status(400).json({ error: "Falha na busca de eventos" });
+      return res.status(400).json({ error: "Falha na busca de eventos" });
     }
   }
 
@@ -56,18 +55,28 @@ class eventsController {
       await PostModel.create({
         ...data,
         autor_id: userId,
-        tags: tags
+        tags
       });
 
-      res.status(201).json({ message: "Evento criado com sucesso" })
+      return res.status(201).json({
+        message: "Evento criado com sucesso"
+      });
 
-    } catch (err) {      
+    } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Falha na criação do evento" })
-      
+
+      if (err.name === "ZodError") {
+        return res.status(400).json({
+          error: "Dados inválidos",
+          details: err
+        });
+      }
+
+      return res.status(500).json({
+        error: "Falha na criação do evento"
+      });
     }
   }
-  
 }
 
-export default new eventsController();
+export default new EventsController();
