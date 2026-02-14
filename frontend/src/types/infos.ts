@@ -12,6 +12,7 @@ export interface Info<T = InfoTagType> {
 }
 
 export interface InfoCard {
-  card: string
+  cardName: string
   icon: string
+  count: number
 }

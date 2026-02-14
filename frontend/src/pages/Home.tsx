@@ -1,46 +1,39 @@
-import { motion, type Variants } from "framer-motion"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useMemo, useState, useEffect } from "react"
+import { useSearchParams } from "react-router-dom"
+import { toast } from "react-toastify"
 
 // Hooks
-import { useEvents } from "../hooks/useEvents"
-import { useTags } from "../hooks/useTags"
+import { useEvents } from "../hooks/events/useEvents"
+import { useActiveTags } from "../hooks/tags/useActiveTags"
 
 // Types
 import type { TagType } from "../types/tag"
 
 // Componentes
-import { ModalWrapper } from "../components/Modal"
+import { ModalWrapper } from "../components/modals/Modal"
 import AppHeader from "../components/AppHeader"
-import { EventCard, Tags } from "../components/Events"
+import { EventCard } from "../components/Events"
 import SearchBar from "../components/SearchBar"
 import { SelectedEventDetails } from "../components/SelectedEventDetails"
-import { GenericButton as Button } from "../components/GenericButton"
+import { SelectedEventDetailsSkeleton } from "../components/skeletons/SelectedEventDetailsSkeleton"
 
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
 import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
-import { toast } from "react-toastify"
 import { useSharedSearch } from "../hooks/useSharedSearch"
+import { FilterTagsModal } from "../components/modals/FilterTagsModal"
 
-const filterVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-}
 
 export default function Home() {
-  const { data, isLoading } = useEvents()
+  const [searchQuery, setSearchQuery] = useSharedSearch()
+  const [params, setParams] = useSearchParams()
+  const {activeTags, setActiveTags, tagsFlatten} = useActiveTags()
+  const { data: events, isLoading: isLoadingEvents } = useEvents(searchQuery, tagsFlatten)
 
   // Modal States
   const [isCardModalOpen, setIsCardModalOpen] = useState(false)
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
-
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useSharedSearch()
-
-  // Tag States
-  const [activeTags, setActiveTags] = useState<Record<TagType, string[]>>({} as Record<TagType, string[]>)
-  const [activeTagsCopy, setActiveTagsCopy] = useState<Record<TagType, string[]>>({} as Record<TagType, string[]>)
-  const { data: tagsData, isLoading: isTagsLoading } = useTags()
 
   // ===================
   // == Handlers
@@ -48,56 +41,44 @@ export default function Home() {
 
   // Abre modal do evento selecionado
   const handleEventCardClick = useCallback((id: string) => {
-    setSelectedEventId(id)
-    setIsCardModalOpen(true)
-  }, [])
+    setParams(prev => {
+      prev.set("event", id);
+      return prev;
+    }, { replace: true });
+  }, [setParams])
+
+  // Fecha modal do evento
+  const handleModalEventClose = useCallback(() => {
+    setParams(prev => {
+      prev.delete("event");
+      return prev;
+    }, { replace: true });
+
+    setSelectedEventId(null);
+    setIsCardModalOpen(false);
+  }, [setParams, setSelectedEventId, setIsCardModalOpen])
 
   // Abre modal de filtros e 
   const handleFilterClick = useCallback(() => {
-    setActiveTagsCopy(structuredClone(activeTags))
     setIsFilterModalOpen(true)
   }, [activeTags])
 
   // Fecha modal de filtros sem aplicar mudanças
   const handleModalFilterClose = useCallback(() => {
     setIsFilterModalOpen(false)
-    setActiveTagsCopy(structuredClone(activeTags))
   }, [activeTags])
 
-  // Limpa todos os filtros ativos
-  const handleClean = useCallback(() => {
-    // setActiveTags({} as Record<TagType, string[]>)
-    setActiveTagsCopy({} as Record<TagType, string[]>)
-    toast.success("Filtros limpos com sucesso!")
-  }, [])
-
   // Aplica os filtros selecionados
-  const handleApplyFilter = useCallback(() => {
+  const onFilter = useCallback((activeTagsCopy: Record<TagType, string[]>) => {
     setIsFilterModalOpen(false)
     setActiveTags(structuredClone(activeTagsCopy))
-  }, [activeTagsCopy])
+    toast.success("Filtros aplicados com sucesso!")
+  }, [])
 
-  // Adiciona ou remove tag dos filtros ativos no modal
-  const handleFilterTagClick = useCallback((tag: { name?: string; type?: TagType }) => {
-    setActiveTagsCopy((prevActiveTags) => {
-      const tagType = tag.type!;
-      const tagName = tag.name!;
-      const currentTags = prevActiveTags[tagType] || [];
-      let updatedTags: string[];
-
-      if (currentTags.includes(tagName)) {
-        // Remover tag
-        updatedTags = currentTags.filter((name) => name !== tagName);
-      } else {
-        // Adicionar tag
-        updatedTags = [...currentTags, tagName];
-      }
-
-      return {        
-        ...prevActiveTags,
-        [tagType]: updatedTags,
-      };
-    });
+  const onClean = useCallback(() => {
+    setIsFilterModalOpen(false)
+    setActiveTags({} as Record<TagType, string[]>)
+    toast.success("Filtros limpos com sucesso!")
   }, [])
 
   // ===================
@@ -105,11 +86,47 @@ export default function Home() {
   // ===================
 
   const hasAnyFilter = useMemo(() => Object.values(activeTags).some(tags => tags.length > 0), [activeTags])
-  const selectedEventData = useMemo(() => data?.find((e) => e.id === selectedEventId) ?? null, [data, selectedEventId])
-  const tagsEntries = useMemo(() => Object.entries(tagsData ?? {}), [tagsData])
+  const selectedEventData = useMemo(() => events?.find((e) => e.id === selectedEventId) ?? null, [events, selectedEventId])
+
+  // ===================
+  // == Effects
+  // ===================
+
+  useEffect(() => {
+    const eventId = params.get("event");
+
+    if (eventId) {
+      setSelectedEventId(eventId);
+      setIsCardModalOpen(true);
+    }
+  }, [params])
 
   return (
     <>
+      {/* Modal Card Event */}
+      <ModalWrapper
+        isOpen={isCardModalOpen}
+        onClose={handleModalEventClose}
+      >
+        {(selectedEventId && selectedEventData) ? (
+          <SelectedEventDetails
+            event={selectedEventData}
+            search={searchQuery}
+          />
+        ) : (
+          <SelectedEventDetailsSkeleton />
+        ) }
+      </ModalWrapper>
+
+      {/* Modal Filter */}
+      <FilterTagsModal 
+        isOpen={isFilterModalOpen}
+        onClose={handleModalFilterClose}
+        activeTags={activeTags}
+        onFilter={onFilter}
+        onClean={onClean}
+      />
+
       <AppHeader>
         <div className="flex items-center gap-4 w-full">
           <SearchBar search={searchQuery} setSearch={setSearchQuery}/>
@@ -129,69 +146,18 @@ export default function Home() {
           </button>
         </div>
       </AppHeader>
+
       <main className="main-app">
-        {/* Modal Card Event */}
-        <ModalWrapper
-          isOpen={isCardModalOpen}
-          onClose={() => setIsCardModalOpen(false)}
-        >
-          {selectedEventId && selectedEventData && (
-            <SelectedEventDetails
-              event={selectedEventData}
-            />
-          )}
-        </ModalWrapper>
-
-        {/* Modal Filter */}
-        <ModalWrapper
-          isOpen={isFilterModalOpen}
-          onClose={handleModalFilterClose}
-        >
-          <section className="flex flex-col gap-4">
-            <h2 className="font-bold text-xl text-center">Filtros de Busca</h2>
-            <div className="overflow-y-auto">
-              {isTagsLoading ? <p>Carregando tags...</p> : (
-                <>
-                  {tagsEntries.map(([type, tags]) => (
-                    <motion.div 
-                      className="mb-6" key={`${type}-tags-filter`}
-                      variants={filterVariants}
-                      initial="hidden"
-                      animate="visible"
-                    >
-                      <h3 className="capitalize font-medium mb-1 text-ink/75 dark:text-paper/75">{type}</h3>
-                      <Tags tags={tags} activeTags={activeTagsCopy} canSelect={true} onClick={handleFilterTagClick} />
-                    </motion.div>
-                  ))}
-                </>
-              )}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <Button 
-                onClick={handleApplyFilter}
-              >
-
-                <span className="text-paper">Aplicar Filtros</span>
-              </Button>
-              <Button
-                className="bg-transparent border-4 border-teal-light hover:border-teal-mid "
-                onClick={handleClean}
-              >
-
-                <span className="">Limpar Filtros</span>
-              </Button>
-            </div>
-          </section>
-        </ModalWrapper>
-
-        {isLoading ? <p>Carregando eventos...</p> : (
+        {isLoadingEvents ? <p>Carregando eventos...</p> : events!.length > 0 ? (
           <>
             <section className="m-auto mt-10 flex flex-col items-center gap-8">
-              {data?.map((event) => (
+              {events?.map((event) => (
                 <EventCard key={event.id} event={event} selectEvent={handleEventCardClick}/>
               ))}
             </section>
           </>
+        ) : (
+          <p className="text-center font-medium p-4">Nenhum evento encontrado com essa busca.</p>
         )}
       </main>
     </>

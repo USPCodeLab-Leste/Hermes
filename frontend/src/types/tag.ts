@@ -9,6 +9,9 @@ export interface Tag<T> {
   type: T;
 }
 
+type TagName = string;
+export type ActiveTags = Record<TagType, TagName[]>;
+
 export type TagType = EventTagType | InfoTagType;
 export type EventTag = Tag<EventTagType>;
 export type InfoTag = Tag<InfoTagType>;

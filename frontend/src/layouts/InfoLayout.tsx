@@ -29,7 +29,7 @@ export default function InfoLayout() {
             <li><NavItem to="carreira" label="Carreira" /></li>
           </ul>
         </motion.nav>
-        <Outlet />
+        <Outlet context={{ search }} />
       </main>
     </>
   )

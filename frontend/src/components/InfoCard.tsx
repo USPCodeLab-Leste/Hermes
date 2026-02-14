@@ -9,12 +9,12 @@ import type { InfoCard as InfoCardType } from '../types/infos';
 
 interface InfoCardProps {
   card: InfoCardType;
-  count?: number;
   variants?: Variants;
 }
 
-export const InfoCard = ({ card, count, variants }: InfoCardProps) => {
-  const isDisabled = typeof count !== 'number' || count <= 0;
+export const InfoCard = ({ card, variants }: InfoCardProps) => {
+  const count = card.count ?? 0;
+  const isDisabled = count <= 0;
   const { search } = useLocation();
 
   return (
@@ -26,7 +26,7 @@ export const InfoCard = ({ card, count, variants }: InfoCardProps) => {
                     items-baseline shadow-lg outline-2 outline-transparent transition-all
                     ${isDisabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer hover:-translate-y-2 hover:shadow-2xl hover:outline-paper focus:outline-paper'}`
                   }
-        to={isDisabled ? '.' : { pathname: card.card, search }}
+        to={isDisabled ? '.' : { pathname: card.cardName, search }}
         aria-disabled={isDisabled}
         onClick={(event) => {
           if (isDisabled) {
@@ -38,7 +38,7 @@ export const InfoCard = ({ card, count, variants }: InfoCardProps) => {
           <LazySvg name={card.icon} className='size-7 text-paper' />
         </div>
         <div className='w-full'>
-          <h3 className='font-semibold text-lg text-left text-paper whitespace-nowrap text-ellipsis overflow-hidden'>{card.card}</h3>
+          <h3 className='font-semibold text-lg text-left text-paper whitespace-nowrap text-ellipsis overflow-hidden'>{card.cardName}</h3>
           <span className='text-sm text-left text-paper/75 whitespace-nowrap text-ellipsis overflow-hidden'>
             {!isDisabled ? `${count} artigo${count !== 1 ? 's' : ''}` : 'Nenhum artigo'}
           </span>

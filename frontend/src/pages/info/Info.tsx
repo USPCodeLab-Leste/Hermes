@@ -1,5 +1,5 @@
-import { Link, useParams } from "react-router-dom";
-import { useCallback, useMemo, useState } from "react";
+import { Link, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, stagger, type Variants } from "framer-motion";
 
 // Hooks
@@ -8,8 +8,9 @@ import { useInfosByTag } from "../../hooks/infos/useInfosByTag";
 // Components
 import PerfilButton from "../../components/PerfilButton";
 import { LazySvg } from "../../components/LazySvg";
-import { ModalWrapper } from "../../components/Modal";
+import { ModalWrapper } from "../../components/modals/Modal";
 import MarkdownRenderer from "../../components/MarkdownRenderer";
+import { MarkdownModal } from "../../components/modals/MarkdownModal";
 
 const variants: Variants = {
   visible: { 
@@ -36,7 +37,9 @@ const variantsChild: Variants = {
 
 export default function Info() {
   const { tagName } = useParams()
-  const { data: infos, isLoading: isLoadingInfos } = useInfosByTag(tagName!);
+  const { search } = useOutletContext<{ search: string }>();
+  const [params, setParams] = useSearchParams()
+  const { data: infos, isLoading: isLoadingInfos } = useInfosByTag(tagName!, search);
   const [modalOpen, setModalOpen] = useState(false);
   const [articleId, setArticleId] = useState<string | null>(null);
 
@@ -45,16 +48,34 @@ export default function Info() {
 
   // Handlers
   const handleClick = useCallback((id: string) => {
-    setArticleId(id);
-    setModalOpen(true);
-  }, []);
+    // setArticleId(id);
+    // setModalOpen(true);
+    setParams(prev => {
+      prev.set("article", id);
+      return prev;
+    }, { replace: true });
+  }, [setParams]);
 
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
     setArticleId(null);
-  }, []);
+    setParams(prev => {
+      prev.delete("article");
+      return prev;
+    }, { replace: true });
+  }, [setParams]);
+
+  // Effects
+  useEffect(() => {
+    const articleId = params.get("article");
+
+    if (articleId) {
+      setArticleId(articleId);
+      setModalOpen(true);
+    }
+  }, [params])
   
-  if (!isLoadingInfos && infos?.length === 0) {
+  if (!isLoadingInfos && infos?.length === 0 && !search) {
     return (
       <section className="flex flex-col items-center justify-center gap-4 h-70">
         <div>A tag "{tagName}" não existe, tente novamente com outra tag</div>
@@ -65,28 +86,17 @@ export default function Info() {
   
   return (
     <>
-    <ModalWrapper
-      isOpen={modalOpen}
-      onClose={handleModalClose}
-    >
-      <>
-        <h2 className="text-2xl font-bold mb-4">{selectedInfo?.title}</h2>
-        {selectedInfo && (
-          <section className="min-h-50 overflow-auto">
-            {/* TODO: transformar o body que está em markdown para componente React */}
-            <MarkdownRenderer >
-              {selectedInfo.body}
-            </MarkdownRenderer>
-          </section>
-        )}
-      </>
-    </ModalWrapper>
+      <MarkdownModal 
+        modalOpen={modalOpen} 
+        handleModalClose={handleModalClose} 
+        selectedInfo={selectedInfo} 
+      />
       <section className="flex flex-col gap-4 h-70">
         <h2 className="text-2xl font-bold">{tagName}</h2>
         <section className="justify-start w-full">
           {isLoadingInfos ? (
             <div>Loading...</div>
-          ) : (
+          ) : infos!.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 gap-2"
               variants={variants}
@@ -103,6 +113,8 @@ export default function Info() {
                 />
               ))}
             </motion.div>
+          ) : (
+            <p className="text-center font-medium p-4">Nenhum artigo encontrado com essa busca em <em>{tagName}</em></p>
           )}
         </section>
       </section>

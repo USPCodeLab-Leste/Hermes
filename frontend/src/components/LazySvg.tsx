@@ -10,7 +10,7 @@ interface LazySvgProps extends ComponentProps<"svg"> {
 }
 
 // This hook can be used to create your own wrapper component.
-const SIMULATED_DELAY_MS = 1500;
+const SIMULATED_DELAY_MS = 0;
 
 const useLazySvgImport = (name: string) => {
   const importRef = useRef<FC<ComponentProps<"svg">> | null>(null);
