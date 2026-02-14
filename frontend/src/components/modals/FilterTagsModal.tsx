@@ -20,10 +20,11 @@ interface FilterTagsModalProps {
   isOpen: boolean;
   onClose: () => void;
   activeTags: ActiveTags;
-  handleApplyFilter: (activeTagsCopy: ActiveTags) => void;
+  onFilter: (activeTagsCopy: ActiveTags) => void;
+  onClean: () => void;
 }
 
-export function FilterTagsModal({ isOpen, onClose, activeTags, handleApplyFilter }: FilterTagsModalProps) {
+export function FilterTagsModal({ isOpen, onClose, activeTags, onFilter, onClean }: FilterTagsModalProps) {
   const { data: tagsData, isLoading: isTagsLoading } = useTags(isOpen)
   const [activeTagsCopy, setActiveTagsCopy] = useState<ActiveTags>({} as ActiveTags)
   
@@ -72,12 +73,6 @@ export function FilterTagsModal({ isOpen, onClose, activeTags, handleApplyFilter
     });
   }, [])
 
-  // Limpa todos os filtros ativos
-  const handleClean = useCallback(() => {
-    setActiveTagsCopy({} as Record<TagType, string[]>)
-    toast.success("Filtros limpos com sucesso!")
-  }, [])
-
   // ==================
   // Effects
   // ==================
@@ -114,14 +109,14 @@ export function FilterTagsModal({ isOpen, onClose, activeTags, handleApplyFilter
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <Button 
-            onClick={() => handleApplyFilter(activeTagsCopy)}
+            onClick={() => onFilter(activeTagsCopy)}
           >
 
             <span className="text-paper">Aplicar Filtros</span>
           </Button>
           <Button
             className="bg-transparent border-4 border-teal-light hover:border-teal-mid "
-            onClick={handleClean}
+            onClick={onClean}
           >
 
             <span className="">Limpar Filtros</span>

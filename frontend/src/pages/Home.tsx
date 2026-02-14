@@ -69,10 +69,16 @@ export default function Home() {
   }, [activeTags])
 
   // Aplica os filtros selecionados
-  const handleApplyFilter = useCallback((activeTagsCopy: Record<TagType, string[]>) => {
+  const onFilter = useCallback((activeTagsCopy: Record<TagType, string[]>) => {
     setIsFilterModalOpen(false)
     setActiveTags(structuredClone(activeTagsCopy))
     toast.success("Filtros aplicados com sucesso!")
+  }, [])
+
+  const onClean = useCallback(() => {
+    setIsFilterModalOpen(false)
+    setActiveTags({} as Record<TagType, string[]>)
+    toast.success("Filtros limpos com sucesso!")
   }, [])
 
   // ===================
@@ -117,7 +123,8 @@ export default function Home() {
         isOpen={isFilterModalOpen}
         onClose={handleModalFilterClose}
         activeTags={activeTags}
-        handleApplyFilter={handleApplyFilter}
+        onFilter={onFilter}
+        onClean={onClean}
       />
 
       <AppHeader>
