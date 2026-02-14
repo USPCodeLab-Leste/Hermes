@@ -5,6 +5,7 @@
 @theme {
   --color-ink: #141010;
   --color-paper: #F4F3F8;
+  --color-aux-3: #DAD8F0;
 
   --color-violet-dark: #373358;
   --color-violet-mid: #494266;
@@ -38,7 +39,7 @@ html, body {
 }
 
 html, body {
-  @apply bg-paper dark:bg-violet-mid;
+  @apply bg-aux-3 dark:bg-violet-mid;
 }
 
 body {

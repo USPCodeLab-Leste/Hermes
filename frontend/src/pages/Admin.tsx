@@ -26,7 +26,7 @@ export default function Admin() {
         <h1 className="max-w-200 w-full px-3 mt-10 mb-3 text-2xl font-bold">
           Administração
         </h1>
-        <SearchBar search={search} setSearch={setSearch} />
+        <SearchBar search={search} setSearch={setSearch} isDark={true} />
         <AdminEventsGrid eventsList={events} />
       </main>
     </>
@@ -77,12 +77,12 @@ function AdminEventsGrid({ eventsList }: { eventsList: Event[] }) {
         >
           <div className="flex flex-col items-center">
             <div className="size-14 p-2 bg-teal-light rounded-full flex items-center justify-center">
-              <PlusIcon className="size-full" />
+              <PlusIcon className="size-full text-paper" />
             </div>
-            <span className="text-[20px]/[24px] font-semibold my-3">
+            <span className="text-[20px]/[24px] font-semibold my-3 text-paper">
               Crie um novo evento
             </span>
-            <span className="text-[16px]/[18px] font-light text-wrap text-center w-6/10">
+            <span className="text-[16px]/[18px] font-light text-wrap text-center w-6/10 text-paper">
               Escreva um novo evento para o Hermes
             </span>
           </div>
