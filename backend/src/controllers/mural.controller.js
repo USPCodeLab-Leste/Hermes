@@ -1,10 +1,10 @@
-import PostModel from "../models/post.model.js";
+import ContentModel from "../models/content.model.js";
 import UserModel from "../models/user.model.js";
 
 const MAX_LIMIT = 20;
 const DEFAULT_LIMIT = 10;
 
-class muralController {
+class MuralController {
   
   async getMural(req, res) {
     try {
@@ -26,10 +26,11 @@ class muralController {
       const userTags = await UserModel.getUserTags(userId);
       const tags = userTags.map(t => t.name);
       
-      let result  = await PostModel.findAll({
+      let result  = await ContentModel.findAll({
         tags,
         limit,
-        offset
+        offset,
+        type: "event"
       });
 
       let events = result.data;
@@ -41,10 +42,11 @@ class muralController {
         const remaining = limit - events.length;
         const existingIds = events.map(e => e.id);
 
-        const extraResult = await PostModel.findAll({
+        const extraResult = await ContentModel.findAll({
           limit: remaining,
           offset: 0,
-          excludeIds: existingIds
+          excludeIds: existingIds,
+          type: "event"
         });
 
         events = [...events, ...extraResult.data];
@@ -53,11 +55,15 @@ class muralController {
         hasMore = hasMore || extraResult.hasMore;
       }
 
+      // Remove o campo type
+      events = events.map(event => {
+        const { type, ...rest } = event;
+        return rest;
+      });
+
       res.status(200).json({
-        limit,
-        offset,
-        hasMore,
-        mural: events
+        mural: events,
+        hasMore
       });
 
     } catch (err) {
@@ -68,4 +74,4 @@ class muralController {
 
 }
 
-export default new muralController();
+export default new MuralController();
