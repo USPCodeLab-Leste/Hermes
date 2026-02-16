@@ -1,11 +1,14 @@
-import express from "express";
-import eventsController from "../controllers/events.controller.js";
-import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware.js";
+import { Router } from "express";
+import BaseContentController from "../controllers/content.controller.js";
+import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware.js"
 
-const router = express.Router();
+import { createEventSchema } from "../validators/content.validator.js";
+
+const router = Router();
+const eventsController = new BaseContentController("event", createEventSchema);
 
 /**
- * @openapi
+ * @swagger
  * /events:
  *   get:
  *     summary: Lista eventos
@@ -52,10 +55,10 @@ const router = express.Router();
  *       400:
  *         description: Falha na busca de eventos
  */
-router.get("/events", eventsController.getEvents);
+router.get("/events", eventsController.get.bind(eventsController));
 
 /**
- * @openapi
+ * @swagger
  * /events:
  *   post:
  *     summary: Cria um novo evento
@@ -69,7 +72,7 @@ router.get("/events", eventsController.getEvents);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/CreateEventRequest"
+ *             $ref: '#/components/schemas/CreateEventRequest'
  *     responses:
  *       201:
  *         description: Evento criado com sucesso
@@ -77,15 +80,15 @@ router.get("/events", eventsController.getEvents);
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/EventCreatedResponse"
+ *       400:
+ *         description: Dados inválidos
  *       401:
  *         description: Não autenticado
  *       403:
  *         description: Acesso restrito a administradores
- *       400:
- *         description: Dados invalidos
  *       500:
  *         description: Falha na criação do evento
  */
-router.post("/events", authMiddleware, adminMiddleware, eventsController.postEvents);
+router.post("/events", authMiddleware, adminMiddleware, eventsController.create.bind(eventsController));
 
 export default router;

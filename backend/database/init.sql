@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS tb_user (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) DEFAULT 'student'
+    role VARCHAR(50) DEFAULT 'USER'
 );
 
 --  tabela de tags (com type e name)
@@ -18,26 +18,27 @@ CREATE TABLE IF NOT EXISTS tb_tag (
     active BOOLEAN DEFAULT TRUE
 );
 
---  tabela de Posts (unificada: Eventos e Infos)
-CREATE TABLE IF NOT EXISTS tb_post (
+--  tabela de Content
+CREATE TABLE IF NOT EXISTS tb_content (
     id UUID PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     body TEXT NOT NULL,
-    local VARCHAR(100),           -- opcional (para Infos)
-    data_inicio TIMESTAMP,        -- opcional (para Infos)
-    data_fim TIMESTAMP,           -- opcional (para Infos)
-    img_banner TEXT,
+    type VARCHAR(20) NOT NULL DEFAULT 'post',
+    local VARCHAR(100),           -- opcional
+    data_inicio TIMESTAMP,        -- opcional
+    data_fim TIMESTAMP,           -- opcional
+    img_banner TEXT,              -- opcional
     status VARCHAR(20) DEFAULT 'published',
     autor_id UUID NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (autor_id) REFERENCES tb_user(id)
 );
 
--- tabela pivo (Post <-> Tag)
-CREATE TABLE IF NOT EXISTS tb_post_tag (
-    post_id UUID REFERENCES tb_post(id) ON DELETE CASCADE,
+-- tabela pivo (content <-> Tag)
+CREATE TABLE IF NOT EXISTS tb_content_tag (
+    content_id UUID REFERENCES tb_content(id) ON DELETE CASCADE,
     tag_id UUID REFERENCES tb_tag(id) ON DELETE CASCADE,
-    PRIMARY KEY (post_id, tag_id)
+    PRIMARY KEY (content_id, tag_id)
 );
 
 -- tabela pivô (User <-> Tag) = tags favoritas

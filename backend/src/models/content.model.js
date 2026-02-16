@@ -2,10 +2,19 @@ import pool from "../config/database.js";
 import crypto from "crypto";
 import TagModel from "./tag.model.js";
 
-class PostModel {
+class ContentModel {
   
-  // pra criar um Post 
-  async create({ title, body, local, data_inicio, data_fim, img_banner, autor_id, tags }) {
+  async create({
+    title,
+    body,
+    local = null,
+    data_inicio = null,
+    data_fim = null,
+    img_banner = null,
+    autor_id,
+    tags = [],
+    type = "post"
+  }) {
     const client = await pool.connect();
 
     try {
@@ -15,9 +24,9 @@ class PostModel {
       const status = "published";
 
       const query = `
-        INSERT INTO tb_post 
-        (id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        INSERT INTO tb_content  
+        (id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id, type)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
         RETURNING *
       `;
 
@@ -30,13 +39,14 @@ class PostModel {
         data_fim,
         img_banner,
         status,
-        autor_id
+        autor_id,
+        type
       ];
 
       const result = await client.query(query, values);
-      const post = result.rows[0];
+      const content = result.rows[0];
 
-      // relação post <-> tag
+      // relação content <-> tag
       if (Array.isArray(tags) && tags.length > 0) {
 
         for (const tagName of tags) {
@@ -49,23 +59,23 @@ class PostModel {
             tag = await TagModel.create(tagName, "general");
           }
 
-          // cria relação post <-> tag
+          // cria relação content <-> tag
           await client.query(
-            `INSERT INTO tb_post_tag (post_id, tag_id)
+            `INSERT INTO tb_content_tag (content_id, tag_id)
              VALUES ($1, $2)
              ON CONFLICT DO NOTHING`,
-            [post.id, tag.id]
+            [content.id, tag.id]
           );
         }
       }
 
       await client.query("COMMIT");
 
-      return post;
+      return content;
 
     } catch (err) {
       await client.query("ROLLBACK");
-      console.error("ERROR CREATE POST:", err);
+      console.error("ERROR CREATE CONTENT:", err);
       
       throw err;
     } finally {
@@ -74,7 +84,7 @@ class PostModel {
   }
 
   // pra buscar todos (Feed) com filtros opcionais
-  async findAll({ title, tags, excludeIds, limit = 10, offset = 0 } = {}) {
+  async findAll({ title, tags, type, excludeIds, limit = 10, offset = 0 } = {}) {
     let query = `
       SELECT 
         p.*,
@@ -84,9 +94,9 @@ class PostModel {
           FILTER (WHERE t.name IS NOT NULL),
           '{}'
         ) AS tags
-      FROM tb_post p
+      FROM tb_content p
       JOIN tb_user u ON p.autor_id = u.id
-      LEFT JOIN tb_post_tag pt ON p.id = pt.post_id
+      LEFT JOIN tb_content_tag pt ON p.id = pt.content_id
       LEFT JOIN tb_tag t ON pt.tag_id = t.id
       WHERE 1=1
     `;
@@ -101,6 +111,13 @@ class PostModel {
       index++;
     }
 
+    // filtro por type
+    if (type) {
+      query += ` AND p.type = $${index}`;
+      values.push(type);
+      index++;
+    }
+
     // filtro por nomes de tags
     if (tags) {
 
@@ -109,8 +126,8 @@ class PostModel {
 
       query += `
         AND p.id IN (
-          SELECT pt.post_id
-          FROM tb_post_tag pt
+          SELECT pt.content_id
+          FROM tb_content_tag pt
           JOIN tb_tag t2 ON pt.tag_id = t2.id
           WHERE LOWER(t2.name) = ANY($${index})
         )
@@ -120,7 +137,7 @@ class PostModel {
       index++;
     }
 
-    // excluir posts já carregados
+    // excluir content já carregados
     if (excludeIds && excludeIds.length > 0) {
       query += ` AND p.id <> ALL($${index})`;
       values.push(excludeIds);
@@ -149,22 +166,13 @@ class PostModel {
     };
   }
 
-  // pra buscar um post pelo id
+  // pra buscar um content pelo id
   async findById(id) {
-    const query = `SELECT * FROM tb_post WHERE id = $1`;
+    const query = `SELECT * FROM tb_content WHERE id = $1`;
     const result = await pool.query(query, [id]);
     return result.rows[0];
   }
 
-  // escolhi manter esse metodo caso a gente precise usar separado, mas o create ja faz isso agora
-  async addTag(postId, tagId) {
-    const query = `
-      INSERT INTO tb_post_tag (post_id, tag_id)
-      VALUES ($1, $2)
-      ON CONFLICT DO NOTHING;
-    `;
-    await pool.query(query, [postId, tagId]);
-  }
 }
 
-export default new PostModel();
+export default new ContentModel();
