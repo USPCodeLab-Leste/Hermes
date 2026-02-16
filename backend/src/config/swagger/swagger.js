@@ -4,6 +4,7 @@ import { userSchemas } from "./schemas/user.schema.js";
 import { eventSchemas } from "./schemas/events.schema.js";
 import { muralSchemas } from "./schemas/mural.schema.js";
 import { tagSchemas } from "./schemas/tag.schema.js";
+import { infoSchemas  } from "./schemas/infos.schema.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -31,9 +32,10 @@ const swaggerSpec = swaggerJSDoc({
       schemas: {
         ...authSchemas,
         ...userSchemas,
-        ...eventSchemas,
         ...muralSchemas,
-        ...tagSchemas
+        ...tagSchemas,
+        ...eventSchemas,
+        ...infoSchemas
       }
     }
   },
