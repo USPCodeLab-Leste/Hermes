@@ -100,4 +100,52 @@ router.post("/login", AuthController.login);
  */
 router.get("/refresh", JWTController.refresh);
 
+/**
+ * @openapi
+ * /auth/verify-email:
+ *   get:
+ *     summary: Verificar e-mail do usuário
+ *     description: >
+ *       Valida o token de verificação enviado via query string e marca o e-mail do usuário como verificado.
+ *       O token é gerado no momento do registro e enviado por e-mail ao usuário.
+ *     tags:
+ *       - Auth
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Token de verificação enviado por e-mail
+ *     responses:
+ *       200:
+ *         description: E-mail verificado com sucesso
+ *         content:
+ *           application/json:
+ *             example:
+ *               {
+ *                 "message": "Email verificado com sucesso"
+ *               }
+ *       400:
+ *         description: Token não fornecido, inválido ou usuário não encontrado
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.get('/verify-email', AuthController.verifyEmail);
+
+// rota teste 
+// router.get('/teste-envio', async (req,res) => {
+//   try {
+//     const emailFake = "hermes@usp.br";
+//     const token = jwt.sign({email: emailFake }, process.env.JWT_EMAIL_SECRET || 'segredinho secreto'); // token qualquer so pra testar o link
+
+//     await sendVerificationEmail(emailFake,token);
+//     res.send("<h1>E-mail enviado com sucesso!<h1> <p>Verifique a url no console pra verificar o email<p>");
+
+//   } catch (error) {
+//     res.status(500).send("Houve um error ao enviar: " + error.message);
+//   }
+
+// });
+
 export default router;
