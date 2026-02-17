@@ -14,7 +14,9 @@
     "zod": "^4.2.1"
   },
   "scripts": {
-    "dev": "nodemon ./src/app.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --detectOpenHandles --forceExit"
   },
   "type": "module"
 }
