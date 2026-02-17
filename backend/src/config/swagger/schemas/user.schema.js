@@ -23,6 +23,10 @@ export const userSchemas = {
           role: {
             type: "string",
             example: "USER"
+          },
+          is_verified: {
+            type: "boolean",
+            example: "false"
           }
         },
         required: ["id", "name", "email", "role"]
@@ -59,6 +63,45 @@ export const userSchemas = {
         $ref: "#/components/schemas/UserResponse"
       }
     ]
+  },
+
+  FollowTagRequest: {
+    type: "object",
+    required: ["tagId"],
+    properties: {
+      tagId: {
+        type: "string",
+        format: "uuid",
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      }
+    }
+  },
+
+  FollowTagResponse: {
+    type: "object",
+    properties: {
+      message: {
+        type: "string",
+        example: "Tag seguida com sucesso"
+      },
+      tagId: {
+        type: "string",
+        format: "uuid",
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      }
+    },
+    required: ["message", "tagId"]
+  },
+
+  UnfollowTagResponse: {
+    type: "object",
+    properties: {
+      message: {
+        type: "string",
+        example: "Tag removida das favoritas com sucesso"
+      }
+    },
+    required: ["message"]
   }
 
 };

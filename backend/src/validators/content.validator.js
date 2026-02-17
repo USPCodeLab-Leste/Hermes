@@ -1,10 +1,36 @@
 import { z } from "zod";
 
-export const createEventSchema = z.object({
+const baseContentSchema = {
   title: z
     .string()
     .min(3, "Título precisa ter pelo menos 3 caracteres")
     .max(100),
+
+  body: z
+    .string()
+    .min(10, "Descrição precisa ter pelo menos 10 caracteres")
+    .max(1000),
+
+  tags: z
+    .array(
+      z.string().min(1, "Tag não pode ser vazia")
+    )
+    .optional(),
+};
+
+export const createInfoSchema = z.object({
+  ...baseContentSchema,
+
+  local: z
+    .string()
+    .min(3, "Local precisa ter pelo menos 3 caracteres")
+    .max(100)
+    .optional(),
+
+}).strict();
+
+export const createEventSchema = z.object({
+  ...baseContentSchema,
 
   data_inicio: z
     .string()
@@ -24,19 +50,6 @@ export const createEventSchema = z.object({
     .string()
     .min(3, "Local precisa ter pelo menos 3 caracteres")
     .max(100),
-
-  body: z
-    .string()
-    .min(10, "Descrição precisa ter pelo menos 10 caracteres")
-    .max(1000)
-    .optional(),
-
-  tags: z
-    .array(
-      z.string().min(1, "Tag não pode ser vazia")
-    )
-    .min(1, "Evento precisa ter pelo menos uma tag")
-    .optional(),
 
   img_banner: z
     .url("Link inválido")

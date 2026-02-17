@@ -9,6 +9,7 @@ import swaggerSpec from "./config/swagger/swagger.js";
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import eventsRoutes from "./routes/events.route.js";
+import infosRoutes from "./routes/infos.route.js";
 import muralRoutes from "./routes/mural.route.js";
 import tagRoutes from "./routes/tag.route.js";
 
@@ -22,6 +23,7 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/auth", authRoutes);
 app.use(userRoutes);
 app.use(eventsRoutes);
+app.use(infosRoutes);
 app.use(muralRoutes);
 app.use(tagRoutes);
 

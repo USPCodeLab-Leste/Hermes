@@ -5,7 +5,12 @@ class TagModel {
   
   // pra buscar tag pelo nome
   async findByName(name) {
-    const query = `SELECT * FROM tb_tag WHERE LOWER(name) = LOWER($1)`;
+    const query = `
+      SELECT * 
+      FROM tb_tag 
+      WHERE LOWER(name) = LOWER($1)
+      LIMIT 1
+    `;
     const result = await pool.query(query, [name]);
     return result.rows[0];
   }

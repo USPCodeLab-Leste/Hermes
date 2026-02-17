@@ -88,6 +88,53 @@ class UserModel {
     const result = await pool.query(query, values);
     return result.rows[0];
   }
+
+  // Seguir tag
+  async followTag(userId, tagId) {
+    const query = `
+      INSERT INTO tb_user_tag (user_id, tag_id)
+      VALUES ($1, $2)
+      ON CONFLICT (user_id, tag_id) DO NOTHING
+      RETURNING user_id, tag_id
+    `;
+
+    const result = await pool.query(query, [userId, tagId]);
+    return result.rows[0];
+  }
+
+  // Deixar de seguir tag
+  async unfollowTag(userId, tagId) {
+    const query = `
+      DELETE FROM tb_user_tag
+      WHERE user_id = $1 AND tag_id = $2
+    `;
+
+    await pool.query(query, [userId, tagId]);
+  }
+
+  // Buscar tags favoritas do usuário
+  async getUserTags(userId) {
+    const query = `
+      SELECT t.id, t.name, t.type
+      FROM tb_tag t
+      JOIN tb_user_tag ut ON ut.tag_id = t.id
+      WHERE ut.user_id = $1 AND t.active = TRUE
+    `;
+
+    const result = await pool.query(query, [userId]);
+    return result.rows;
+  }
+
+  async verifyUserEmail(id) {
+    const sql = `
+      UPDATE tb_user
+      SET is_verified = TRUE
+      WHERE id = $1
+      RETURNING id, email, is_verified
+    `;
+    const result = await pool.query(sql, [id]);
+    return result.rows[0];
+  }
   
 }
 
