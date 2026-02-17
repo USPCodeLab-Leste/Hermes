@@ -17,6 +17,7 @@ import { MarkdownModal } from "../../components/modals/MarkdownModal";
 
 // Hooks
 import { useInfosByType } from "../../hooks/infos/useInfosByType";
+import { useInfosByTitle } from "../../hooks/infos/useInfos";
 
 interface InfoTypeProps {
   isLoading: boolean;
@@ -147,7 +148,7 @@ interface InfoSearchResultsProps {
 }
 
 const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
-  const { data: infos, isLoading } = useInfosByType(type, search);
+  const { data: infos, isLoading } = useInfosByTitle(search);
 
   return (
     <motion.section className="flex flex-col gap-4">
@@ -189,7 +190,6 @@ const InfoSearchResultCards = ({ infos }: { infos: Info[] }) => {
       />
       <motion.div
         className="grid grid-cols-1 gap-4"
-        key="info-search-result-cards"
         variants={infoCardsVariants}
         initial="hidden"
         animate="visible"
@@ -216,14 +216,14 @@ const InfoSearchResultCard = ({
   info,
   handleClick,
 }: InfoSearchResultCardProps) => {
-  const tagName = info.tags[0].name;
+  const { name: tagName, type: tagType } = info.tags[0];
   const { search } = useLocation();
 
   return (
     <motion.div className="flex flex-row gap-2 items-center">
       <SearchIcon />
       <button
-        className="w-full flex overflow-hidden font-medium cursor-pointer hover:underline text-left"
+        className="flex-1 flex overflow-hidden font-medium cursor-pointer hover:underline text-left"
         onClick={() => handleClick(info)}
       >
         <Highlighter
@@ -234,11 +234,11 @@ const InfoSearchResultCard = ({
           textToHighlight={info.title}
         />
       </button>
-      <div>
-        <Link to={{ pathname: tagName, search }} className="transition-colors">
-          <span className="capitalize hover:underline">/{tagName}</span>
-        </Link>
-      </div>
+      <Link to={{ pathname: `/info/${tagType}/${tagName}`, search }} className="transition-colors text-right flex flex-col hover:underline text-sm text-ink/75 dark:text-paper/75">
+        {/* <span></span> */}
+        <span className="capitalize">{tagType}/</span>
+        <span className="capitalize">{tagName}</span>
+      </Link>
     </motion.div>
   );
 };

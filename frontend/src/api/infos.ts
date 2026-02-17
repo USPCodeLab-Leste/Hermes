@@ -6,6 +6,11 @@ export function getInfos() {
   return fakeRequest(infos)
 }
 
+// Retorna as informações filtradas por título
+export function getInfosByTitle(infoTitle: string) {
+  return fakeRequest(infos.filter(info => info.title.toLowerCase().includes(infoTitle.toLowerCase())))
+}
+
 // Retorna as informações filtradas por tag
 export function getInfosByTag(tagName: string, infoTitle?: string) {
   return fakeRequest(infos.filter(info => {
