@@ -1,21 +1,22 @@
 import nodemailer from 'nodemailer';
 
+const pass = process.env.SMTP_PASS;
+
 export async function sendVerificationEmail(userEmail,token) {
-    const testAccount = await new nodemailer.createTestAccount; // conta teste automatica ethereal
 
     const transporter = await new nodemailer.createTransport({
-        host: testAccount.smtp.host,
-        port: testAccount.smtp.port,
-        secure: testAccount.smtp.secure,
+        host: "smtp.resend.com",
+        port: 465,
+        secure: true,
         auth: {
-            user: testAccount.user,
-            pass: testAccount.pass,
+            user: 'resend',
+            pass: pass,
         },
     });
 
-    const verificationLink = `https://localhost:3000/auth/verify-email?token=${token}`;
+    const verificationLink = `http://localhost:3000/auth/verify-email?token=${token}`;
     const info = await transporter.sendMail({
-        from: '"Sistema Hermes" <no-reply@hermes.com>',
+        from: '"Sistema Hermes" <no-reply@hermes.kauamoreno.dev>',
         to: userEmail,
         subject: "Ative sua conta no Hermes",
         html: `
@@ -30,5 +31,4 @@ export async function sendVerificationEmail(userEmail,token) {
     });
 
     console.log("Email enviado. ID: %s", info.messageId);
-    console.log("Visualize o email por aqui: %s", nodemailer.getTestMessageUrl(info));
 }
