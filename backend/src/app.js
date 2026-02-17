@@ -32,3 +32,5 @@ app.listen(PORT, () => {
   console.log(` Documentation  -> http://localhost:${PORT}/docs`);
   console.log(`------------------------------------------------`);
 });
+
+export default app;
