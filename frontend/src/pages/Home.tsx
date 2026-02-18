@@ -22,13 +22,14 @@ import FilterIcon from "../assets/icons/filter.svg?react"
 import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
 import { useSharedSearch } from "../hooks/useSharedSearch"
 import { FilterTagsModal } from "../components/modals/FilterTagsModal"
+import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton"
 
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useSharedSearch()
   const [params, setParams] = useSearchParams()
   const {activeTags, setActiveTags, tagsFlatten} = useActiveTags()
-  const { data: events, isLoading: isLoadingEvents } = useEvents(searchQuery, tagsFlatten)
+  const { data: events, isLoading: isLoadingEvents, isTyping } = useEvents(searchQuery, tagsFlatten)
 
   // Modal States
   const [isCardModalOpen, setIsCardModalOpen] = useState(false)
@@ -148,17 +149,23 @@ export default function Home() {
       </AppHeader>
 
       <main className="main-app">
-        {isLoadingEvents ? <p>Carregando eventos...</p> : events!.length > 0 ? (
-          <>
-            <section className="m-auto mt-10 flex flex-col items-center gap-8">
-              {events?.map((event) => (
-                <EventCard key={event.id} event={event} selectEvent={handleEventCardClick}/>
+        <section className={`m-auto mt-10 flex flex-col items-center gap-8`}>
+          {isLoadingEvents ? (
+            <>
+              {[1, 2, 3, 4].map((i) => (
+                <EventCardSkeleton key={`event-card-skeleton-${i}`} />
               ))}
-            </section>
-          </>
-        ) : (
-          <p className="text-center font-medium p-4">Nenhum evento encontrado com essa busca.</p>
-        )}
+            </>
+          ) : events && events.length > 0 ? (
+            <>
+                {events?.map((event) => (
+                  <EventCard key={event.id} event={event} selectEvent={handleEventCardClick} isFetching={isTyping}/>
+                ))}
+            </>
+          ) : (
+            <p className="text-center font-medium p-4">Nenhum evento encontrado com essa busca.</p>
+          )}
+        </section>
       </main>
     </>
   )

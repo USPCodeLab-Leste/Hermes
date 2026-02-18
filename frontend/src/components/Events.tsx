@@ -18,6 +18,7 @@ interface EventsProps {
   variants?: Variants;
   event: Event;
   selectEvent: (id: string) => void;
+  isFetching?: boolean;
 }
 interface EventCardProps extends EventsProps {
   isAdmin?: boolean;
@@ -30,22 +31,24 @@ const defaultEventVariants: Variants = {
   visible: { opacity: 1, y: 0, scale: 1 },
 }
 
-export function EventCard({ event, selectEvent, variants, isAdmin, editFunction, deleteFunction }: EventCardProps) {
+export function EventCard({ event, selectEvent, variants, isAdmin, editFunction, deleteFunction, isFetching }: EventCardProps) {
   if (isAdmin) {
     return (  
-      <div className="flex flex-col gap-2">
-        <EventCardContent variants={variants} event={event} selectEvent={selectEvent} />
-        {isAdmin && (
-          <div className="grid grid-cols-2 gap-2">
-            <EditButton label="Editar" Icon={PenIcon} onClick={editFunction!} className="bg-teal-light/70 hover:bg-teal-light/80" />
-            <EditButton label="Excluir" Icon={TrashIcon} onClick={deleteFunction!} />
-          </div>
-        )}
+      <div className={`flex flex-col gap-2 ${isFetching ? 'pointer-events-none opacity-50' : ''}`}>
+        <EventCardContent variants={variants} event={event} selectEvent={selectEvent} isFetching={isFetching} />
+        <div className="grid grid-cols-2 gap-2">
+          <EditButton label="Editar" Icon={PenIcon} onClick={editFunction!} className="bg-teal-light/70 hover:bg-teal-light/80" />
+          <EditButton label="Excluir" Icon={TrashIcon} onClick={deleteFunction!} />
+        </div>
       </div>
     )
   }
   
-  return <EventCardContent variants={variants} event={event} selectEvent={selectEvent} />
+  return (
+    <div className={`w-full flex justify-center items-center ${isFetching ? 'pointer-events-none opacity-50' : ''}`}>
+      <EventCardContent variants={variants} event={event} selectEvent={selectEvent} />
+    </div>
+  )
 }
 
 const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
