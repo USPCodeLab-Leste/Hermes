@@ -99,6 +99,7 @@ class PostModel {
 
   // pra buscar um post pelo id
   async findById(id) {
+    /* Só pega uma das tags */
     let query = `
     SELECT 
     p.id,

@@ -38,7 +38,7 @@ export const eventSchemas = {
         type: "string",
         example: "Hermes"
       },
-      tag: {
+      tags: {
         type: "array",
         items: {
           type: "string"

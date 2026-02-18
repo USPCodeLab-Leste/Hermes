@@ -104,44 +104,53 @@ class eventsController {
         return res.status(400).json({error: "Error to patch!"});
       }
 
-      return res.status(200).json({results: patchResponse});
+      return res.status(200).json({message: "Evento atualizado com sucesso!"});
 
     } catch (err) {
-      console.error(err);
+      return err;
     }
   }
 
   async getEventId(req, res) {
-    const id = req.params.id;
+    try{
+      const id = req.params.id;
 
-    let response;
+      let response;
 
-    if(id) response = await PostModel.findById(id);
-    else return res.status(404).json({error: "ID não informado"});
+      if(id) response = await PostModel.findById(id);
+      else return res.status(404).json({error: "ID não informado"});
 
-    if(!response){
-      console.error("Error to get event.", response);
-      return res.status(404).json({error: "Event Not Found!"});
+      if(!response){
+        console.error("Error to get event.", response);
+        return res.status(404).json({error: "Event Not Found!"});
+      }
+      return res.status(200).json(response);
+    } catch (err) {
+      console.error(err);
+      return err;
     }
-    return res.status(200).json(response);
   }
 
   async deleteEvent(req, res) {
-    const id = req.params.id;
-    const id_user = req.user.id;
+    try {
+      const id = req.params.id;
+      const id_user = req.user.id;
 
-    let response;
+      let response;
 
-    if(id && id_user) response = PostModel.deleteEvent(id, id_user);
-    else return res.status(400).json({error: "ID não informado"});
+      if(id && id_user) response = PostModel.deleteEvent(id, id_user);
+      else return res.status(400).json({error: "ID não informado"});
 
-    if(!response){
-      console.error("Error to delete events.", response);
-      return res.status(400).json({error: "Error to delete events"});
+      if(!response){
+        console.error("Error to delete events.", response);
+        return res.status(400).json({error: "Error to delete events"});
 
+      }
+
+      return res.status(200).json({message: "Evento deletado com sucesso!"});
+    } catch (err) {
+      return err;
     }
-
-    return res.status(200).json(response);
 
   }
   
