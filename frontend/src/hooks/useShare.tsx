@@ -37,7 +37,7 @@ export function useShare() {
     // Fallback desktop
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Link copiado!");
+      toast.success("Link copiado com sucesso!");
       onSuccess?.();
     } catch (error) {
       toast.error("Não foi possível copiar o link.");
