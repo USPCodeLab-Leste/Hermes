@@ -8,9 +8,8 @@ import { useInfosByTag } from "../../hooks/infos/useInfosByTag";
 // Components
 import PerfilButton from "../../components/PerfilButton";
 import { LazySvg } from "../../components/LazySvg";
-import { ModalWrapper } from "../../components/modals/Modal";
-import MarkdownRenderer from "../../components/MarkdownRenderer";
 import { MarkdownModal } from "../../components/modals/MarkdownModal";
+import { PerfilButtonSkeleton } from "../../components/skeletons/PerfilButtonSkeleton";
 
 const variants: Variants = {
   visible: { 
@@ -39,7 +38,7 @@ export default function Info() {
   const { tagName } = useParams()
   const { search } = useOutletContext<{ search: string }>();
   const [params, setParams] = useSearchParams()
-  const { data: infos, isLoading: isLoadingInfos } = useInfosByTag(tagName!, search);
+  const { data: infos, isLoading: isLoadingInfos, isTyping } = useInfosByTag(tagName!, search);
   const [modalOpen, setModalOpen] = useState(false);
   const [articleId, setArticleId] = useState<string | null>(null);
 
@@ -93,10 +92,20 @@ export default function Info() {
       />
       <section className="flex flex-col gap-4 h-70">
         <h2 className="text-2xl font-bold">{tagName}</h2>
-        <section className="justify-start w-full">
+        <section 
+          className="justify-start w-full"
+          style={{
+            opacity: isTyping ? 0.5 : 1,
+            pointerEvents: isTyping ? "none" : "auto"
+          }}
+        >
           {isLoadingInfos ? (
-            <div>Loading...</div>
-          ) : infos!.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {Array.from({ length: 7 }).map((_, index) => (
+                <PerfilButtonSkeleton key={`info-card-skeleton-${index}`} />
+              ))}
+            </div>
+          ) : (infos && infos.length > 0) ? (
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 gap-2"
               variants={variants}

@@ -18,6 +18,7 @@ import { MarkdownModal } from "../../components/modals/MarkdownModal";
 // Hooks
 import { useInfosByType } from "../../hooks/infos/useInfosByType";
 import { useInfosByTitle } from "../../hooks/infos/useInfos";
+import { useDebounce } from "../../hooks/useDebounce";
 
 interface InfoTypeProps {
   isLoading: boolean;
@@ -148,29 +149,34 @@ interface InfoSearchResultsProps {
 }
 
 const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
-  const { data: infos, isLoading } = useInfosByTitle(search);
+  const debounceSearch = useDebounce(search);
+  const { data: infos, isLoading, isFetching } = useInfosByTitle(debounceSearch);
+
+  const isTyping = search !== debounceSearch || isFetching;
 
   return (
     <motion.section className="flex flex-col gap-4">
       <p className="mb-2">
-        Você está buscando por <em>{search}</em>
+        Você está buscando por <em>{debounceSearch}</em>
       </p>
       {isLoading ? (
         <>Carregando resultados...</>
       ) : (
-        <>
+        <div className={`${isTyping ? "pointer-events-none opacity-50" : ""}`}>
           {infos && infos.length > 0 ? (
-            <InfoSearchResultCards infos={infos} />
+            <>
+              <InfoSearchResultCards infos={infos} search={search} />
+            </>
           ) : (
             <p className="text-center font-medium p-4">Nenhum artigo encontrado com essa busca em <em className="capitalize">{type}</em></p>
           )}
-        </>
+        </div>
       )}
     </motion.section>
   );
 };
 
-const InfoSearchResultCards = ({ infos }: { infos: Info[] }) => {
+const InfoSearchResultCards = ({ infos, search }: { infos: Info[]; search: string }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedInfo, setSelectedInfo] = useState<Info | undefined>(undefined);
 
@@ -200,6 +206,7 @@ const InfoSearchResultCards = ({ infos }: { infos: Info[] }) => {
             key={`info-search-result-card-${index}`}
             info={info}
             handleClick={handleClick}
+            search={search}
           />
         ))}
       </motion.div>
@@ -210,14 +217,15 @@ const InfoSearchResultCards = ({ infos }: { infos: Info[] }) => {
 interface InfoSearchResultCardProps {
   info: Info;
   handleClick: (info: Info) => void;
+  search: string;
 }
 
 const InfoSearchResultCard = ({
   info,
   handleClick,
+  search
 }: InfoSearchResultCardProps) => {
   const { name: tagName, type: tagType } = info.tags[0];
-  const { search } = useLocation();
 
   return (
     <motion.div className="flex flex-row gap-2 items-center">
@@ -229,12 +237,12 @@ const InfoSearchResultCard = ({
         <Highlighter
           className="inline-block w-full whitespace-nowrap text-ellipsis overflow-hidden"
           highlightClassName="text-ink bg-violet-light rounded-sm"
-          searchWords={[search.replace("?q=", "")]}
+          searchWords={[search]}
           autoEscape={true}
           textToHighlight={info.title}
         />
       </button>
-      <Link to={{ pathname: `/info/${tagType}/${tagName}`, search }} className="transition-colors text-right flex flex-col hover:underline text-sm text-ink/75 dark:text-paper/75">
+      <Link to={{ pathname: `/info/${tagType}/${tagName}`, search: `?q=${search}` }} className="transition-colors text-right flex flex-col hover:underline text-sm text-ink/75 dark:text-paper/75">
         {/* <span></span> */}
         <span className="capitalize">{tagType}/</span>
         <span className="capitalize">{tagName}</span>

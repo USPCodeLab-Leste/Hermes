@@ -35,7 +35,7 @@ import Estudos from './pages/info/Estudos';
 import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
-import Info from './pages/info/Info'
+import Info from './pages/info/InfoTag'
 import Admin from './pages/Admin'
 
 // Components
