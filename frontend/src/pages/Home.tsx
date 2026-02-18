@@ -5,6 +5,7 @@ import { toast } from "react-toastify"
 // Hooks
 import { useEvents } from "../hooks/events/useEvents"
 import { useActiveTags } from "../hooks/tags/useActiveTags"
+import { useSharedSearch } from "../hooks/useSharedSearch"
 
 // Types
 import type { ActiveTags, GenericTag } from "../types/tag"
@@ -16,13 +17,12 @@ import { EventCard, RemoveFilterTags } from "../components/Events"
 import SearchBar from "../components/SearchBar"
 import { SelectedEventDetails } from "../components/SelectedEventDetails"
 import { SelectedEventDetailsSkeleton } from "../components/skeletons/SelectedEventDetailsSkeleton"
+import { FilterTagsModal } from "../components/modals/FilterTagsModal"
+import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton"
 
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
 import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
-import { useSharedSearch } from "../hooks/useSharedSearch"
-import { FilterTagsModal } from "../components/modals/FilterTagsModal"
-import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton"
 
 
 export default function Home() {
@@ -159,9 +159,12 @@ export default function Home() {
             )}
           </button>
         </div>
-        <div className="self-start w-full">
-          <RemoveFilterTags tags={activeTagsValues} onClick={handleRemoveFilterTag}/>
-        </div>
+        {activeTagsValues.length > 0 && (
+          <div className="self-start w-full">
+            <RemoveFilterTags tags={activeTagsValues} onClick={handleRemoveFilterTag}/>
+          </div>
+
+        )}
       </AppHeader>
 
       <main className="main-app">
@@ -179,7 +182,7 @@ export default function Home() {
                 ))}
             </>
           ) : (
-            <p className="text-center font-medium p-4">Nenhum evento encontrado com essa busca.</p>
+            <p className="text-center font-medium p-4" style={{opacity: isTyping ? 0.5 : 1}}>Nenhum evento encontrado com essa busca.</p>
           )}
         </section>
       </main>

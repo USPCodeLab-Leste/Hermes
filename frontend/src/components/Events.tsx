@@ -1,5 +1,5 @@
 import { useCallback, useState, memo } from "react"
-import { motion, stagger, type Variants } from "framer-motion"
+import { AnimatePresence, motion, stagger, type Variants } from "framer-motion"
 
 // Icons
 import PlusIcon from "../assets/icons/plus.svg?react"
@@ -100,9 +100,13 @@ const EditButton = ({label, Icon, onClick, className}: {label: string; Icon: Rea
 
 const tagsVariants: Variants = {
   visible: {
+    opacity: 1,
     transition: {
       delayChildren: stagger(0.1),
     }
+  },
+  hidden: {
+    opacity: 0,
   }
 }
 
@@ -167,13 +171,20 @@ interface RemoveFilterTagsProps {
 
 export function RemoveFilterTags({ tags, className, onClick }: RemoveFilterTagsProps) {
   return (
+    
     <motion.div 
       className={`flex flex-row gap-2 flex-wrap ${className}`}
       variants={tagsVariants}
+      initial="hidden"
+      animate={tags.length > 0 ? 'visible' : 'hidden'}
+      exit="hidden"
+      layout
     >
-      {tags.map((tag, index) => (
-        <RemoveFilterTag key={index} tag={tag} onClick={onClick}  />
-      ))}
+      <AnimatePresence mode="popLayout">
+        {tags.map(tag => (
+          <RemoveFilterTag key={tag.id} tag={tag} onClick={onClick}  />
+        ))}
+      </AnimatePresence>
     </motion.div>
   )
 }
@@ -261,6 +272,7 @@ const TagWrapper = ({ children, canSelect, className, variants, onClick, disable
       className={`px-2 md:px-3 py-2 rounded-full text-[12px] md:text-sm font-medium text-paper transition-colors
                  inline-flex items-center justify-center gap-1 min-w-12 shadow-md shadow-black/20 bg-teal-light 
                  ${className ?? ''}`}
+      layout
       variants={variants} 
       onClick={onClick}
       disabled={disabled}

@@ -91,7 +91,15 @@ export default function Info() {
         selectedInfo={selectedInfo} 
       />
       <section className="flex flex-col gap-4 h-70">
-        <h2 className="text-2xl font-bold">{tagName}</h2>
+        <motion.h2 
+          className="text-2xl font-bold" 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          aria-label={`Tag ${tagName}`}
+        >
+          {tagName}
+        </motion.h2>
         <section 
           className="justify-start w-full"
           style={{
