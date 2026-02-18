@@ -6,9 +6,9 @@ import { useTags } from "../../hooks/tags/useTags"
 
 // Componentes
 import { ModalWrapper } from "./Modal"
-import { Tags } from "../Events"
+import { SelectTags } from "../Events"
 import { GenericButton as Button } from "../GenericButton"
-import { type ActiveTags, type TagType } from "../../types/tag"
+import { type GenericTag, type ActiveTags } from "../../types/tag"
 import { FilterTagSkeleton } from "../skeletons/FilterTagSkeleton"
 
 const filterVariants: Variants = {
@@ -51,26 +51,18 @@ export function FilterTagsModal({ isOpen, onClose, activeTags, onFilter, onClean
   // ==================
 
   // Adiciona ou remove tag dos filtros ativos no modal
-  const handleFilterTagClick = useCallback((tag: { name?: string; type?: TagType }) => {
-    setActiveTagsCopy((prevActiveTags) => {
-      const tagType = tag.type!;
-      const tagName = tag.name!;
-      const currentTags = prevActiveTags[tagType] || [];
-      let updatedTags: string[];
-
-      if (currentTags.includes(tagName)) {
-        // Remover tag
-        updatedTags = currentTags.filter((name) => name !== tagName);
+  const handleFilterTagClick = useCallback((tag: GenericTag) => {
+    setActiveTagsCopy((prev) => {
+      if (prev[tag.id]) {
+        const { [tag.id]: _, ...rest } = prev;
+        return rest;
       } else {
-        // Adicionar tag
-        updatedTags = [...currentTags, tagName];
+        return {
+          ...prev,
+          [tag.id]: tag,
+        }
       }
-
-      return {        
-        ...prevActiveTags,
-        [tagType]: updatedTags,
-      };
-    });
+    })
   }, [])
 
   // ==================
@@ -103,7 +95,7 @@ export function FilterTagsModal({ isOpen, onClose, activeTags, onFilter, onClean
                   animate="visible"
                 >
                   <h3 className="capitalize font-medium mb-1 text-ink/75 dark:text-paper/75">{type}</h3>
-                  <Tags tags={tags} activeTags={activeTagsCopy} canSelect={true} onClick={handleFilterTagClick} />
+                  <SelectTags tags={tags} activeTags={activeTagsCopy} canSelect={true} onClick={handleFilterTagClick} />
                 </motion.div>
               ))}
             </>
