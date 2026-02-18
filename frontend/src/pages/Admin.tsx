@@ -16,9 +16,10 @@ import { useMyEvents } from "../hooks/events/useMyEvents";
 import { useSharedSearch } from "../hooks/useSharedSearch";
 import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton";
 import Skeletons from "../components/skeletons/Skeletons";
+import { motion } from "framer-motion";
 
 export default function Admin() {
-  const [search, setSearch] = useSharedSearch();
+  const {value: search, setValue: setSearch} = useSharedSearch()
   const { data: events, isLoading, isTyping } = useMyEvents(search);
 
   return (
@@ -76,9 +77,10 @@ function AdminEventsGrid({ eventsList, isLoading, isTyping }: AdminEventsGridPro
       </ModalWrapper>
 
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-        <div
+        <motion.div
+          whileHover={{y: -8}}
           className={`aspect-5/3 w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col
-                        bg-center justify-center items-center cursor-pointer hover:-translate-y-2 shadow-lg hover:shadow-2xl
+                        bg-center justify-center items-center cursor-pointer shadow-lg hover:shadow-2xl
                         outline-2 hover:outline-paper focus:outline-paper outline-transparent transition-all`}
           onClick={handleNewEvent}
           aria-label="Adicionar novo evento"
@@ -94,7 +96,7 @@ function AdminEventsGrid({ eventsList, isLoading, isTyping }: AdminEventsGridPro
               Escreva um novo evento para o Hermes
             </span>
           </div>
-        </div>
+        </motion.div>
         {isLoading ? (
           <>
             {Array.from({ length: 5 }).map((_, i) => (
