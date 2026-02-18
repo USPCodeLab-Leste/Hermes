@@ -1,6 +1,5 @@
 import { motion, type Variants } from "framer-motion"
 import { useState, useMemo, useEffect, useCallback } from "react"
-import { toast } from "react-toastify"
 
 // Hooks
 import { useTags } from "../../hooks/tags/useTags"
@@ -10,6 +9,7 @@ import { ModalWrapper } from "./Modal"
 import { Tags } from "../Events"
 import { GenericButton as Button } from "../GenericButton"
 import { type ActiveTags, type TagType } from "../../types/tag"
+import { FilterTagSkeleton } from "../skeletons/FilterTagSkeleton"
 
 const filterVariants: Variants = {
   hidden: { opacity: 0 },
@@ -90,12 +90,14 @@ export function FilterTagsModal({ isOpen, onClose, activeTags, onFilter, onClean
     >
       <section className="flex flex-col gap-4">
         <h2 className="font-bold text-xl text-center">Filtros de Busca</h2>
-        <div className="max-h-70 overflow-y-auto">
-          {isTagsLoading ? <p>Carregando tags...</p> : (
+        <div className="max-h-70 overflow-y-auto flex flex-col gap-6">
+          {isTagsLoading ? (
+            <FilterTagSkeleton />
+          ) : (
             <>
               {tagsEntries.map(([type, tags]) => (
                 <motion.div 
-                  className="mb-6" key={`${type}-tags-filter`}
+                  key={`${type}-tags-filter`}
                   variants={filterVariants}
                   initial="hidden"
                   animate="visible"
