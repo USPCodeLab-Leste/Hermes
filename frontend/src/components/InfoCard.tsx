@@ -20,11 +20,12 @@ export const InfoCard = ({ card, variants }: InfoCardProps) => {
   return (
     <motion.div
       variants={variants}
+      whileHover={{y: -8}}
     >
       <Link
         className={`p-4 bg-violet-light rounded-2xl aspect-square flex flex-col justify-between
                     items-baseline shadow-lg outline-2 outline-transparent transition-all
-                    ${isDisabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer hover:-translate-y-2 hover:shadow-2xl hover:outline-paper focus:outline-paper'}`
+                    ${isDisabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer hover:shadow-2xl hover:outline-paper focus:outline-paper'}`
                   }
         to={isDisabled ? '.' : { pathname: card.cardName, search }}
         aria-disabled={isDisabled}
