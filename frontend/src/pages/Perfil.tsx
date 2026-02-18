@@ -1,10 +1,16 @@
+import { type MouseEventHandler, type SVGProps, type ComponentType, useMemo, useCallback } from "react";
+import { motion, stagger, type Variants } from "framer-motion";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { auth } from "../services/auth";
+
+// Components
+import PerfilButton from "../components/PerfilButton";
+
+// Hooks
 import { useSignOut } from "../hooks/auth/useSignOut";
 import { useTheme } from "../hooks/useTheme";
-import { auth } from "../services/auth";
-import PerfilButton from "../components/PerfilButton";
-import { type MouseEventHandler, type SVGProps, type ComponentType, useMemo, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMe } from "../hooks/useMe";
+import { useUserMotionPreference } from "../hooks/useUserMotionPreference";
 
 // icones
 import UserIcon from "../assets/icons/user.svg?react";
@@ -16,7 +22,8 @@ import PasswordIcon from "../assets/icons/lock.svg?react"
 import LogoutIcon from "../assets/icons/tabler_logout.svg?react"
 import LightModeIcon from "../assets/icons/sun.svg?react"
 import PencilIcon from "../assets/icons/pencil.svg?react"
-import { motion, stagger, type Variants } from "framer-motion";
+import PlayIcon from "../assets/icons/play.svg?react"
+import PauseIcon from "../assets/icons/pause.svg?react"
 
 const variants: Variants = {
   visible: { 
@@ -53,6 +60,7 @@ export default function Perfil() {
   const { theme , toggleTheme } = useTheme();
   const { data: user } = useMe();
   const isDark = theme === 'dark';
+  const { isReducedMotion, togglePreference } = useUserMotionPreference();
 
   // Search Params
   const [searchParams] = useSearchParams();
@@ -63,6 +71,7 @@ export default function Perfil() {
   const handleSenha = useCallback(() => console.log("Senha ok"), []);
   const handleNotificacoes = useCallback(() => console.log("Notificacoes"), []);
   const handleDarkMode = useCallback(() => toggleTheme(), [toggleTheme]);
+  const handleReducedMotionToggle = useCallback(() => togglePreference(), [togglePreference]);
   const handleBug = useCallback(() => {}, []);
   const handleInfo = useCallback(() => {}, []);
   const handleAdmin = useCallback(() => navigate({ pathname: "admin", search }), [navigate, search]);
@@ -73,17 +82,17 @@ export default function Perfil() {
     { label: "Alterar Senha", icon: PasswordIcon, onClick: handleSenha },
     { label: "Notificações", icon: BellIcon, onClick: handleNotificacoes },
     { label: isDark ? "Modo Claro" : "Modo Escuro", icon: isDark ? LightModeIcon : DarkModeIcon, onClick: handleDarkMode },
+    { label: isReducedMotion ? "Ativar Animações" : "Desativar Animações", icon: isReducedMotion ? PlayIcon : PauseIcon, onClick: handleReducedMotionToggle },
     { label: "Relatar Bugs", icon: BugIcon, onClick: handleBug },
     { label: "Informações", icon: InfoIcon, onClick: handleInfo },
     { label: "Sair", icon: LogoutIcon, onClick: signOut },
-  ].map((action, index) => ({ ...action, id: index })), [isDark, user?.role, handleDarkMode, handleBug, handleInfo, handleNotificacoes, handlePerfil, handleSenha, handleAdmin, signOut]);
+  ].map((action, index) => ({ ...action, id: index })), [isDark, user?.role, handleDarkMode, handleReducedMotionToggle, handleBug, handleInfo, handleNotificacoes, handlePerfil, handleSenha, handleAdmin, signOut]);
+
 
   return (
     <>
-      <header className="flex items-center flex-col text-paper dark:text-paper bg-violet-dark  mb-6 pb-7.5 gap-5 rounded-b-2xl">
-        <div className="mt-6 mp-5 mx-4 flex justify-center">
-          <h6 className="text-[20px]/[24px] ">Perfil</h6>
-        </div>
+      <header className="flex items-center flex-col text-paper dark:text-paper bg-violet-dark mb-6 py-12 gap-5 rounded-b-2xl">
+        <h6 className="text-[20px]/[24px] text-center">Perfil</h6>
         {/* <img src="" alt="iamgem de perfil" />*/}
         <div className="flex flex-col justify-center items-center">
           {user?.name ? (

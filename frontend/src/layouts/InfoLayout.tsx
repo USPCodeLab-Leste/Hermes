@@ -50,7 +50,7 @@ const NavItem = ({ to, label }: { to: string; label: string }) => {
               layoutId="info-indicator"
               transition={{ 
                 type: "spring", 
-                stiffness: 500, 
+                stiffness: 300, 
                 damping: 30,
               }}
               className="absolute z-5"
