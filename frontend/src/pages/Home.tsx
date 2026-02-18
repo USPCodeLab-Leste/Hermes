@@ -7,12 +7,12 @@ import { useEvents } from "../hooks/events/useEvents"
 import { useActiveTags } from "../hooks/tags/useActiveTags"
 
 // Types
-import type { TagType } from "../types/tag"
+import type { ActiveTags, GenericTag } from "../types/tag"
 
 // Componentes
 import { ModalWrapper } from "../components/modals/Modal"
 import AppHeader from "../components/AppHeader"
-import { EventCard } from "../components/Events"
+import { EventCard, RemoveFilterTags } from "../components/Events"
 import SearchBar from "../components/SearchBar"
 import { SelectedEventDetails } from "../components/SelectedEventDetails"
 import { SelectedEventDetailsSkeleton } from "../components/skeletons/SelectedEventDetailsSkeleton"
@@ -28,8 +28,8 @@ import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton"
 export default function Home() {
   const [searchQuery, setSearchQuery] = useSharedSearch()
   const [params, setParams] = useSearchParams()
-  const {activeTags, setActiveTags, tagsFlatten} = useActiveTags()
-  const { data: events, isLoading: isLoadingEvents, isTyping } = useEvents(searchQuery, tagsFlatten)
+  const {activeTags, setActiveTags, activeTagsNames, activeTagsValues} = useActiveTags()
+  const { data: events, isLoading: isLoadingEvents, isTyping } = useEvents(searchQuery, activeTagsNames)
 
   // Modal States
   const [isCardModalOpen, setIsCardModalOpen] = useState(false)
@@ -59,18 +59,18 @@ export default function Home() {
     setIsCardModalOpen(false);
   }, [setParams, setSelectedEventId, setIsCardModalOpen])
 
-  // Abre modal de filtros e 
+  // Abre modal de filtros
   const handleFilterClick = useCallback(() => {
     setIsFilterModalOpen(true)
-  }, [activeTags])
+  }, [])
 
   // Fecha modal de filtros sem aplicar mudanças
   const handleModalFilterClose = useCallback(() => {
     setIsFilterModalOpen(false)
-  }, [activeTags])
+  }, [])
 
   // Aplica os filtros selecionados
-  const onFilter = useCallback((activeTagsCopy: Record<TagType, string[]>) => {
+  const onFilter = useCallback((activeTagsCopy: ActiveTags) => {
     setIsFilterModalOpen(false)
     setActiveTags(structuredClone(activeTagsCopy))
     toast.success("Filtros aplicados com sucesso!")
@@ -78,15 +78,23 @@ export default function Home() {
 
   const onClean = useCallback(() => {
     setIsFilterModalOpen(false)
-    setActiveTags({} as Record<TagType, string[]>)
+    setActiveTags({} as ActiveTags)
     toast.success("Filtros limpos com sucesso!")
+  }, [])
+
+  // Adiciona ou remove tag dos filtros ativos no modal
+  const handleRemoveFilterTag = useCallback((tag: GenericTag) => {
+    setActiveTags((prev) => {
+      const { [tag.id]: _, ...rest } = prev;
+      return rest;
+    })
   }, [])
 
   // ===================
   // == Memos
   // ===================
 
-  const hasAnyFilter = useMemo(() => Object.values(activeTags).some(tags => tags.length > 0), [activeTags])
+  const countActiveFilters = useMemo(() => Object.values(activeTags).length, [activeTags])
   const selectedEventData = useMemo(() => events?.find((e) => e.id === selectedEventId) ?? null, [events, selectedEventId])
 
   // ===================
@@ -133,18 +141,26 @@ export default function Home() {
           <SearchBar search={searchQuery} setSearch={setSearchQuery}/>
           <button 
             onClick={handleFilterClick}
-            className="cursor-pointer bg-teal-mid border-2 border-teal-mid p-2 rounded-xl
+            className="cursor-pointer bg-teal-mid border-2 border-teal-mid py-2 px-2 rounded-full
                        hover:border-teal-light hover:bg-teal-light aria-expanded:border-teal-light aria-expanded:bg-teal-light
-                        transition-colors group"
+                        transition-colors group flex flex-row gap-2 items-center justify-center"
             aria-label="Abrir filtros de busca"
             aria-expanded={isFilterModalOpen}
           >
-            {hasAnyFilter ? (
-              <FilterSparkIcon className="text-paper transition-colors"/>
+            {countActiveFilters > 0 ? (
+              <>
+                <FilterSparkIcon className="text-paper transition-colors size-6 shrink-0"/>
+                <div className="bg-violet-light rounded-full aspect-square p-3 relative">
+                  <span className="text-paper text-sm font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{countActiveFilters}</span>
+                </div>
+              </>
             ) : (
               <FilterIcon className="text-paper transition-colors"/>
             )}
           </button>
+        </div>
+        <div className="self-start w-full">
+          <RemoveFilterTags tags={activeTagsValues} onClick={handleRemoveFilterTag}/>
         </div>
       </AppHeader>
 

@@ -63,6 +63,10 @@ img {
   max-width: 100%;
 }
 
+button {
+  @apply cursor-pointer;
+}
+
 .main-app {
   @apply p-4 my-0 mx-auto mb-30 max-w-2xl w-95/100
 }

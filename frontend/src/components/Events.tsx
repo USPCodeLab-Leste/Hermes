@@ -6,6 +6,7 @@ import PlusIcon from "../assets/icons/plus.svg?react"
 import CheckIcon from "../assets/icons/check.svg?react"
 import PenIcon from "../assets/icons/pencil.svg?react";
 import TrashIcon from "../assets/icons/trash.svg?react";
+import XIcon from "../assets/icons/close.svg?react";
 
 // Types
 import type { Event } from "../types/events"
@@ -119,73 +120,153 @@ const tagVariants: Variants = {
 interface TagsProps {
   tags: GenericTag[];
   className?: string;
-  canSelect?: boolean;
-  activeTags?: ActiveTags;
-  onClick?: (tag: GenericTag) => void;
 }
 
-export function Tags({ tags, className, canSelect, activeTags, onClick }: TagsProps) {
-  const isActive = useCallback((tag: GenericTag) => {
-    if (!activeTags) return false;
-
-    const tagType = tag.type;
-    const activeTagNames = activeTags[tagType] || [];
-    return activeTagNames.includes(tag.name!);
-  }, [activeTags]);
-
+// Tags para exibição simples, sem interação
+export function Tags({ tags, className }: TagsProps) {
   return (
     <motion.div 
       className={`flex flex-row gap-2 flex-wrap ${className}`}
       variants={tagsVariants}
     >
       {tags.map((tag, index) => (
-        <Tag key={index} tag={tag} canSelect={canSelect} active={isActive(tag)} onClick={onClick} />
+        <Tag key={index} tag={tag} />
       ))}
     </motion.div>
   )
 }
 
-interface TagProps {
+interface SelectTagsProps {
+  tags: GenericTag[];
+  className?: string;
+  canSelect?: boolean;
+  activeTags: ActiveTags;
+  onClick: (tag: GenericTag) => void;
+}
+
+// Tags para seleção, usadas no filtro
+export function SelectTags({ tags, className, activeTags, onClick }: SelectTagsProps) {
+  return (
+    <motion.div 
+      className={`flex flex-row gap-2 flex-wrap ${className}`}
+      variants={tagsVariants}
+    >
+      {tags.map((tag, index) => (
+        <SelectTag key={index} tag={tag} active={!!activeTags[tag.id]} onClick={onClick} />
+      ))}
+    </motion.div>
+  )
+}
+
+interface RemoveFilterTagsProps {
+  tags: GenericTag[];
+  className?: string;
+  onClick: (tag: GenericTag) => void;
+}
+
+
+export function RemoveFilterTags({ tags, className, onClick }: RemoveFilterTagsProps) {
+  return (
+    <motion.div 
+      className={`flex flex-row gap-2 flex-wrap ${className}`}
+      variants={tagsVariants}
+    >
+      {tags.map((tag, index) => (
+        <RemoveFilterTag key={index} tag={tag} onClick={onClick}  />
+      ))}
+    </motion.div>
+  )
+}
+
+// Tag para exibição simples, sem interação
+export const Tag = ({ tag }: { tag: GenericTag }) => {
+  return (
+    <TagWrapper 
+      canSelect={false}
+      variants={tagVariants}
+    >
+     <span className="text-paper">{tag.name}</span>
+    </TagWrapper>
+  )
+}
+interface SelectTagProps {
   tag: GenericTag;
   canSelect?: boolean;
   active?: boolean;
-  onClick?: (tag: GenericTag) => void;
+  onClick: (tag: GenericTag) => void;
 }
 
-export const Tag = memo(function Tag({ tag, canSelect, onClick, active }: TagProps) {
+// Tag para seleção, usada no filtro
+export const SelectTag = memo(function Tag({ tag, onClick, active }: SelectTagProps) {
   const handleClick = useCallback(() => {
-    if (canSelect) {
-      onClick && onClick(tag)
-    }
-  }, [canSelect, onClick, tag])
+    onClick(tag)
+  }, [onClick, tag])
 
-  const Component = canSelect ? motion.button : motion.div
 
   return (
-    <Component
-      className={`px-2 md:px-3 py-2 rounded-full text-[12px] md:text-sm font-medium text-paper transition-colors
-                 inline-flex items-center justify-center gap-1 min-w-12 shadow-md shadow-black/20
-                 ${active ? 'bg-violet-dark' : 'bg-teal-light '}
-                 ${canSelect ? 'cursor-pointer' : 'cursor-default'}
-                `}
+    <TagWrapper 
+      canSelect={true}
+      className={`${active ? 'bg-violet-dark' : 'bg-teal-light'}`}
       variants={tagVariants}
       onClick={handleClick}
-      aria-pressed={canSelect ? active : undefined}
-      disabled={canSelect ? false : undefined}
+      aria-pressed={active}
+      disabled={false}
     >
-      {canSelect && (
-        <>
-          {!active ? (
-            <PlusIcon className="size-4 text-paper" />
+      {!active ? (
+        <PlusIcon className="size-4 text-paper" />
 
-          ) : (
-            <CheckIcon className="size-4 text-paper" />
-          )}
-        </>
+      ) : (
+        <CheckIcon className="size-4 text-paper" />
       )}
-      <span className="text-paper">{tag.name!}</span>
-    </Component>
+      <span className="text-paper">{tag.name}</span>
+    </TagWrapper>
   )
 }, (prevProps, nextProps) => {
   return prevProps.active === nextProps.active && prevProps.tag.id === nextProps.tag.id;
 })
+
+export const RemoveFilterTag = ({ tag, onClick }: { tag: GenericTag; onClick: (tag: GenericTag) => void }) => {
+  const handleClick = useCallback(() => {
+    onClick(tag)
+  }, [onClick, tag])
+
+  return (
+    <TagWrapper 
+      canSelect={true}
+      className="hover:bg-violet-light/50"
+      variants={tagVariants}
+      onClick={handleClick}
+    >
+      <XIcon className="size-4 text-paper shrink-0" />
+      <span className="text-paper">{tag.name}</span>
+    </TagWrapper>
+  )
+}
+
+interface TagWrapperProps {
+  children: React.ReactNode;
+  canSelect?: boolean;
+  className?: string;
+  variants?: Variants;
+  onClick?: () => void;
+  disabled?: boolean;
+}
+
+// Componente wrapper para as tags, para evitar repetição de código entre as diferentes variações de tag
+const TagWrapper = ({ children, canSelect, className, variants, onClick, disabled, ...props }: TagWrapperProps) => {
+  const Component = canSelect ? motion.button : motion.div;
+
+  return (
+    <Component 
+      className={`px-2 md:px-3 py-2 rounded-full text-[12px] md:text-sm font-medium text-paper transition-colors
+                 inline-flex items-center justify-center gap-1 min-w-12 shadow-md shadow-black/20 bg-teal-light 
+                 ${className ?? ''}`}
+      variants={variants} 
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </Component>
+  )
+}
