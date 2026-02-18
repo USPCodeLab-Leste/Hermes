@@ -1,3 +1,4 @@
+import { useCallback } from "react"
 import { useSearchParams } from "react-router-dom"
 
 export function useSharedSearch(param = "q") {
@@ -5,7 +6,7 @@ export function useSharedSearch(param = "q") {
 
   const value = params.get(param) ?? ""
 
-  const setValue = (newValue: string) => {
+  const setValue = useCallback((newValue: string) => {
     setParams(prev => {
       if (newValue) {
         prev.set(param, newValue)
@@ -14,7 +15,7 @@ export function useSharedSearch(param = "q") {
       }
       return prev
     }, { replace: true })
-  }
+  }, [setParams])
 
   return [value, setValue] as const
 }

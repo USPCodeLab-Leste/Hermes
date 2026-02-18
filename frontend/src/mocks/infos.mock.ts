@@ -1,5 +1,4 @@
-import type { Info, InfoCard } from '../types/infos';
-import type { InfoTagType } from '../types/tag';
+import type { Info } from '../types/infos';
 import { getInfoTagByName } from './tags.mock'
 import testMockContent from './markdown.mock.md?raw' 
 
@@ -36,6 +35,70 @@ export const mockInfos = [
     tags: ['Avaliações'],
     body: testMockContent,
     icon_name: 'clipboard-check'
+  },
+
+  // Progressão
+  {
+    title: 'Créditos',
+    tags: ['Progressão'],
+    body: testMockContent,
+    icon_name: 'clock'
+  },
+
+  // Conclusão
+  {
+    title: 'Formatura',
+    tags: ['Conclusão'],
+    body: testMockContent,
+    icon_name: 'graduation'
+  },
+
+  // Alimentação
+  {
+    title: 'Bandejão',
+    tags: ['Alimentação'],
+    body: testMockContent,
+    icon_name: 'apple'
+  },
+
+  // Transporte
+  {
+    title: 'Rotas de Ônibus',
+    tags: ['Transporte'],
+    body: testMockContent,
+    icon_name: 'bus'
+  },
+
+  // Biblioteca
+  {
+    title: 'Catálogo',
+    tags: ['Biblioteca'],
+    body: testMockContent,
+    icon_name: 'books'
+  },
+
+  // Saúde
+  {
+    title: 'Atendimento Médico',
+    tags: ['Saúde'],
+    body: testMockContent,
+    icon_name: 'first-aid'
+  },
+
+  // Bolsas
+  {
+    title: 'Bolsas de Estudo',
+    tags: ['Bolsas'],
+    body: testMockContent,
+    icon_name: 'money-bill-wave'
+  },
+
+  // Estágios
+  {
+    title: 'Oportunidades de Estágio',
+    tags: ['Estágios'],
+    body: testMockContent,
+    icon_name: 'briefcase'
   }
 ].map((event, index) => ({
   ...event,
@@ -45,55 +108,3 @@ export const mockInfos = [
   created_at: '2023-01-15T10:00:00Z',
   status: 'published'
 })) as Info[];
-
-// Icons para cada tag de Info, agrupados pelo tipo da tag
-export const infoTagIcons: Record<InfoTagType, InfoCard[]> = {
-  'estudos': [
-    {
-      card: 'Matrícula',
-      icon: 'book'
-    },
-    {
-      card: 'Avaliações',
-      icon: 'abacus'
-    },
-    {
-      card: 'Progressão',
-      icon: 'clock'
-    },
-    {
-      card: 'Conclusão',
-      icon: 'graduation'
-    }
-  ],
-  'campus': [
-    {
-      card: 'Alimentação',
-      icon: 'apple'
-    },
-    {
-      card: 'Transporte',
-      icon: 'bus'
-    },
-    {
-      card: 'Biblioteca',
-      icon: 'books'
-    },
-    {
-      card: 'Saúde',
-      icon: 'first-aid'
-    }
-  ],
-  'apoios': [
-    {
-      card: 'Bolsas',
-      icon: 'money-bill-wave'
-    }
-  ],
-  'carreira': [
-    {
-      card: 'Estágios',
-      icon: 'briefcase'
-    }
-  ]
-}

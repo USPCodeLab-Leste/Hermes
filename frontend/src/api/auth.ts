@@ -29,7 +29,8 @@ export async function register(data: RegisterPayload) {
   const newUser = {
     uuid: crypto.randomUUID(),
     ...data,
-  }
+    role: 'USER',
+  } as const
 
   authUsers.push(newUser)
 

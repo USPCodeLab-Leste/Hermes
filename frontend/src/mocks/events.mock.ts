@@ -10,7 +10,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Localização do Evento',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
     tags: [
       'SI',
       'CodeLab',
@@ -25,7 +24,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Outro Local',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
     tags: [
       'SI',
       'CodeLab',
@@ -40,7 +38,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Tech Hub',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'SI',
@@ -56,7 +53,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Campo Central',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'Futebol',
@@ -70,7 +66,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Sala de Aula - Bloco A',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'SI',
@@ -86,7 +81,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Biblioteca Central',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'Xadrez',
@@ -101,7 +95,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Pátio da Faculdade',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'SI',
@@ -116,7 +109,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Quadra Poliesportiva',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'Calistenia',
@@ -131,7 +123,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Auditório Principal',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'SI',
@@ -146,7 +137,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Ginásio Coberto',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'Basquete',
@@ -160,7 +150,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Anfiteatro',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'Música',
@@ -175,7 +164,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Sala de Conferência',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
 
     tags: [
       'MKT',
@@ -190,7 +178,6 @@ export const mockEvents = [
     created_at: '2024-05-01T10:00:00Z',
     local: 'Quadra de Vôlei',
     body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam corrupti est sunt sint labore porro, culpa consectetur asperiores voluptates placeat magni possimus, expedita laboriosam architecto, maxime optio fuga! Asperiores, dolor!',
-    img_banner: 'https://picsum.photos/id/_/500/300',
     tags: [
       'Vôlei',
     ],
@@ -199,7 +186,7 @@ export const mockEvents = [
 ].map((event, index) => ({
   ...event,
   id: 'e'+String(index),
-  img_banner: event.img_banner.replace('_', String(Math.floor(Math.random() * 1000))),
+  img_banner: `https://static.photos/640x360/${100+index}`,
   tags: event.tags.map(tag => getEventTagByName(tag)) as Tag<EventTagType>[],
   autor_id: 'a'+String(index)
 })) as Event[];

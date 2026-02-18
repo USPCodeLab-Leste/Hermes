@@ -12,7 +12,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Hooks
-import { useAuth } from './hooks/useAuth'
+import { useAuth } from './hooks/auth/useAuth'
 import { useTheme } from './hooks/useTheme';
 
 // Layouts
@@ -35,7 +35,7 @@ import Estudos from './pages/info/Estudos';
 import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
-import Info from './pages/info/Info'
+import Info from './pages/info/InfoTag'
 import Admin from './pages/Admin'
 
 // Components
@@ -53,6 +53,24 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
   }
 
   return isAuthenticated ? children : <Navigate to="/auth" replace />
+}
+
+export function RequireAdmin({ children }: { children: JSX.Element }) {
+  const { user, loading, isAuthenticated } = useAuth();
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (user!.role !== "ADMIN") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
 }
 
 function InfoIndexRedirect({ pathname }: { pathname: string }) {
@@ -101,8 +119,18 @@ export const router = createHashRouter(
           <Route path="carreira" element={<Carreira />} />
           <Route path="carreira/:tagName" element={<Info />} />
         </Route>
-        <Route path="/perfil" element={<Perfil />} />
-        <Route path="/admin" element={<Admin />} />
+
+        <Route path="/perfil" >
+          <Route index element={<Perfil />} />
+          <Route 
+            path="admin" 
+            element={
+              <RequireAdmin>
+                <Admin />
+              </RequireAdmin>
+            } 
+          />
+        </Route>
       </Route>
 
       {/* Fallback */}
@@ -117,6 +145,7 @@ export default function App() {
     <AuthProvider>
       <ToastContainer
         className="absolute"
+        toastClassName="dark:bg-violet-dark! bg-violet-light! text-paper! rounded-lg shadow-lg"
         position="top-right"     // Posição na tela
         autoClose={3000}         // 3 segundos
         hideProgressBar={false}  // Mostrar ou esconder a barrinha de tempo

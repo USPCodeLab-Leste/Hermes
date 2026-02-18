@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import type { AuthService } from '../services/auth'
-import type { UserMe } from '../types/user'
+import type { AuthService } from '../../services/auth'
+import type { UserMe } from '../../types/user'
 
 export function useAuthState(auth: AuthService) {
   const [loading, setLoading] = useState(true)

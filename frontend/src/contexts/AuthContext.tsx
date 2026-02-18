@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 import { auth } from '../services/auth'
-import { useAuthState } from '../hooks/useAuthState'
+import { useAuthState } from '../hooks/auth/useAuthState'
 import type { UserMe } from '../types/user'
 
 interface AuthContextData {

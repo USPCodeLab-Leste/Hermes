@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom"
-import { useAuth } from "../hooks/useAuth"
+import { useAuth } from "../hooks/auth/useAuth"
 // import { motion, AnimatePresence } from "motion/react"
 
 import YoutubeIcon from '../assets/brand-youtube.svg?react'

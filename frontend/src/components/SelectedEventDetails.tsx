@@ -8,11 +8,16 @@ import { Tags } from "./Events"
 import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
 
-export function SelectedEventDetails({ event }: { event: Event | null }) {
+interface SelectedEventDetailsProps {
+  event: Event | null;
+  search?: string;
+}
+
+export function SelectedEventDetails({ event, search }: SelectedEventDetailsProps) {
   // Handlers
   const handleShare = useCallback(() => {
-    // TODO: implementar função para compartilhar com react-share
-  }, []);
+    // const link = `/home?q=${search}&event=${event?.id}`
+  }, [search, event]);
 
   return (
     <div className="flex flex-col gap-4">

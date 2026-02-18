@@ -1,20 +1,19 @@
-import { useSignOut } from "../hooks/useSignOut";
+import { useSignOut } from "../hooks/auth/useSignOut";
 import { useTheme } from "../hooks/useTheme";
 import { auth } from "../services/auth";
 import PerfilButton from "../components/PerfilButton";
-import { type MouseEventHandler, type SVGProps, type ComponentType, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { type MouseEventHandler, type SVGProps, type ComponentType, useMemo, useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMe } from "../hooks/useMe";
 
 // icones
-import UserIcon from "../assets/icons/userIcon.svg?react";
-import DarkModeIcon from "../assets/icons/DarkModeIcon.svg?react";
-import BellIcon from "../assets/icons/bellIcon.svg?react"
-import BugIcon from "../assets/icons/bugIcon.svg?react";
-import InfoIcon from "../assets/icons/infoIcon.svg?react";
-import PasswordIcon from "../assets/icons/passwordIcon.svg?react"
+import UserIcon from "../assets/icons/user.svg?react";
+import DarkModeIcon from "../assets/icons/moon.svg?react";
+import BellIcon from "../assets/icons/bell.svg?react"
+import BugIcon from "../assets/icons/bug.svg?react";
+import InfoIcon from "../assets/icons/info.svg?react";
+import PasswordIcon from "../assets/icons/lock.svg?react"
 import LogoutIcon from "../assets/icons/tabler_logout.svg?react"
-import LeftArrow from "../assets/icons/chevron-left.svg?react"
 import LightModeIcon from "../assets/icons/sun.svg?react"
 import PencilIcon from "../assets/icons/pencil.svg?react"
 import { motion, stagger, type Variants } from "framer-motion";
@@ -55,15 +54,18 @@ export default function Perfil() {
   const { data: user } = useMe();
   const isDark = theme === 'dark';
 
+  // Search Params
+  const [searchParams] = useSearchParams();
+  const search = searchParams.toString() ? `?${searchParams.toString()}` : "";
 
   // onClick Functions (alterar para as funcoes ou router corretos)
-  const handlePerfil = () => console.log("Perfil ok");
-  const handleSenha = () => console.log("Senha ok");
-  const handleNotificacoes = () => console.log("Notificacoes");
-  const handleDarkMode = toggleTheme;
-  const handleBug = () => {};
-  const handleInfo = () => {};
-  const handleAdmin = () => navigate("/admin");
+  const handlePerfil = useCallback(() => console.log("Perfil ok"), []);
+  const handleSenha = useCallback(() => console.log("Senha ok"), []);
+  const handleNotificacoes = useCallback(() => console.log("Notificacoes"), []);
+  const handleDarkMode = useCallback(() => toggleTheme(), [toggleTheme]);
+  const handleBug = useCallback(() => {}, []);
+  const handleInfo = useCallback(() => {}, []);
+  const handleAdmin = useCallback(() => navigate({ pathname: "admin", search }), [navigate, search]);
 
   const actions: PerfilAction[] = useMemo(() => [
     ...(user?.role === "ADMIN" ? [{ label: "Painel Admin", icon: PencilIcon, onClick: handleAdmin }] : []),
@@ -84,9 +86,19 @@ export default function Perfil() {
         </div>
         {/* <img src="" alt="iamgem de perfil" />*/}
         <div className="flex flex-col justify-center items-center">
-          <h5 className="text-[24px]/[28px] font-bold capitalize">{user?.name}</h5>
-          <span className="text-[16px]/[20px] lowercase">{user?.email}</span>
-          {user?.role === "ADMIN" && <span className="text-[14px]/[18px] text-teal-light font-medium">Administrador</span>}
+          {user?.name ? (
+            <div className="flex flex-row justify-center items-center gap-2">
+              <h5 className="text-[24px]/[28px] font-bold capitalize">{user?.name}</h5>
+              {user?.role === "ADMIN" && <span className="text-[10px] font-medium bg-teal-mid p-1 rounded">ADM</span>}
+            </div>
+          ) : (
+            <h5 className="text-[24px]/[28px] font-bold capitalize shimmer rounded-full text-transparent" aria-hidden="true">nome alguém</h5>
+          )}
+          {user?.email ? (
+            <span className="text-[16px]/[20px] lowercase">{user?.email}</span>
+          ) : (
+            <span className="text-[16px]/[20px] lowercase shimmer rounded-full text-transparent" aria-hidden="true">email_exe@usp.br</span>
+          )}
         </div>
         
       </header>
