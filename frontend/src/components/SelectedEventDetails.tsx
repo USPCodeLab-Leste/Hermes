@@ -1,5 +1,8 @@
 import { useCallback } from "react"
 
+// Hooks
+import { useShare } from "../hooks/useShare"
+
 // Types
 import type { Event } from "../types/events"
 
@@ -14,10 +17,16 @@ interface SelectedEventDetailsProps {
 }
 
 export function SelectedEventDetails({ event, search }: SelectedEventDetailsProps) {
+  const share = useShare();
+
   // Handlers
   const handleShare = useCallback(() => {
-    // const link = `/home?q=${search}&event=${event?.id}`
-  }, [search, event]);
+    if (!event) return;
+
+    console.log(window.location)
+    const url = window.location.href;
+    share({ url, title: event.title, text: `Confira o evento ${event.title} no Hermes!` });
+  }, [event, search, share]);
 
   return (
     <div className="flex flex-col gap-4">

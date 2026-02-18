@@ -1,8 +1,15 @@
+import { useCallback } from "react";
+
+// Componentes
 import { ModalWrapper } from "./Modal";
 import MarkdownRenderer from "../MarkdownRenderer";
-import type { Info } from "../../types/infos";
 import { GenericButton } from "../GenericButton";
-import { useCallback } from "react";
+
+// Types
+import type { Info } from "../../types/infos";
+
+// Hooks
+import { useShare } from "../../hooks/useShare";
 
 interface MarkdownModalProps {
   modalOpen: boolean;
@@ -11,10 +18,17 @@ interface MarkdownModalProps {
 }
 
 export function MarkdownModal({ modalOpen, handleModalClose, selectedInfo }: MarkdownModalProps) {
+  const share = useShare();
+
   const handleShareArticle = useCallback((info: Info) => {
+    if (!info) return;
+
     const tag = info.tags[0]
     const link = `/info/${tag.type}/${tag.name}?q=${info.title}&article=${info.id}`
-  }, []);
+    const url = window.location.href.split('/info/')[0]+link;
+
+    share({ url, title: info.title, text: `Confira o artigo ${info.title} no Hermes!` });
+  }, [selectedInfo, share]);
     
   return (
     <ModalWrapper isOpen={modalOpen} onClose={handleModalClose}>
