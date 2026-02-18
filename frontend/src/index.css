@@ -40,15 +40,44 @@ html, body {
 body, button, textarea {
   @apply font-sans dark:text-paper text-ink;
 }
+
+html:has(.modal-open) {
+  overflow: hidden;
+}
+
 #root {
   min-height: 100vh;
 }
 
 #root:has(> .main-app) {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
 }
 
 img {
   max-width: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-violet-dark;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-violet-light;
+  border-radius: 6px;
+}
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance:none;
+}
+
+.main-app {
+  @apply p-4 my-0 mx-auto mb-30 max-w-2xl w-9/10
 }
