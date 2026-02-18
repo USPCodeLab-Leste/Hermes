@@ -1,9 +1,10 @@
-import { Link, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, stagger, type Variants } from "framer-motion";
 
 // Hooks
 import { useInfosByTag } from "../../hooks/infos/useInfosByTag";
+import { useSharedSearch } from "../../hooks/useSharedSearch";
 
 // Components
 import PerfilButton from "../../components/PerfilButton";
@@ -36,7 +37,7 @@ const variantsChild: Variants = {
 
 export default function Info() {
   const { tagName } = useParams()
-  const { search } = useOutletContext<{ search: string }>();
+  const { value: search } = useSharedSearch();
   const [params, setParams] = useSearchParams()
   const { data: infos, isLoading: isLoadingInfos, isTyping } = useInfosByTag(tagName!, search);
   const [modalOpen, setModalOpen] = useState(false);

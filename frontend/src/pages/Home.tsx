@@ -26,7 +26,7 @@ import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
 
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useSharedSearch()
+  const {value: searchQuery, setValue: setSearchQuery} = useSharedSearch()
   const [params, setParams] = useSearchParams()
   const {activeTags, setActiveTags, activeTagsNames, activeTagsValues} = useActiveTags()
   const { data: events, isLoading: isLoadingEvents, isTyping } = useEvents(searchQuery, activeTagsNames)

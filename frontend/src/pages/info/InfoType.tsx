@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, stagger, type Variants } from "framer-motion";
-import { useOutletContext, Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Highlighter from "react-highlight-words";
 
 
@@ -16,9 +16,9 @@ import { useCallback, useMemo, useState } from "react";
 import { MarkdownModal } from "../../components/modals/MarkdownModal";
 
 // Hooks
-import { useInfosByType } from "../../hooks/infos/useInfosByType";
 import { useInfosByTitle } from "../../hooks/infos/useInfos";
 import { useDebounce } from "../../hooks/useDebounce";
+import { useSharedSearch } from "../../hooks/useSharedSearch";
 
 interface InfoTypeProps {
   isLoading: boolean;
@@ -50,7 +50,7 @@ const infoCardVariants: Variants = {
 };
 
 export function InfoType({ isLoading, type, infos }: InfoTypeProps) {
-  const { search } = useOutletContext<{ search: string }>();
+  const { value: search } = useSharedSearch();
 
   return (
     <section>
