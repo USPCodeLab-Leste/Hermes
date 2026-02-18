@@ -14,10 +14,12 @@ import PlusIcon from "../assets/icons/plus.svg?react";
 // Hooks
 import { useMyEvents } from "../hooks/events/useMyEvents";
 import { useSharedSearch } from "../hooks/useSharedSearch";
+import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton";
+import Skeletons from "../components/skeletons/Skeletons";
 
 export default function Admin() {
   const [search, setSearch] = useSharedSearch();
-  const { data: events = [] } = useMyEvents(search);
+  const { data: events, isLoading, isTyping } = useMyEvents(search);
 
   return (
     <>
@@ -27,13 +29,19 @@ export default function Admin() {
           Administração
         </h1>
         <SearchBar search={search} setSearch={setSearch} isDark={true} />
-        <AdminEventsGrid eventsList={events} />
+        <AdminEventsGrid eventsList={events} isLoading={isLoading} isTyping={isTyping} />
       </main>
     </>
   );
 }
 
-function AdminEventsGrid({ eventsList }: { eventsList: Event[] }) {
+interface AdminEventsGridProps {
+  eventsList: Event[] | undefined;
+  isLoading: boolean;
+  isTyping: boolean;
+}
+
+function AdminEventsGrid({ eventsList, isLoading, isTyping }: AdminEventsGridProps) {
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
@@ -51,7 +59,7 @@ function AdminEventsGrid({ eventsList }: { eventsList: Event[] }) {
 
   // Memos
   const selectedEventData = useMemo(
-    () => eventsList.find((event) => event.id === selectedEventId),
+    () => eventsList?.find((event) => event.id === selectedEventId),
     [eventsList, selectedEventId],
   );
 
@@ -87,7 +95,19 @@ function AdminEventsGrid({ eventsList }: { eventsList: Event[] }) {
             </span>
           </div>
         </div>
-        {eventsList.map((eventItem) => (
+        {isLoading ? (
+          <>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div>
+                <EventCardSkeleton key={`event-card-skeleton-${i}`} />
+                <div className="w-full grid grid-cols-2 gap-2 mt-2">
+                  <Skeletons className="px-3 py-1.5 rounded-md" >Editar</Skeletons>
+                  <Skeletons className="px-3 py-1.5 rounded-md" >Excluir</Skeletons>
+                </div>
+              </div>
+            ))}
+          </>
+        ): (eventsList && eventsList.length > 0) ? eventsList.map((eventItem) => (
           <EventCard
             key={eventItem.id}
             event={eventItem}
@@ -95,8 +115,13 @@ function AdminEventsGrid({ eventsList }: { eventsList: Event[] }) {
             isAdmin={true}
             editFunction={() => handleEditEvent(eventItem.id)}
             deleteFunction={() => handleDeleteEvent(eventItem.id)}
+            isFetching={isTyping}
           />
-        ))}
+        )) : (
+          <div className="flex justify-center items-center">
+            <p className="text-center font-medium p-4">Nenhum evento encontrado com essa busca.</p>
+          </div>
+        )}
       </section>
     </>
   );
