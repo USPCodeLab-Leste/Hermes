@@ -1,21 +1,6 @@
-import { useCallback } from "react"
-import { useSearchParams } from "react-router-dom"
+import { useContext } from "react"
+import { SearchContext } from "../contexts/SearchContext";
 
-export function useSharedSearch(param = "q") {
-  const [params, setParams] = useSearchParams()
-
-  const value = params.get(param) ?? ""
-
-  const setValue = useCallback((newValue: string) => {
-    setParams(prev => {
-      if (newValue) {
-        prev.set(param, newValue)
-      } else {
-        prev.delete(param)
-      }
-      return prev
-    }, { replace: true })
-  }, [setParams])
-
-  return [value, setValue] as const
+export function useSharedSearch() {
+  return useContext(SearchContext)!;
 }

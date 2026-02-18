@@ -9,7 +9,7 @@ import SearchBar from "../components/SearchBar";
 import { useSharedSearch } from '../hooks/useSharedSearch';
 
 export default function InfoLayout() {
-  const [search, setSearch] = useSharedSearch()
+  const {value: search, setValue: setSearch} = useSharedSearch()
   
   return (
     <>
