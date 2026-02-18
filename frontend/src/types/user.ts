@@ -1,17 +1,18 @@
 export interface User {
   uuid: string
-  username: string
+  name: string
+  role: 'USER' | 'ADMIN'
 }
 
 export type UserCredential = {
   uuid: string
   email: string
-  username: string
+  name: string
 }
 
 export interface UserMe {
   id: string
-  nome: string
+  name: string
   email: string
   role: 'USER' | 'ADMIN'
 }

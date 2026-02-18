@@ -1,143 +1,172 @@
-import { motion, stagger, type Variants } from "framer-motion"
-import { useState } from "react"
-import { useEvents } from "../hooks/useEvents"
-import { ModalWrapper } from "../components/Modal"
-import type { Event } from "../types/events"
+import { useCallback, useMemo, useState, useEffect } from "react"
+import { useSearchParams } from "react-router-dom"
+import { toast } from "react-toastify"
+
+// Hooks
+import { useEvents } from "../hooks/events/useEvents"
+import { useActiveTags } from "../hooks/tags/useActiveTags"
+
+// Types
+import type { TagType } from "../types/tag"
+
+// Componentes
+import { ModalWrapper } from "../components/modals/Modal"
 import AppHeader from "../components/AppHeader"
+import { EventCard } from "../components/Events"
+import SearchBar from "../components/SearchBar"
+import { SelectedEventDetails } from "../components/SelectedEventDetails"
+import { SelectedEventDetailsSkeleton } from "../components/skeletons/SelectedEventDetailsSkeleton"
+
+// Icons
+import FilterIcon from "../assets/icons/filter.svg?react"
+import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
+import { useSharedSearch } from "../hooks/useSharedSearch"
+import { FilterTagsModal } from "../components/modals/FilterTagsModal"
+import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton"
+
 
 export default function Home() {
-  const { data, isLoading } = useEvents()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useSharedSearch()
+  const [params, setParams] = useSearchParams()
+  const {activeTags, setActiveTags, tagsFlatten} = useActiveTags()
+  const { data: events, isLoading: isLoadingEvents, isTyping } = useEvents(searchQuery, tagsFlatten)
+
+  // Modal States
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false)
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
 
-  const handleEventCardClick = (id: string) => {
-    setSelectedEventId(id)
-    setIsModalOpen(true)
-  }
+  // ===================
+  // == Handlers
+  // ===================
 
-  const selectedEventData = data?.find((e) => e.id === selectedEventId) ?? null
+  // Abre modal do evento selecionado
+  const handleEventCardClick = useCallback((id: string) => {
+    setParams(prev => {
+      prev.set("event", id);
+      return prev;
+    }, { replace: true });
+  }, [setParams])
+
+  // Fecha modal do evento
+  const handleModalEventClose = useCallback(() => {
+    setParams(prev => {
+      prev.delete("event");
+      return prev;
+    }, { replace: true });
+
+    setSelectedEventId(null);
+    setIsCardModalOpen(false);
+  }, [setParams, setSelectedEventId, setIsCardModalOpen])
+
+  // Abre modal de filtros e 
+  const handleFilterClick = useCallback(() => {
+    setIsFilterModalOpen(true)
+  }, [activeTags])
+
+  // Fecha modal de filtros sem aplicar mudanças
+  const handleModalFilterClose = useCallback(() => {
+    setIsFilterModalOpen(false)
+  }, [activeTags])
+
+  // Aplica os filtros selecionados
+  const onFilter = useCallback((activeTagsCopy: Record<TagType, string[]>) => {
+    setIsFilterModalOpen(false)
+    setActiveTags(structuredClone(activeTagsCopy))
+    toast.success("Filtros aplicados com sucesso!")
+  }, [])
+
+  const onClean = useCallback(() => {
+    setIsFilterModalOpen(false)
+    setActiveTags({} as Record<TagType, string[]>)
+    toast.success("Filtros limpos com sucesso!")
+  }, [])
+
+  // ===================
+  // == Memos
+  // ===================
+
+  const hasAnyFilter = useMemo(() => Object.values(activeTags).some(tags => tags.length > 0), [activeTags])
+  const selectedEventData = useMemo(() => events?.find((e) => e.id === selectedEventId) ?? null, [events, selectedEventId])
+
+  // ===================
+  // == Effects
+  // ===================
+
+  useEffect(() => {
+    const eventId = params.get("event");
+
+    if (eventId) {
+      setSelectedEventId(eventId);
+      setIsCardModalOpen(true);
+    }
+  }, [params])
 
   return (
     <>
-      <AppHeader />
-      <main className="main-app">
-        {isLoading ? <p>Carregando eventos...</p> : (
-          <>
-            <ModalWrapper
-              isOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-            >
-              {selectedEventId && selectedEventData && (
-                <SelectedEventDetails
-                  event={selectedEventData}
-                />
-              )}
-            </ModalWrapper>
+      {/* Modal Card Event */}
+      <ModalWrapper
+        isOpen={isCardModalOpen}
+        onClose={handleModalEventClose}
+      >
+        {(selectedEventId && selectedEventData) ? (
+          <SelectedEventDetails
+            event={selectedEventData}
+            search={searchQuery}
+          />
+        ) : (
+          <SelectedEventDetailsSkeleton />
+        ) }
+      </ModalWrapper>
 
-            <section className="m-auto mt-10 flex flex-col items-center gap-8">
-              {data?.map((event) => (
-                <EventCard event={event} selectEvent={handleEventCardClick} />
+      {/* Modal Filter */}
+      <FilterTagsModal 
+        isOpen={isFilterModalOpen}
+        onClose={handleModalFilterClose}
+        activeTags={activeTags}
+        onFilter={onFilter}
+        onClean={onClean}
+      />
+
+      <AppHeader>
+        <div className="flex items-center gap-4 w-full">
+          <SearchBar search={searchQuery} setSearch={setSearchQuery}/>
+          <button 
+            onClick={handleFilterClick}
+            className="cursor-pointer bg-teal-mid border-2 border-teal-mid p-2 rounded-xl
+                       hover:border-teal-light hover:bg-teal-light aria-expanded:border-teal-light aria-expanded:bg-teal-light
+                        transition-colors group"
+            aria-label="Abrir filtros de busca"
+            aria-expanded={isFilterModalOpen}
+          >
+            {hasAnyFilter ? (
+              <FilterSparkIcon className="text-paper transition-colors"/>
+            ) : (
+              <FilterIcon className="text-paper transition-colors"/>
+            )}
+          </button>
+        </div>
+      </AppHeader>
+
+      <main className="main-app">
+        <section className={`m-auto mt-10 flex flex-col items-center gap-8`}>
+          {isLoadingEvents ? (
+            <>
+              {[1, 2, 3, 4].map((i) => (
+                <EventCardSkeleton key={`event-card-skeleton-${i}`} />
               ))}
-            </section>
-          </>
-        )}
+            </>
+          ) : events && events.length > 0 ? (
+            <>
+                {events?.map((event) => (
+                  <EventCard key={event.id} event={event} selectEvent={handleEventCardClick} isFetching={isTyping}/>
+                ))}
+            </>
+          ) : (
+            <p className="text-center font-medium p-4">Nenhum evento encontrado com essa busca.</p>
+          )}
+        </section>
       </main>
     </>
-  )
-}
-
-const eventVariants: Variants = {
-  hidden: { opacity: 0, y: 40, scale: 0.85 },
-  visible: { opacity: 1, y: 0, scale: 1 },
-}
-
-function EventCard({ event, selectEvent }: { event: Event, selectEvent: (id: string) => void }) {
-  const [isReady, setIsReady] = useState(false)
-
-  return (  
-    <motion.button
-      variants={eventVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{amount: 0.4, once: true}}
-      transition={{
-        type: 'spring',
-        stiffness: 320,
-        damping: 18,
-        duration: 0.5,
-        delayChildren: 0.2,
-      }}
-      key={event.id} 
-      className={`max-w-120 h-60 w-full overflow-hidden bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat 
-                 bg-center justify-between cursor-pointer hover:-translate-y-2 shadow-lg hover:shadow-2xl 
-                 outline-2 hover:outline-paper focus:outline-paper outline-transparent ${isReady ? 'transition-all' : ''}`}
-      style={{ backgroundImage: `url('https://picsum.photos/600/200?random=${event.id}')`}}
-      onClick={() => selectEvent(event.id)}
-      onAnimationComplete={() => setIsReady(true)}
-      aria-label={`Selecionar evento ${event.title}`}
-    >
-      <Tags tags={event.tags} />
-      <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b">
-        <h2 className="font-bold text-xl">{event.title}</h2>
-        <p>{event.date}</p>
-      </div>
-    </motion.button>
-  )
-}
-
-function SelectedEventDetails({ event }: { event: Event | null }) {
-  return (
-    <div>
-      <div className="bg-paper dark:bg-violet-dark p-6 rounded-lg max-w-lg w-full flex flex-col gap-2">
-        <h2 className="text-2xl font-bold mb-2">{event?.title}</h2>
-        <p><strong>Data:</strong> {event?.date}</p>
-        <p><strong>Localização:</strong> {event?.location}</p>
-        <p><strong>Descrição:</strong> {event?.description}</p>
-      </div>
-    </div>
-  )
-}
-
-const tagsVariants: Variants = {
-  visible: {
-    transition: {
-      delayChildren: stagger(0.1),
-    }
-  }
-}
-
-const tagVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: -20,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-  },
-}
-
-function Tags({ tags }: { tags: string[] }) {
-  return (
-    <motion.div 
-      className="flex flex-row gap-2 p-4"
-      // animate="jump"
-      variants={tagsVariants}
-    >
-      {tags.map((tag, index) => (
-        <Tag key={index} tag={tag} />
-      ))}
-    </motion.div>
-  )
-}
-
-function Tag({ tag }: { tag: string }) {
-  return (
-    <motion.span 
-      className="bg-teal-light outline-teal-mid outline-2 px-3 py-1 rounded-full text-sm font-medium inline-block"
-      variants={tagVariants}
-    >
-      {tag}
-    </motion.span>
   )
 }

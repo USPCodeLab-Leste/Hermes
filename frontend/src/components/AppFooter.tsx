@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
 // Ícones
@@ -9,7 +9,8 @@ import Ondinha from "../assets/icons/ondinha.svg?react";
 
 export default function AppFooter() {
   return (
-    <footer className="w-full bottom-0 bg-violet-dark flex items-center justify-center h-20 fixed">
+    <footer className="w-full bottom-0 bg-violet-dark flex items-center justify-center 
+                       h-20 fixed shadow-paper-top dark:shadow-violet-top">
       <motion.nav 
         className="flex justify-evenly items-center max-w-180 w-full relative"
         layout
@@ -23,9 +24,11 @@ export default function AppFooter() {
 }
 
 const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }) => {
+  const { search } = useLocation()
+  
   return (
     <NavLink 
-      to={to}
+      to={{pathname: to, search}}
       className="inline-flex items-center justify-center relative"
     >
       {({ isActive }) => (
@@ -38,10 +41,10 @@ const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType<
                 stiffness: 500, 
                 damping: 30,
               }}
-              className="absolute -top-3.5 aspect-124/39 w-28"
+              className="absolute -top-[15px] aspect-124/39 w-28"
             >
               <Ondinha 
-                className="dark:text-violet-mid text-paper"
+                className="dark:text-violet-mid text-paper z-4"
               />
             </motion.div>
           )}
@@ -49,12 +52,11 @@ const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType<
             // layout
             transition={{
               type: "spring",
-              duration: 0.3,
               stiffness: 800,
               damping: 30,
             }}
             className={`
-              p-4 rounded-full transition-colors
+              p-4 rounded-full transition-colors relative z-5
               ${isActive 
                 ? "bg-teal-mid" 
                 : "hover:bg-violet-light/50"
