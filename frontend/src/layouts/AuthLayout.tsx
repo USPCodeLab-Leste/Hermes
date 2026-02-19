@@ -2,10 +2,10 @@ import { Navigate, Outlet } from "react-router-dom"
 import { useAuth } from "../hooks/auth/useAuth"
 // import { motion, AnimatePresence } from "motion/react"
 
-import YoutubeIcon from '../assets/brand-youtube.svg?react'
-import DiscordIcon from '../assets/brand-discord.svg?react'
-import InstagramIcon from '../assets/brand-instagram.svg?react'
-import logoHermes from '../assets/temp-logo.png'
+import YoutubeIcon from '../assets/icons/brand-youtube.svg?react'
+import DiscordIcon from '../assets/icons/brand-discord.svg?react'
+import InstagramIcon from '../assets/icons/brand-instagram.svg?react'
+import LogoHermes from '../assets/logo.png'
 
 export default function AuthLayout() {
   const { isAuthenticated } = useAuth()
@@ -20,7 +20,7 @@ export default function AuthLayout() {
 
       {/* LOGO E DESCRIÇÃO DO HERMES */}
       <section className="w-full flex flex-5 flex-col justify-center items-center p-6 py-14 md:p-4">
-        <img src={logoHermes} alt="Logo do Hermes" className="w-48 md:w-64 max-w-xs object-contain" />
+        <img src={LogoHermes} alt="Logo do Hermes" className="w-48 md:w-64 max-w-xs object-contain" />
 
         <p className="text-base md:text-center max-w-md pb-1 pt-6">
           Lorem ipsum dolor sit amet, consectet adipiscing elit. Cras finibus vehicula nulla quis maximus.
