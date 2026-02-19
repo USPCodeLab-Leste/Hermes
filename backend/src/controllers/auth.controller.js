@@ -1,6 +1,6 @@
 import UserModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import { registerSchema } from "../validators/auth.validator.js";
+import { registerSchema, changePasswordSchema } from "../validators/auth.validator.js";
 import jwt from "jsonwebtoken";
 import { sendVerificationEmail } from "../services/email.service.js";
 
@@ -161,6 +161,43 @@ class AuthController {
       
       console.log(err);
       return res.status(500).json({ error: "Erro interno ao verificar email." });
+    }
+  }
+
+  async changePassword(req, res) {
+    try {
+      const userId = req.user.id;
+      const { oldPassword, newPassword } = changePasswordSchema.parse(req.body);
+
+      if (!oldPassword || !newPassword) {
+        return res.status(400).json({ error: "Dados incompletos" });
+      }
+
+      const user = await UserModel.findOne({id: userId});
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      }
+
+      // compara senha antiga
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ error: "Senha antiga incorreta" });
+      }
+
+      // gera novo hash
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await UserModel.updatePassword(userId, hashedPassword);
+
+      return res.status(200).json({ message: "Senha alterada com sucesso" });
+
+    } catch (err) {
+      console.error(err);
+      
+      if (err.name === "ZodError") {
+        return res.status(400).json({ error: err });
+      }
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
     }
   }
 

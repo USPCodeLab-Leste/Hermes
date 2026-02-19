@@ -163,6 +163,54 @@ router.get('/verify-email', AuthController.verifyEmail);
  */
 router.post('/logout', authMiddleware, AuthController.logout);
 
+/**
+ * @swagger
+ * /auth/change-password:
+ *   patch:
+ *     summary: Alterar senha do utilizador autenticado
+ *     description: Permite que o utilizador autenticado altere a sua senha informando a senha atual.
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 example: 12345678
+ *               newPassword:
+ *                 type: string
+ *                 example: NovaSenhaForte123
+ *     responses:
+ *       200:
+ *         description: Senha alterada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Senha alterada com sucesso
+ *       400:
+ *         description: Dados inválidos
+ *       401:
+ *         description: Não autorizado ou senha antiga incorreta
+ *       404:
+ *         description: Utilizador não encontrado
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.patch("/change-password", authMiddleware, AuthController.changePassword);
+
 // rota teste 
 // router.get('/teste-envio', async (req,res) => {
 //   try {
