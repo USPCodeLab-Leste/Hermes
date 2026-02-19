@@ -36,7 +36,7 @@ class UserModel {
   }
 
   // Cria usuario
-  async create({ name, email, password, role = "USER" }) {
+  async create({ name, email, password, role = "ADMIN" }) {
     try {
       const id = crypto.randomUUID();
 

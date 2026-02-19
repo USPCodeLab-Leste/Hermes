@@ -58,7 +58,35 @@ const eventsController = new BaseContentController("event", createEventSchema);
 router.get("/events", eventsController.get.bind(eventsController));
 
 /**
- * @swagger
+ * @openapi
+ * /events/{id}:
+ *   get:
+ *     tags:
+ *       - Events
+ *     summary: Buscar evento por ID
+ *     description: Retorna um evento específico pelo ID
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID do evento
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Evento encontrado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Event"
+ *       404:
+ *         description: Evento não encontrado
+ */
+router.get("/events/:id", eventsController.getById.bind(eventsController));
+
+/**
+ * @openapi
  * /events:
  *   post:
  *     summary: Cria um novo evento
@@ -90,5 +118,93 @@ router.get("/events", eventsController.get.bind(eventsController));
  *         description: Falha na criação do evento
  */
 router.post("/events", authMiddleware, adminMiddleware, eventsController.create.bind(eventsController));
+
+/**
+ * @openapi
+ * /events/{id}:
+ *   patch:
+ *     tags:
+ *       - Events
+ *     summary: Atualizar evento
+ *     description: Atualiza parcialmente um evento existente (apenas autor ou admin)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID do evento
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateEventRequest"
+ *     responses:
+ *       200:
+ *         description: Evento atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Event"
+ *       400:
+ *         description: Erro na atualização
+ *       401:
+ *         description: Não autenticado
+ *       403:
+ *         description: Sem permissão
+ */
+router.patch(
+  "/events/:id",
+  authMiddleware,
+  adminMiddleware,
+  eventsController.patch.bind(eventsController)
+);
+
+/**
+ * @openapi
+ * /events/{id}:
+ *   delete:
+ *     tags:
+ *       - Events
+ *     summary: Deletar evento
+ *     description: Remove um evento existente (apenas autor ou admin)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID do evento
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Evento deletado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Evento deletado com sucesso
+ *       400:
+ *         description: Erro ao deletar evento
+ *       401:
+ *         description: Não autenticado
+ *       403:
+ *         description: Sem permissão
+ */
+router.delete(
+  "/events/:id",
+  authMiddleware,
+  adminMiddleware,
+  eventsController.delete.bind(eventsController)
+);
 
 export default router;

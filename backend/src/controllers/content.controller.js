@@ -108,6 +108,114 @@ class BaseContentController {
       });
     }
   }
+  
+  async patch(req, res) {
+    try {
+      const id = req.params.id;
+      const userId = req.user.id;
+
+      if (!id) {
+        return res.status(400).json({ error: "ID não informado" });
+      }
+
+      const body = this.schema
+        ? this.schema.parse(req.body)
+        : req.body;
+
+      const { tags, ...contentData } = body;
+
+      const updatedContent = await ContentModel.update(id, {
+        ...contentData,
+        type: this.type,
+        autor_id: userId,
+        tags
+      });
+
+      if (!updatedContent) {
+        return res.status(400).json({
+          error: `Erro ao atualizar ${this.type}`
+        });
+      }
+
+      return res.status(200).json({
+        message: `${this.type} atualizado com sucesso`
+      });
+
+    } catch (err) {
+      console.error(err);
+
+      if (err.name === "ZodError") {
+        return res.status(400).json({
+          error: "Dados inválidos",
+          details: err
+        });
+      }
+
+      return res.status(500).json({
+        error: `Falha ao atualizar ${this.type}`
+      });
+    }
+  }
+
+  async getById(req, res) {
+    try {
+      const id = req.params.id;
+
+      if (!id) {
+        return res.status(400).json({ error: "ID não informado" });
+      }
+
+      const response = await ContentModel.findById(id);
+
+      if (!response) {
+        return res.status(404).json({
+          error: `${this.type} não encontrado`
+        });
+      }
+
+      const cleanedData = this.removeUnwantedFields(
+        this.removeNullFields(response)
+      );
+
+      return res.status(200).json(cleanedData);
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        error: `Erro ao buscar ${this.type}`
+      });
+    }
+  }
+
+  async delete(req, res) {
+    try {
+      const id = req.params.id;
+      const userId = req.user.id;
+
+      if (!id) {
+        return res.status(400).json({ error: "ID não informado" });
+      }
+
+      const response = await ContentModel.delete(id, userId);
+
+      if (!response) {
+        return res.status(400).json({
+          error: `Erro ao deletar ${this.type}`
+        });
+      }
+
+      return res.status(200).json({
+        message: `${this.type} deletado com sucesso`
+      });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        error: `Falha ao deletar ${this.type}`
+      });
+    }
+  }
+
 }
 
 export default BaseContentController;
