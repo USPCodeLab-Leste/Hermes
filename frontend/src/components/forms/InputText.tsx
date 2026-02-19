@@ -5,8 +5,6 @@ import { Input } from "./Input";
 import { Label } from "./Label"
 
 const InputText = ({ id, label, value, onChange, disabled, placeholder, autocomplete, hasError, errorMessage, required }: any) => {
-  console.log("InputText render!");
-
   return (
     <div className="flex flex-col gap-1">
       <Label id={id} label={label} required={required} />

@@ -67,9 +67,9 @@ export default function Perfil() {
   const search = searchParams.toString() ? `?${searchParams.toString()}` : "";
 
   // onClick Functions (alterar para as funcoes ou router corretos)
-  const handlePerfil = useCallback(() => console.log("Perfil ok"), []);
-  const handleSenha = useCallback(() => console.log("Senha ok"), []);
-  const handleNotificacoes = useCallback(() => console.log("Notificacoes"), []);
+  const handlePerfil = useCallback(() => {}, []);
+  const handleSenha = useCallback(() => {}, []);
+  const handleNotificacoes = useCallback(() => {}, []);
   const handleDarkMode = useCallback(() => toggleTheme(), [toggleTheme]);
   const handleReducedMotionToggle = useCallback(() => togglePreference(), [togglePreference]);
   const handleBug = useCallback(() => {}, []);

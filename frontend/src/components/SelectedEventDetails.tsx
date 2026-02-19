@@ -23,7 +23,6 @@ export function SelectedEventDetails({ event, search }: SelectedEventDetailsProp
   const handleShare = useCallback(() => {
     if (!event) return;
 
-    console.log(window.location)
     const url = window.location.href;
     share({ url, title: event.title, text: `Confira o evento ${event.title} no Hermes!` });
   }, [event, search, share]);

@@ -117,8 +117,6 @@ export default function Register() {
     }
   }, [regError]);
 
-  console.log("Register render!");
-
   const isLoading = regLoading;
 
   return (
