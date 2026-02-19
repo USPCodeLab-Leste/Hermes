@@ -49,8 +49,6 @@ const InputPassword = ({ id, label, value, onChange, disabled, placeholder, vali
 
   const showVisualError = hasError || (validation && !allValid && value.length > 0);
 
-  console.log("InputPassword render!");
-
   return (
     <div className="flex flex-col gap-1">
       <Label id={id} label={label} required={required} />

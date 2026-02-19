@@ -95,8 +95,6 @@ export default function Login() {
     }
   }, [location, navigate])
 
-  console.log("Login render!");
-
   if (user) {
     return (
       <Navigate to="/" replace />
