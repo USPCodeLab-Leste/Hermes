@@ -113,6 +113,30 @@ class AuthController {
     }
   }
 
+  async logout(req, res) {
+
+    try {
+      
+      await res.clearCookie("access_token", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false
+      });
+
+      await res.clearCookie("refresh_token", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false
+      });
+
+      return res.status(200).json({ message: "Logout realizado com sucesso" });
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Falha no log-out" });
+    }
+  }
+
   async verifyEmail(req, res) {
     try {
       const { token } = req.query;

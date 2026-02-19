@@ -1,6 +1,7 @@
 import express from "express";
 import AuthController from "../controllers/auth.controller.js";
 import JWTController from "../controllers/jwt.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js"
 
 const router = express.Router();
 
@@ -132,6 +133,35 @@ router.get("/refresh", JWTController.refresh);
  *         description: Erro interno do servidor
  */
 router.get('/verify-email', AuthController.verifyEmail);
+
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout
+ *     description: Invalida o token JWT do utilizador autenticado.
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Logout realizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Logout realizado com sucesso
+ *       401:
+ *         description: Não autorizado (token inválido ou ausente)
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.post('/logout', authMiddleware, AuthController.logout);
 
 // rota teste 
 // router.get('/teste-envio', async (req,res) => {
