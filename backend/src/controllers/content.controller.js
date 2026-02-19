@@ -78,7 +78,7 @@ class BaseContentController {
       const userId = req.user.id;
 
       // Se tiver schema (Zod), valida
-      const data = this.schema ? this.schema.parse(req.body) : req.body;
+      const data = this.schema.create ? this.schema.create.parse(req.body) : req.body;
 
       const { tags, ...contentData } = data;
 
@@ -118,8 +118,8 @@ class BaseContentController {
         return res.status(400).json({ error: "ID não informado" });
       }
 
-      const body = this.schema
-        ? this.schema.parse(req.body)
+      const body = this.schema.update
+        ? this.schema.update.parse(req.body)
         : req.body;
 
       const { tags, ...contentData } = body;

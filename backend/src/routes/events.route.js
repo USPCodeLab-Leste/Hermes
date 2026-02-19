@@ -2,10 +2,16 @@ import { Router } from "express";
 import BaseContentController from "../controllers/content.controller.js";
 import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware.js"
 
-import { createEventSchema } from "../validators/content.validator.js";
+import { createEventSchema, updateEventSchema } from "../validators/content.validator.js";
 
 const router = Router();
-const eventsController = new BaseContentController("event", createEventSchema);
+const eventsController = new BaseContentController(
+  "event",
+  {
+    create: createEventSchema,
+    update: updateEventSchema
+  }
+);
 
 /**
  * @swagger
