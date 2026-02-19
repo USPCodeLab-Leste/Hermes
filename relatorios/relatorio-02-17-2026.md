@@ -125,3 +125,9 @@ Quando é postado uma tag que não existe, é retornado um erro qualquer, não i
 
 #### DELETE (/users/me/tags/{tagId})
 Funciona perfeitamente.
+
+A verificação de administrador, de login e de o usuário apenas atualizar e deletar seus posts está funcionando adequamente.
+
+- SUGESTÃO - Deixar todas as rotas com middleware de auth, pra evitar abusos de não alunos, ou ataques DDOS
+- FAZER - Tratar o usuário que não autentica o email até a data limite, atualmente de 7 dias
+- SUGESTÃO - POST auth/register, quando falha o envio do email o front recebe uma mensagem de erro, mas o usuário é criado, tem que tratar essa exceção
