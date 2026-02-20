@@ -32,11 +32,11 @@ const InputPassword = ({ id, label, value, onChange, disabled, placeholder, vali
       isValid: /[0-9]/.test(value),
       message: "Pelo menos um número",
     },
-    {
-      id: 4,
-      isValid: /[!@#$%^&*(),.?":{}|<>]/.test(value),
-      message: "Pelo menos um caracter especial",
-    },
+    // {
+    //   id: 4,
+    //   isValid: /[!@#$%^&*(),.?":{}|<>]/.test(value),
+    //   message: "Pelo menos um caracter especial",
+    // },
   ];
 
   const allValid = validations.every(v => v.isValid);
@@ -48,8 +48,6 @@ const InputPassword = ({ id, label, value, onChange, disabled, placeholder, vali
   }, [allValid, onValidationChange, validation]);
 
   const showVisualError = hasError || (validation && !allValid && value.length > 0);
-
-  console.log("InputPassword render!");
 
   return (
     <div className="flex flex-col gap-1">

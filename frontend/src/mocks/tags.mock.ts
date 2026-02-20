@@ -78,11 +78,11 @@ export const mockInfoTags = [
 // ==========================
 
 // Retorna uma tag de evento pelo nome
-export const getEventTagByName = (name: string): Tag<EventTagType> | undefined => {
-  return mockEventTags.find(tag => tag.name === name);
+export const getEventTagByName = (name: string): Tag<EventTagType> => {
+  return mockEventTags.find(tag => tag.name === name) || { name, type: 'outro', id: 'event-tag-outro-' + name } as Tag<EventTagType>;
 }
 
 // Retorna uma tag de informação pelo nome
-export const getInfoTagByName = (name: string): Tag<InfoTagType> | undefined => {
-  return mockInfoTags.find(tag => tag.name === name);
+export const getInfoTagByName = (name: string): Tag<InfoTagType> => {
+  return mockInfoTags.find(tag => tag.name === name) || { name, type: 'carreira', id: 'info-tag-carreira-' + name } as Tag<InfoTagType>;
 }

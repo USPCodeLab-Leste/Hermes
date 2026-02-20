@@ -23,7 +23,6 @@ export function SelectedEventDetails({ event, search }: SelectedEventDetailsProp
   const handleShare = useCallback(() => {
     if (!event) return;
 
-    console.log(window.location)
     const url = window.location.href;
     share({ url, title: event.title, text: `Confira o evento ${event.title} no Hermes!` });
   }, [event, search, share]);
@@ -34,7 +33,7 @@ export function SelectedEventDetails({ event, search }: SelectedEventDetailsProp
         className="aspect-5/3 w-auto bg-no-repeat bg-cover overflow-hidden bg-violet-dark rounded-xl -mx-6 -mt-12 mb-4"
         style={{ backgroundImage: `url('${event?.img_banner}')` }}
       />
-      <div className="flex flex-col gap-1 overflow-y-auto max-h-[30dvh]">
+      <div className="flex flex-col gap-1 overflow-y-auto max-h-[40dvh]">
         <Tags tags={event?.tags ?? []} className="mb-2" />
         <h2 className="text-2xl font-bold -mb-1">{event?.title}</h2>
         <div className="flex flex-row flex-wrap gap-x-2 gap-y-0 items-center mb-2">
