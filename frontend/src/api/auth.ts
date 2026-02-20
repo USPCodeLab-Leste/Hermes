@@ -10,23 +10,15 @@ export async function signIn(data: LoginPayload) {
   )
 
   if (!user) {
+    await fakeRequest(null)
     throw new Error('Credenciais inválidas')
   }
 
-  const token = `jwt-${user.uuid}`
+  localStorage.setItem('fake-cookie', user.uuid)
+
   return fakeRequest({
-    token,
+    message: 'Login realizado com sucesso',
   })
-}
-
-export async function checkEmail(email: string) {
-  const emailExists = authUsers.some(u => u.email === email)
-
-  if (emailExists) {
-    throw new Error('Email já cadastrado')
-  }
-
-  return fakeRequest({ message: 'Email verificado' })
 }
 
 export async function signOut() {
@@ -37,7 +29,8 @@ export async function register(data: RegisterPayload) {
   const newUser = {
     uuid: crypto.randomUUID(),
     ...data,
-  }
+    role: 'USER',
+  } as const
 
   authUsers.push(newUser)
 

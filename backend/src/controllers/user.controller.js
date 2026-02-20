@@ -16,7 +16,8 @@ class UserController {
           "name": user.name,
           "email": user.email,
           "role": user.role,
-          "userTags": userTags
+          "userTags": userTags,
+          "is_verified": user.is_verified
         }
       });
 

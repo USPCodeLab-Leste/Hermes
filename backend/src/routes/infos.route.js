@@ -2,10 +2,16 @@ import { Router } from "express";
 import BaseContentController from "../controllers/content.controller.js";
 import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware.js"
 
-import { createInfoSchema } from "../validators/content.validator.js";
+import { createInfoSchema, updateInfoSchema } from "../validators/content.validator.js";
 
 const router = Router();
-const infosController = new BaseContentController("info", createInfoSchema);
+const infosController = new BaseContentController(
+  "info",
+  {
+    create: createInfoSchema,
+    update: updateInfoSchema
+  }
+);
 
 /**
  * @swagger
@@ -80,5 +86,117 @@ router.get("/infos", infosController.get.bind(infosController));
  *         description: Falha na criação da info
  */
 router.post("/infos", authMiddleware, adminMiddleware, infosController.create.bind(infosController));
+
+/**
+ * @swagger
+ * /infos/{id}:
+ *   get:
+ *     summary: Buscar info por ID
+ *     description: Retorna uma info específica pelo ID
+ *     tags: [Infos]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID da info
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Info encontrada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Info"
+ *       404:
+ *         description: Info não encontrada
+ */
+router.get(
+  "/infos/:id",
+  infosController.getById.bind(infosController)
+);
+
+/**
+ * @swagger
+ * /infos/{id}:
+ *   patch:
+ *     summary: Atualizar info
+ *     description: Atualiza parcialmente uma info existente (apenas admin)
+ *     tags: [Infos]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID da info
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateInfoRequest"
+ *     responses:
+ *       200:
+ *         description: Info atualizada com sucesso
+ *       400:
+ *         description: Erro na atualização
+ *       401:
+ *         description: Não autenticado
+ *       403:
+ *         description: Sem permissão
+ */
+router.patch(
+  "/infos/:id",
+  authMiddleware,
+  adminMiddleware,
+  infosController.patch.bind(infosController)
+);
+
+/**
+ * @swagger
+ * /infos/{id}:
+ *   delete:
+ *     summary: Deletar info
+ *     description: Remove uma info existente (apenas admin)
+ *     tags: [Infos]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID da info
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Info deletada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: info deletado com sucesso
+ *       400:
+ *         description: Erro ao deletar info
+ *       401:
+ *         description: Não autenticado
+ *       403:
+ *         description: Sem permissão
+ */
+router.delete(
+  "/infos/:id",
+  authMiddleware,
+  adminMiddleware,
+  infosController.delete.bind(infosController)
+);
 
 export default router;

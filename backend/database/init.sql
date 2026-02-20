@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS tb_user (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) DEFAULT 'USER'
+    role VARCHAR(50) DEFAULT 'USER',
+    is_verified BOOLEAN DEFAULT FALSE
 );
 
 --  tabela de tags (com type e name)

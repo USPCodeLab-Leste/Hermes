@@ -57,3 +57,7 @@ export const createEventSchema = z.object({
     .optional()
 
 }).strict();
+
+// Deixa tudo opcional para o /patch
+export const updateInfoSchema = createInfoSchema.partial().strict();
+export const updateEventSchema = createEventSchema.partial().strict();

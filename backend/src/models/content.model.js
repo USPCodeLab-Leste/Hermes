@@ -173,6 +173,154 @@ class ContentModel {
     return result.rows[0];
   }
 
+  async update(id, info) {
+
+    // Pesquisa do criador daquele content
+    const querySearchContent = `SELECT autor_id FROM tb_content WHERE id = $1;`;
+    let searchContentAutorId = await pool.query(querySearchContent, [id]);
+
+    if (!searchContentAutorId.rows[0]) return null;
+
+    // Verifica se o usuário é o criador
+    if (info.autor_id !== searchContentAutorId.rows[0].autor_id)
+      return null;
+
+    // Monta query dinâmica
+    let queryUpdateTbContent = `
+    UPDATE tb_content
+    SET id=$1`;
+
+    const values = [id];
+    let idx = 2;
+
+    if (info.title) {
+      queryUpdateTbContent += `, title = $${idx}`;
+      values.push(info.title);
+      idx++;
+    }
+
+    if (info.data_inicio) {
+      queryUpdateTbContent += `, data_inicio = $${idx}`;
+      values.push(info.data_inicio);
+      idx++;
+    }
+
+    if (info.data_fim) {
+      queryUpdateTbContent += `, data_fim = $${idx}`;
+      values.push(info.data_fim);
+      idx++;
+    }
+
+    if (info.status) {
+      queryUpdateTbContent += `, status = $${idx}`;
+      values.push(info.status);
+      idx++;
+    }
+
+    if (info.img_banner) {
+      queryUpdateTbContent += `, img_banner = $${idx}`;
+      values.push(info.img_banner);
+      idx++;
+    }
+
+    if (info.body) {
+      queryUpdateTbContent += `, body = $${idx}`;
+      values.push(info.body);
+      idx++;
+    }
+
+    queryUpdateTbContent += `
+    WHERE id = $1
+    RETURNING *`;
+
+    // Atualiza tags
+    if (info.tags) {
+
+      const queryDeleteTags = `DELETE FROM tb_content_tag WHERE content_id = $1;`;
+
+      await pool.query(queryDeleteTags, [id])
+        .catch(err => {
+          console.error("ERROR TO DELETE OLDS TAGS", err);
+          return null;
+        });
+
+      for (const tag of info.tags) {
+
+        const queryInsertTbTag = `
+        INSERT INTO tb_tag (id, name, type, active)
+        VALUES ($1,$2,$3,$4)
+        ON CONFLICT (name)
+        DO UPDATE SET name = EXCLUDED.name
+        RETURNING id;`;
+
+        const valuesTag = [crypto.randomUUID(), tag, "general", true];
+
+        const resultInsertTbTag = await pool.query(queryInsertTbTag, valuesTag)
+          .catch(err => {
+            console.error("ERROR TO INSERT TAG", err);
+            return null;
+          });
+
+        if (!resultInsertTbTag) continue;
+
+        const idTag = resultInsertTbTag.rows[0].id;
+
+        await pool.query(
+          `INSERT INTO tb_content_tag (content_id, tag_id)
+          VALUES ($1, $2)
+          ON CONFLICT DO NOTHING`,
+          [id, idTag]
+        );
+      }
+    }
+
+    const result = await pool
+      .query(queryUpdateTbContent, values)
+      .then(res => res.rows[0])
+      .catch(err => {
+        console.error("ERROR PATCH CONTENT: ", err);
+        return null;
+      });
+
+    return result;
+  }
+
+  async delete(id, user_id) {
+
+    // Resgata o autor
+    const search = await pool.query(
+      `SELECT autor_id FROM tb_content WHERE id = $1;`,
+      [id]
+    ).then(res => res.rows[0]);
+
+    if (!search) return null;
+
+    // Verifica se autor é o mesmo
+    if (user_id !== search.autor_id)
+      return null;
+
+    // Deleta relacionamento
+    await pool.query(
+      `DELETE FROM tb_content_tag WHERE content_id = $1;`,
+      [id]
+    ).catch(err => {
+      console.error("ERROR DELETE RELATION TB_CONTENT_TAG:", err);
+      return null;
+    });
+
+    // Deleta content
+    const result = await pool.query(
+      `DELETE FROM tb_content WHERE id = $1 RETURNING *;`,
+      [id]
+    ).then(res => res.rows[0])
+    .catch(err => {
+      console.error("ERROR DELETE CONTENT:", err);
+      return null;
+    });
+
+    return result;
+  }
+
 }
 
 export default new ContentModel();

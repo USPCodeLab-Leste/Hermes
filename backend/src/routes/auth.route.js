@@ -1,6 +1,7 @@
 import express from "express";
 import AuthController from "../controllers/auth.controller.js";
 import JWTController from "../controllers/jwt.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js"
 
 const router = express.Router();
 
@@ -99,5 +100,130 @@ router.post("/login", AuthController.login);
  *         description: Erro interno ao renovar token
  */
 router.get("/refresh", JWTController.refresh);
+
+/**
+ * @openapi
+ * /auth/verify-email:
+ *   get:
+ *     summary: Verificar e-mail do usuário
+ *     description: >
+ *       Valida o token de verificação enviado via query string e marca o e-mail do usuário como verificado.
+ *       O token é gerado no momento do registro e enviado por e-mail ao usuário.
+ *     tags:
+ *       - Auth
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Token de verificação enviado por e-mail
+ *     responses:
+ *       200:
+ *         description: E-mail verificado com sucesso
+ *         content:
+ *           application/json:
+ *             example:
+ *               {
+ *                 "message": "Email verificado com sucesso"
+ *               }
+ *       400:
+ *         description: Token não fornecido, inválido ou usuário não encontrado
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.get('/verify-email', AuthController.verifyEmail);
+
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout
+ *     description: Invalida o token JWT do utilizador autenticado.
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Logout realizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Logout realizado com sucesso
+ *       401:
+ *         description: Não autorizado (token inválido ou ausente)
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.post('/logout', authMiddleware, AuthController.logout);
+
+/**
+ * @swagger
+ * /auth/change-password:
+ *   patch:
+ *     summary: Alterar senha do utilizador autenticado
+ *     description: Permite que o utilizador autenticado altere a sua senha informando a senha atual.
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 example: 12345678
+ *               newPassword:
+ *                 type: string
+ *                 example: NovaSenhaForte123
+ *     responses:
+ *       200:
+ *         description: Senha alterada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Senha alterada com sucesso
+ *       400:
+ *         description: Dados inválidos
+ *       401:
+ *         description: Não autorizado ou senha antiga incorreta
+ *       404:
+ *         description: Utilizador não encontrado
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.patch("/change-password", authMiddleware, AuthController.changePassword);
+
+// rota teste 
+// router.get('/teste-envio', async (req,res) => {
+//   try {
+//     const emailFake = "hermes@usp.br";
+//     const token = jwt.sign({email: emailFake }, process.env.JWT_EMAIL_SECRET || 'segredinho secreto'); // token qualquer so pra testar o link
+
+//     await sendVerificationEmail(emailFake,token);
+//     res.send("<h1>E-mail enviado com sucesso!<h1> <p>Verifique a url no console pra verificar o email<p>");
+
+//   } catch (error) {
+//     res.status(500).send("Houve um error ao enviar: " + error.message);
+//   }
+
+// });
 
 export default router;
