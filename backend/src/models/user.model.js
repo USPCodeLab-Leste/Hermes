@@ -36,7 +36,7 @@ class UserModel {
   }
 
   // Cria usuario
-  async create({ name, email, password, role = "USER" }) {
+  async create({ name, email, password, role = "ADMIN" }) {
     try {
       const id = crypto.randomUUID();
 
@@ -135,7 +135,14 @@ class UserModel {
     const result = await pool.query(sql, [id]);
     return result.rows[0];
   }
-  
+
+  async updatePassword(id, password) {
+    await pool.query(
+      `UPDATE tb_user SET password = $1 WHERE id = $2`,
+      [password, id]
+    );
+  }
+
 }
 
 export default new UserModel();

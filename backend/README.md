@@ -78,5 +78,5 @@ sudo docker-compose logs -f backend
 
 Para remover o docker-compose
 ```bash
-sudo docker-compose down
+sudo docker-compose down -v
 ```
