@@ -32,6 +32,24 @@ Os testes demonstra que a aplicação restorna as devidas respostas de erro e de
 #### GET (/auth/refresh)
 Renova o token de acesso.
 
+#### POST (/auth/logout)
+Finalizar a sessão do usuário.
+Funcioando perfeitamente.
+
+#### PATCH (/auth/change-password)
+Atualizar a senha do usuário.
+##### Testes
+Teste realizados:
+- Modelo padrão;
+- Senha antiga incorreta;
+- Senha nova vazia;
+- Senha nova não seguinto os padrões.
+
+Teste deram em sucesso.
+
+Ponto à destacar: o backend poderia verificar se a senha atende aos requisitos mínimo de senha?
+
+
 Ele renova o token sem nenhum empecilho
 
 ### Events
