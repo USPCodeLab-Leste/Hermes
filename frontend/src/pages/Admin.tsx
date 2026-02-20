@@ -1,5 +1,5 @@
 import { useCallback, useState, useMemo } from "react";
-import type { Event } from "../types/events";
+import { motion } from "framer-motion";
 
 // Components
 import { EventCard } from "../components/Events";
@@ -7,6 +7,9 @@ import AppHeader from "../components/AppHeader";
 import SearchBar from "../components/SearchBar";
 import { SelectedEventDetails } from "../components/SelectedEventDetails";
 import { ModalWrapper } from "../components/modals/Modal";
+import Skeletons from "../components/skeletons/Skeletons";
+import { CreateEventModal } from "../components/modals/CreateEventModal";
+import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton";
 
 // Icons
 import PlusIcon from "../assets/icons/plus.svg?react";
@@ -14,13 +17,9 @@ import PlusIcon from "../assets/icons/plus.svg?react";
 // Hooks
 import { useMyEvents } from "../hooks/events/useMyEvents";
 import { useSharedSearch } from "../hooks/useSharedSearch";
-import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton";
-import Skeletons from "../components/skeletons/Skeletons";
-import { motion } from "framer-motion";
 
 export default function Admin() {
   const {value: search, setValue: setSearch} = useSharedSearch()
-  const { data: events, isLoading, isTyping } = useMyEvents(search);
 
   return (
     <>
@@ -30,24 +29,28 @@ export default function Admin() {
           Administração
         </h1>
         <SearchBar search={search} setSearch={setSearch} isDark={true} />
-        <AdminEventsGrid eventsList={events} isLoading={isLoading} isTyping={isTyping} />
+        <AdminEventsGrid search={search} />
       </main>
     </>
   );
 }
 
 interface AdminEventsGridProps {
-  eventsList: Event[] | undefined;
-  isLoading: boolean;
-  isTyping: boolean;
+  search: string;
 }
 
-function AdminEventsGrid({ eventsList, isLoading, isTyping }: AdminEventsGridProps) {
-  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+function AdminEventsGrid({ search }: AdminEventsGridProps) {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const { data: events, isLoading, isTyping, refetch } = useMyEvents(search);
+
+  // Modal States
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Handlers
-  const handleNewEvent = useCallback(() => {}, []);
+  const handleNewEvent = useCallback(() => {
+    setIsCreateModalOpen(true);
+  }, []);
 
   const handleSelectEvent = useCallback((id: string) => {
     setSelectedEventId(id);
@@ -58,10 +61,15 @@ function AdminEventsGrid({ eventsList, isLoading, isTyping }: AdminEventsGridPro
 
   const handleDeleteEvent = useCallback((id: string) => {}, []);
 
+  const handleCreateEventModalClose = useCallback(() => {
+    setIsCreateModalOpen(false);
+    refetch();
+  }, []);
+
   // Memos
   const selectedEventData = useMemo(
-    () => eventsList?.find((event) => event.id === selectedEventId),
-    [eventsList, selectedEventId],
+    () => events?.find((event) => event.id === selectedEventId),
+    [events, selectedEventId],
   );
 
   return (
@@ -75,6 +83,9 @@ function AdminEventsGrid({ eventsList, isLoading, isTyping }: AdminEventsGridPro
           <SelectedEventDetails event={selectedEventData} />
         )}
       </ModalWrapper>
+
+      {/* Modal Cria Evento */}
+      <CreateEventModal isOpen={isCreateModalOpen} onClose={handleCreateEventModalClose} />
 
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
         <motion.div
@@ -109,7 +120,7 @@ function AdminEventsGrid({ eventsList, isLoading, isTyping }: AdminEventsGridPro
               </div>
             ))}
           </>
-        ): (eventsList && eventsList.length > 0) ? eventsList.map((eventItem) => (
+        ): (events && events.length > 0) ? events.map((eventItem) => (
           <EventCard
             key={eventItem.id}
             event={eventItem}

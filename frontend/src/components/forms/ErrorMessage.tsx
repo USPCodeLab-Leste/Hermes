@@ -1,4 +1,4 @@
-export function ErrorMessage({ hasError, errorMessage }: { hasError: boolean; errorMessage: string }) {
+export function ErrorMessage({ hasError, errorMessage }: { hasError?: boolean; errorMessage?: string }) {
   return (
     <>
       {hasError && errorMessage && (

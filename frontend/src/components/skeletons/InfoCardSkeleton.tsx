@@ -1,4 +1,5 @@
 import { motion } from "framer-motion"
+import Skeletons from "./Skeletons"
 
 export const InfoCardSkeleton = () => {
   return (
@@ -15,13 +16,13 @@ export const InfoCardSkeleton = () => {
       <div className='shimmer p-2 rounded-[10px] w-fit'>
         <div className='size-7' />
       </div>
-      <div className="w-fit">
-        <h3 className='w-fit font-semibold text-lg text-left text-transparent shimmer px-2 block rounded-xl'>
+      <div className="w-full">
+        <Skeletons className='font-semibold text-lg text-left whitespace-nowrap text-ellipsis overflow-hidden'>
           texto exemplo
-        </h3>
-        <span className='w-fit text-sm text-left text-transparent/75 shimmer px-2 block rounded-xl'>
-          texto
-        </span>
+        </Skeletons>
+        <Skeletons className='w-fit text-sm text-left block'>
+          1 artigo
+        </Skeletons>
       </div>
     </motion.div>
   )
