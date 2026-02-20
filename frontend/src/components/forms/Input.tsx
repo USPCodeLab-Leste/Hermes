@@ -1,15 +1,16 @@
 interface InputProps {
   type: string;
   id: string;
-  value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
   readonly?: boolean;
   disabled?: boolean;
   placeholder?: string;
   autocomplete?: string;
+  accept?: string;
 }
 
-export function Input({type, id, value, onChange, disabled, placeholder, autocomplete, readonly}: InputProps) {
+export function Input({type, id, value, onChange, disabled, placeholder, autocomplete, readonly, accept}: InputProps) {
   return (
     <input
       type={type}
@@ -21,6 +22,7 @@ export function Input({type, id, value, onChange, disabled, placeholder, autocom
       placeholder={placeholder}
       readOnly={readonly}
       autoComplete={autocomplete}
+      accept={accept}
       className="flex-1 bg-transparent outline-none w-full"
     />
   )
