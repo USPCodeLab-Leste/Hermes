@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Label } from "./Label";
 import { ErrorMessage } from "./ErrorMessage";
 
@@ -20,23 +20,60 @@ interface InputUploadFileProps {
  
  export function InputUploadFile({ id, label, hasError, errorMessage, required, accept, selectedFile, disabled, changeSelectedFile }: InputUploadFileProps) {
 
-  const inputRef = useRef(null)
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isDragActive, setIsDragActive] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      changeSelectedFile(e.target.files[0]);
-    }
-  }
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files.length > 0) {
+        changeSelectedFile(e.target.files[0]);
+      }
+    },
+    [changeSelectedFile],
+  );
 
-  const onChooseFile = () => {
-    if (inputRef.current) {
-      (inputRef.current as HTMLInputElement).click();
-    }
-  }
+  const onChooseFile = useCallback(() => {
+    if (disabled) return;
+    inputRef.current?.click();
+  }, [disabled]);
 
-  // const removeFile = () => {
-  //   changeSelectedFile(null);
-  // }
+  const handleDragEnter = useCallback((e: React.DragEvent<HTMLElement>) => {
+      if (disabled) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragActive(true);
+    },
+    [disabled]);
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLElement>) => {
+      if (disabled) return;
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    [disabled]);
+
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLElement>) => {
+      if (disabled) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      setIsDragActive(false);
+    },
+    [disabled]);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      if (disabled) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      setIsDragActive(false);
+
+      const file = e.dataTransfer.files?.[0] ?? null;
+      if (file) changeSelectedFile(file);
+    },
+    [changeSelectedFile, disabled],
+  );
 
   return (
     <div className="flex flex-col gap-1">
@@ -55,25 +92,28 @@ interface InputUploadFileProps {
         type="button" 
         onClick={onChooseFile} 
         disabled={disabled}
+        onDragEnter={handleDragEnter}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
         className={`flex flex-col gap-4 justify-center items-center p-8 rounded-2xl
-                   border-3 border-dashed text-ink/75 dark:text-paper/75 group
-                   ${hasError ? "border-red-300" : " border-ink/50 dark:border-paper/50"}
+                   border-3 border-dashed text-ink/75 dark:text-paper/75 group 
+                   ${hasError ? "border-red-300" : isDragActive ? "border-teal-light" : " border-ink/50 dark:border-paper/50"}
+                   ${isDragActive ? "cursor-grabbing" : "cursor-pointer"} 
                    `}
       >
-        <UploadIcon className="size-14 rounded-full bg-violet-dark p-3.5 group-hover:bg-violet-dark/75 transition-colors" />
-        <span className="font-medium">{selectedFile ? selectedFile.name : "Enviar Arquivo"}</span>
+        <UploadIcon className={`size-14 rounded-full p-3.5 ${isDragActive ? "bg-teal-mid" : "bg-violet-dark"} group-hover:bg-violet-dark/75 transition-colors pointer-events-none`} />
+        <span className="font-medium pointer-events-none">
+          {selectedFile
+            ? selectedFile.name
+            : isDragActive
+              ? "Solte o Arquivo aqui"
+              : "Enviar Arquivo"
+          }
+        </span>
       </button>
 
-      {/* {selectedFile && (
-        <div className="flex items-center gap-2 justify-between rounded-2xl border-3 border-paper p-2">
-          <span>{selectedFile.name}</span>
-          <button type="button" onClick={removeFile} className="ml-2">
-            <CloseIcon className="size-5" />
-          </button>
-        </div>
-      )} */}
       <ErrorMessage hasError={hasError} errorMessage={errorMessage} />
-      
     </div>
   )
 }

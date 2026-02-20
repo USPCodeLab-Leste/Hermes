@@ -88,7 +88,7 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
       <CreateEventModal isOpen={isCreateModalOpen} onClose={handleCreateEventModalClose} />
 
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-        <motion.div
+        <motion.button
           whileHover={{y: -8}}
           className={`aspect-5/3 w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col
                         bg-center justify-center items-center cursor-pointer shadow-lg hover:shadow-2xl
@@ -107,7 +107,7 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
               Escreva um novo evento para o Hermes
             </span>
           </div>
-        </motion.div>
+        </motion.button>
         {isLoading ? (
           <>
             {Array.from({ length: 5 }).map((_, i) => (
