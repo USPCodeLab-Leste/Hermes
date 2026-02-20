@@ -30,6 +30,7 @@ const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType<
     <NavLink 
       to={{pathname: to, search}}
       className="inline-flex items-center justify-center relative"
+      tabIndex={9}
     >
       {({ isActive }) => (
         <>
@@ -41,7 +42,8 @@ const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType<
                 stiffness: 500, 
                 damping: 30,
               }}
-              className="absolute -top-[15px] aspect-124/39 w-28"
+              className="absolute -top-[15px] aspect-124/39 w-28 pointer-events-none"
+              aria-hidden="true"
             >
               <Ondinha 
                 className="dark:text-violet-mid text-paper z-4"
