@@ -2,35 +2,25 @@ import { useCallback, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 
 // Components
-import { EventCard } from "../components/Events";
-import AppHeader from "../components/AppHeader";
-import SearchBar from "../components/SearchBar";
-import { SelectedEventDetails } from "../components/SelectedEventDetails";
-import { ModalWrapper } from "../components/modals/Modal";
-import Skeletons from "../components/skeletons/Skeletons";
-import { CreateEventModal } from "../components/modals/CreateEventModal";
-import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton";
+import { EventCard } from "../../components/Events";
+import { SelectedEventDetails } from "../../components/SelectedEventDetails";
+import { ModalWrapper } from "../../components/modals/Modal";
+import { CreateEventModal } from "../../components/modals/CreateEventModal";
+import { EventCardSkeleton } from "../../components/skeletons/EventCardSkeleton";
 
 // Icons
-import PlusIcon from "../assets/icons/plus.svg?react";
+import PlusIcon from "../../assets/icons/plus.svg?react";
 
 // Hooks
-import { useMyEvents } from "../hooks/events/useMyEvents";
-import { useSharedSearch } from "../hooks/useSharedSearch";
+import { useMyEvents } from "../../hooks/events/useMyEvents";
+import { useSharedSearch } from "../../hooks/useSharedSearch";
 
-export default function Admin() {
-  const {value: search, setValue: setSearch} = useSharedSearch()
+export default function CreateEvent() {
+  const { value: search } = useSharedSearch()
 
   return (
     <>
-      <AppHeader />
-      <main className="main-app">
-        <h1 className="max-w-200 w-full px-3 mt-10 mb-3 text-2xl font-bold">
-          Administração
-        </h1>
-        <SearchBar search={search} setSearch={setSearch} isDark={true} />
         <AdminEventsGrid search={search} />
-      </main>
     </>
   );
 }
@@ -57,9 +47,9 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
     setIsCardModalOpen(true);
   }, []);
 
-  const handleEditEvent = useCallback((id: string) => {}, []);
+  const handleEditEvent = useCallback((_id: string) => {}, []);
 
-  const handleDeleteEvent = useCallback((id: string) => {}, []);
+  const handleDeleteEvent = useCallback((_id: string) => {}, []);
 
   const handleCreateEventModalClose = useCallback(() => {
     setIsCreateModalOpen(false);
@@ -80,7 +70,12 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
         onClose={() => setIsCardModalOpen(false)}
       >
         {selectedEventId && selectedEventData && (
-          <SelectedEventDetails event={selectedEventData} />
+          <SelectedEventDetails
+            event={selectedEventData}
+            isAdmin={true}
+            onEdit={() => handleEditEvent(selectedEventId)}
+            onDelete={() => handleDeleteEvent(selectedEventId)}
+          />
         )}
       </ModalWrapper>
 
@@ -90,7 +85,7 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
         <motion.button
           whileHover={{y: -8}}
-          className={`aspect-5/3 w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col
+          className={`aspect-video w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col
                         bg-center justify-center items-center cursor-pointer shadow-lg hover:shadow-2xl
                         outline-2 hover:outline-paper focus:outline-paper outline-transparent transition-all`}
           onClick={handleNewEvent}
@@ -113,10 +108,6 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
             {Array.from({ length: 5 }).map((_, i) => (
               <div>
                 <EventCardSkeleton key={`event-card-skeleton-${i}`} />
-                <div className="w-full grid grid-cols-2 gap-2 mt-2">
-                  <Skeletons className="px-3 py-1.5 rounded-md" >Editar</Skeletons>
-                  <Skeletons className="px-3 py-1.5 rounded-md" >Excluir</Skeletons>
-                </div>
               </div>
             ))}
           </>
@@ -125,9 +116,6 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
             key={eventItem.id}
             event={eventItem}
             selectEvent={handleSelectEvent}
-            isAdmin={true}
-            editFunction={() => handleEditEvent(eventItem.id)}
-            deleteFunction={() => handleDeleteEvent(eventItem.id)}
             isFetching={isTyping}
           />
         )) : (

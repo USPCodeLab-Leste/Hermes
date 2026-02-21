@@ -36,10 +36,12 @@ import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
 import Info from './pages/info/InfoTag'
-import Admin from './pages/Admin'
+import CreateEvent from './pages/admin/CreateEvent';
+import CreateInfo from './pages/admin/CreateInfo';
 
 // Components
 import Loading from './components/Loading'
+import AdminLayout from './layouts/AdminLayout';
 
 /* =========================
    Guards de Autenticação
@@ -126,10 +128,14 @@ export const router = createHashRouter(
             path="admin" 
             element={
               <RequireAdmin>
-                <Admin />
+                <AdminLayout />
               </RequireAdmin>
             } 
-          />
+          >
+            <Route index element={<InfoIndexRedirect pathname="/perfil/admin/create_events" />} />
+            <Route path="create_events" element={<CreateEvent />} />
+            <Route path="create_infos" element={<CreateInfo />} />
+          </Route>
         </Route>
       </Route>
 

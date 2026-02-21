@@ -4,8 +4,6 @@ import { AnimatePresence, motion, stagger, type Variants } from "framer-motion"
 // Icons
 import PlusIcon from "../assets/icons/plus.svg?react"
 import CheckIcon from "../assets/icons/check.svg?react"
-import PenIcon from "../assets/icons/pencil.svg?react";
-import TrashIcon from "../assets/icons/trash.svg?react";
 import XIcon from "../assets/icons/close.svg?react";
 
 // Types
@@ -22,30 +20,13 @@ interface EventsProps {
   selectEvent: (id: string) => void;
   isFetching?: boolean;
 }
-interface EventCardProps extends EventsProps {
-  isAdmin?: boolean;
-  editFunction?: () => void;
-  deleteFunction?: () => void;
-}
 
 const defaultEventVariants: Variants = {
   hidden: { opacity: 0, y: 40, scale: 0.85 },
   visible: { opacity: 1, y: 0, scale: 1 },
 }
 
-export function EventCard({ event, selectEvent, variants, isAdmin, editFunction, deleteFunction, isFetching }: EventCardProps) {
-  if (isAdmin) {
-    return (  
-      <div className={`flex flex-col gap-2 ${isFetching ? 'pointer-events-none opacity-50' : ''}`}>
-        <EventCardContent variants={variants} event={event} selectEvent={selectEvent} isFetching={isFetching} />
-        <div className="grid grid-cols-2 gap-2">
-          <EditButton label="Editar" Icon={PenIcon} onClick={editFunction!} className="bg-teal-light/70 hover:bg-teal-light/80" />
-          <EditButton label="Excluir" Icon={TrashIcon} onClick={deleteFunction!} />
-        </div>
-      </div>
-    )
-  }
-  
+export function EventCard({ event, selectEvent, variants, isFetching }: EventsProps) {
   return (
     <div className={`w-full flex justify-center items-center ${isFetching ? 'pointer-events-none opacity-50' : ''}`}>
       <EventCardContent variants={variants} event={event} selectEvent={selectEvent} />
@@ -70,7 +51,7 @@ const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
           duration: 0.5,
           delayChildren: 0.2,
         }}
-        className={`aspect-5/3 w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat 
+        className={`aspect-video w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat 
                   bg-center justify-between cursor-pointer shadow-lg hover:shadow-2xl 
                   outline-2 hover:outline-paper focus:outline-paper outline-transparent ${isReady && !isReducedMotion ? 'transition-all' : ''}`}
         style={{ backgroundImage: `url('${event.img_banner}')` }}
@@ -88,18 +69,6 @@ const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
       </motion.button>
   )
 }
-
-const EditButton = ({label, Icon, onClick, className}: {label: string; Icon: React.FC<React.SVGProps<SVGSVGElement>>; onClick: () => void; className?: string}) => (
-    <button 
-      className={`px-3 py-1.5 rounded-md font-medium cursor-pointer flex justify-center items-center gap-1 text-sm
-      hover:shadow-2xl hover:outline-paper focus:outline-paper 
-      outline-transparent transition-all ${className ?? 'bg-red-500/70 hover:bg-red-500/80' }`}
-      onClick={onClick}
-    >
-      <Icon className="size-4" />
-      {label}
-    </button>
-)
 
 const tagsVariants: Variants = {
   visible: {

@@ -45,3 +45,10 @@ export async function uploadBase64ToImgbb(base64Image: string): Promise<string> 
 
   return data.data.display_url as string;
 }
+
+export async function uploadBannerAndGetUrl(file: File) {
+  const base64 = await fileToBase64(file);
+  const imageUrl = await uploadBase64ToImgbb(base64);
+
+  return imageUrl;
+}

@@ -7,18 +7,21 @@ interface PerfilButtonProps {
     onClick: MouseEventHandler<HTMLButtonElement>,
     btnName: string,
     variants?: Variants
+    isFetching?: boolean
 }
 
 export default function PerfilButton({
     icon,
     onClick, 
     btnName,
-    variants
+    variants,
+    isFetching
 }: PerfilButtonProps){
     return (
         <motion.button
-            className="bg-violet-light cursor-pointer text-[20px]/[24px] flex items-center justify-between gap-2 md:max-w-95 w-full h-11.25 border-2 px-2 py-4 
-                         rounded-2xl transition-colors duration-200 ease-in hover:bg-violet-mid/50 focus:bg-violet-mid/50 outline-none group"
+            className={`bg-violet-light cursor-pointer text-[20px]/[24px] flex items-center justify-between gap-2 md:max-w-95 w-full h-11.25 border-2 px-2 py-4 
+                         rounded-2xl transition-colors duration-200 ease-in hover:bg-violet-mid/50 focus:bg-violet-mid/50 outline-none group
+                         ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
             onClick={onClick}
             variants={variants}
         >

@@ -1,0 +1,257 @@
+import { useCallback, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+
+// Components
+import { GenericButton } from "../GenericButton";
+import { ErrorMessage } from "../forms/ErrorMessage";
+import { MemoizedInputText as InputText } from "../forms/InputText";
+import { Label } from "../forms/Label";
+import { InputWrapper } from "../forms/InputWrapper";
+import { ModalWrapper } from "./Modal";
+import { MarkdownWritePreview } from "../forms/MarkdownWritePreview";
+
+// API
+import { postInfo } from "../../api/infos";
+
+// Types
+import { infoTypes } from "../../mocks/tags.mock";
+import type { InfoTagType } from "../../types/tag";
+
+export function CreateInfoModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  return (
+    <ModalWrapper isOpen={isOpen} onClose={onClose}>
+      <CreateInfoModalContent onClose={onClose} />
+    </ModalWrapper>
+  );
+}
+
+const defaultFormErrors = {
+  type: { hasError: false, message: "" },
+  title: { hasError: false, message: "" },
+  body: { hasError: false, message: "" },
+  local: { hasError: false, message: "" },
+  tags: { hasError: false, message: "" },
+};
+
+const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
+  const [confirmed, setConfirmed] = useState({
+    clickCount: 0,
+    isConfirmed: false,
+  });
+
+  const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
+  const [isCreatingLoading, setIsCreatingLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    type: "estudos" as InfoTagType,
+    title: "",
+    body: "",
+    local: "",
+    tags: "", // comma-separated
+  });
+
+  const tagsArray = useMemo(() => {
+    return formData.tags
+      .split(",")
+      .map((t) => {
+        const trimmed = t.trim();
+        const capitalized = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+        return capitalized;
+      })
+      .filter(Boolean);
+  }, [formData.tags]);
+
+  const resetConfirm = useCallback(() => {
+    setConfirmed({ clickCount: 0, isConfirmed: false });
+  }, []);
+
+  const handleChange = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => {
+      const { id, value } = e.target;
+
+      resetConfirm();
+      setFormData((prev) => ({ ...prev, [id]: value }));
+      setErrors((prev) => ({
+        ...prev,
+        [id]: { hasError: false, message: "" },
+      }));
+    },
+    [resetConfirm],
+  );
+
+  const validate = useCallback(() => {
+    let hasLocalError = false;
+    const newErrors = structuredClone(defaultFormErrors);
+
+    if (!formData.type) {
+      newErrors.type = { hasError: true, message: "O tipo é obrigatório." };
+      hasLocalError = true;
+    }
+
+    if (formData.title.trim() === "") {
+      newErrors.title = { hasError: true, message: "O título é obrigatório." };
+      hasLocalError = true;
+    }
+
+    if (formData.body.trim() === "") {
+      newErrors.body = { hasError: true, message: "O conteúdo é obrigatório." };
+      hasLocalError = true;
+    }
+
+    if (formData.local.trim() === "") {
+      newErrors.local = { hasError: true, message: "O local é obrigatório." };
+      hasLocalError = true;
+    }
+
+    if (tagsArray.length === 0) {
+      newErrors.tags = {
+        hasError: true,
+        message: "Pelo menos uma tag é obrigatória (separe por vírgulas).",
+      };
+      hasLocalError = true;
+    }
+
+    setErrors(newErrors);
+    return !hasLocalError;
+  }, [formData.body, formData.local, formData.title, formData.type, tagsArray.length]);
+
+  const handleCreate = useCallback(async (e?: React.FormEvent) => {
+    e?.preventDefault();
+
+    if (isCreatingLoading) return;
+
+    if (!validate()) return;
+
+    if (confirmed.clickCount === 0) {
+      setConfirmed((prev) => ({
+        ...prev,
+        clickCount: prev.clickCount + 1,
+        isConfirmed: false,
+      }));
+      return;
+    }
+
+    try {
+      setIsCreatingLoading(true);
+
+      const payload = {
+        type: formData.type,
+        title: formData.title.trim(),
+        body: formData.body.trim(),
+        local: formData.local.trim(),
+        tags: tagsArray,
+      };
+
+      await postInfo(payload);
+      toast.success("Informação criada com sucesso!");
+
+      onClose();
+      setConfirmed((prev) => ({ ...prev, isConfirmed: true }));
+    } catch (error) {
+      toast.error("Erro ao criar informação");
+    } finally {
+      setIsCreatingLoading(false);
+    }
+  }, [confirmed.clickCount, formData.body, formData.local, formData.title, formData.type, isCreatingLoading, onClose, tagsArray, validate]);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1 overflow-y-auto max-h-[60dvh]">
+        <form onSubmit={handleCreate} className="flex flex-col gap-3">
+          <InputText
+            id="title"
+            label="Título"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Aviso Importante"
+            autocomplete="off"
+            hasError={errors.title.hasError}
+            errorMessage={errors.title.message}
+            disabled={isCreatingLoading}
+            required={true}
+          />
+
+          <MarkdownWritePreview
+            id="body"
+            label="Conteúdo"
+            value={formData.body}
+            onChange={(e) => handleChange(e)}
+            placeholder="Informamos que o sistema ficará indisponível para manutenção."
+            disabled={isCreatingLoading}
+            required={true}
+            hasError={errors.body.hasError}
+            errorMessage={errors.body.message}
+          />
+
+          <InputText
+            id="local"
+            label="Local"
+            value={formData.local}
+            onChange={handleChange}
+            placeholder="Bloco A"
+            autocomplete="off"
+            hasError={errors.local.hasError}
+            errorMessage={errors.local.message}
+            disabled={isCreatingLoading}
+            required={true}
+          />
+
+          <div className="flex flex-col gap-1">
+            <Label id="type" label="Tipo" required={true} />
+            <InputWrapper hasError={errors.type.hasError} disabled={isCreatingLoading}>
+              <select
+                id="type"
+                value={formData.type}
+                onChange={handleChange}
+                disabled={isCreatingLoading}
+                className="flex-1 bg-transparent outline-none w-full cursor-pointer"
+              >
+                {infoTypes.map((type) => (
+                  <option key={type} value={type} className="text-ink">
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </InputWrapper>
+            <ErrorMessage
+              hasError={errors.type.hasError}
+              errorMessage={errors.type.message}
+            />
+          </div>
+
+          <InputText
+            id="tags"
+            label="Tags (separe por vírgula)"
+            value={formData.tags}
+            onChange={handleChange}
+            placeholder="Aviso, Manutenção"
+            autocomplete="off"
+            hasError={errors.tags.hasError}
+            errorMessage={errors.tags.message}
+            disabled={isCreatingLoading}
+            required={true}
+          />
+        </form>
+      </div>
+
+      <GenericButton onClick={handleCreate} disabled={isCreatingLoading}>
+        <span className="text-paper">
+          {confirmed.clickCount === 0
+            ? "Criar Informação"
+            : isCreatingLoading
+              ? "Criando informação..."
+              : "Confirmar Criação"}
+        </span>
+      </GenericButton>
+    </div>
+  );
+};

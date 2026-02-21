@@ -3,7 +3,7 @@ import Skeletons from './Skeletons';
 export function EventCardSkeleton() {
   return (
       <div
-        className={`aspect-5/3 w-full max-w-120 overflow-hidden bg-violet-light/20 rounded-xl flex flex-col bg-cover bg-no-repeat 
+        className={`aspect-video w-full max-w-120 overflow-hidden bg-violet-light/20 rounded-xl flex flex-col bg-cover bg-no-repeat 
                   bg-center justify-between shadow-lg`}
           aria-hidden="true"
       >

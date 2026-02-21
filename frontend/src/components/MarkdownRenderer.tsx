@@ -8,13 +8,6 @@ export default function MarkdownRenderer({ children }: { children: string }) {
       <Markdown
         remarkPlugins={[remarkGfm]}
         components={{
-          // code({ children }) {
-          //   return (
-          //     <pre className="markdown-code">
-          //       <code>{children}</code>
-          //     </pre>
-          //   );
-          // },
           tr(props) {
             return <tr {...props} className="border-b border-violet-light bg-violet-light dark:bg-violet-dark even:bg-violet-mid/50" />
           },
