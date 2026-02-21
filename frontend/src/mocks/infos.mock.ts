@@ -50,7 +50,7 @@ export const mockInfos = [
     title: 'Formatura',
     tags: ['Conclusão'],
     body: testMockContent,
-    icon_name: 'graduation'
+    icon_name: 'graduation-cap'
   },
 
   // Alimentação
@@ -82,7 +82,7 @@ export const mockInfos = [
     title: 'Atendimento Médico',
     tags: ['Saúde'],
     body: testMockContent,
-    icon_name: 'first-aid'
+    icon_name: 'health-kit'
   },
 
   // Bolsas
