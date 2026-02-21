@@ -189,8 +189,7 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
   }, [formData, tagsArray, bannerFile]);
 
   // Valida os dados e simula/confirma a criação do evento
-  const handleCreate = useCallback(
-    async (e?: React.FormEvent) => {
+  const handleCreate = useCallback(async (e?: React.FormEvent) => {
       e?.preventDefault();
       if (isCreatingLoading) return;
       if (!validate()) return;
@@ -253,8 +252,8 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1 overflow-y-auto max-h-[60dvh]">
         <form onSubmit={handleCreate} className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1 overflow-y-auto max-h-[60dvh]">
           {/* Título */}
           <InputText
             id="title"
@@ -375,17 +374,18 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
             disabled={isCreatingLoading}
             required={true}
           />
-        </form>
-      </div>
-      <GenericButton onClick={handleCreate} disabled={isCreatingLoading}>
-        <span className="text-paper">
-          {confirmed.clickCount === 0
-            ? "Criar Evento"
-            : isCreatingLoading
-              ? "Criando evento..."
-              : "Confirmar Criação"}
-        </span>
-      </GenericButton>
+        </div>
+        
+        <GenericButton type="submit" disabled={isCreatingLoading}>
+          <span className="text-paper">
+            {confirmed.clickCount === 0
+              ? "Criar Evento"
+              : isCreatingLoading
+                ? "Criando evento..."
+                : "Confirmar Criação"}
+          </span>
+        </GenericButton>
+      </form>
     </div>
   );
 };

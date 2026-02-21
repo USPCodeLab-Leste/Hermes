@@ -80,23 +80,16 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
     setConfirmed({ clickCount: 0, isConfirmed: false });
   }, []);
 
-  const handleChange = useCallback(
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >,
-    ) => {
-      const { id, value } = e.target;
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
 
-      resetConfirm();
-      setFormData((prev) => ({ ...prev, [id]: value }));
-      setErrors((prev) => ({
-        ...prev,
-        [id]: { hasError: false, message: "" },
-      }));
-    },
-    [resetConfirm],
-  );
+    resetConfirm();
+    setFormData((prev) => ({ ...prev, [id]: value }));
+    setErrors((prev) => ({
+      ...prev,
+      [id]: { hasError: false, message: "" },
+    }));
+  }, [resetConfirm]);
 
   const validate = useCallback(() => {
     let hasLocalError = false;
@@ -186,8 +179,8 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
         }}
       />
 
-      <div className="flex flex-col gap-1 overflow-y-auto max-h-[60dvh]">
-        <form onSubmit={handleCreate} className="flex flex-col gap-3">
+      <form onSubmit={handleCreate} className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1 overflow-y-auto max-h-[60dvh]">
           <InputText
             id="title"
             label="Título"
@@ -290,18 +283,18 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
             disabled={isCreatingLoading}
             required={true}
           />
-        </form>
-      </div>
-
-      <GenericButton onClick={handleCreate} disabled={isCreatingLoading}>
-        <span className="text-paper">
-          {confirmed.clickCount === 0
-            ? "Criar Informação"
-            : isCreatingLoading
-              ? "Criando informação..."
-              : "Confirmar Criação"}
-        </span>
-      </GenericButton>
+        </div>
+        
+        <GenericButton type="submit" disabled={isCreatingLoading}>
+          <span className="text-paper">
+            {confirmed.clickCount === 0
+              ? "Criar Informação"
+              : isCreatingLoading
+                ? "Criando informação..."
+                : "Confirmar Criação"}
+          </span>
+        </GenericButton>
+      </form>
     </div>
   );
 };

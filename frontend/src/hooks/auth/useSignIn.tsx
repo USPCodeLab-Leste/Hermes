@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import type { AuthService } from '../services/auth'
-import type { LoginPayload } from '../types/payloads'
-import type { UserMe } from '../types/user'
+import type { AuthService } from '../../services/auth'
+import type { LoginPayload } from '../../types/payloads'
+import type { UserMe } from '../../types/user'
 
 export function useSignIn(auth: AuthService) {
   const [loading, setLoading] = useState(false)

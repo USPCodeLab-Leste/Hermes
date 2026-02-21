@@ -1,16 +1,19 @@
-import { type MouseEventHandler, type SVGProps, type ComponentType, useMemo, useCallback } from "react";
+import { type MouseEventHandler, type SVGProps, type ComponentType, useMemo, useCallback, useState } from "react";
 import { motion, stagger, type Variants } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { auth } from "../services/auth";
 
 // Components
 import PerfilButton from "../components/PerfilButton";
+import { ChangeNameModal } from "../components/modals/ChangeNameModal";
+import { ChangePasswordModal } from "../components/modals/ChangePasswordModal";
 
 // Hooks
 import { useSignOut } from "../hooks/auth/useSignOut";
 import { useTheme } from "../hooks/useTheme";
 import { useMe } from "../hooks/useMe";
 import { useUserMotionPreference } from "../hooks/useUserMotionPreference";
+
 
 // icones
 import UserIcon from "../assets/icons/user.svg?react";
@@ -62,17 +65,22 @@ export default function Perfil() {
   const isDark = theme === 'dark';
   const { isReducedMotion, togglePreference } = useUserMotionPreference();
 
+  const [isChangeNameOpen, setIsChangeNameOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+
   // Search Params
   const [searchParams] = useSearchParams();
   const search = searchParams.toString() ? `?${searchParams.toString()}` : "";
 
   // onClick Functions (alterar para as funcoes ou router corretos)
-  const handlePerfil = useCallback(() => {}, []);
-  const handleSenha = useCallback(() => {}, []);
+  const handlePerfil = useCallback(() => setIsChangeNameOpen(true), []);
+  const handleSenha = useCallback(() => setIsChangePasswordOpen(true), []);
   const handleNotificacoes = useCallback(() => {}, []);
   const handleDarkMode = useCallback(() => toggleTheme(), [toggleTheme]);
   const handleReducedMotionToggle = useCallback(() => togglePreference(), [togglePreference]);
-  const handleBug = useCallback(() => {}, []);
+  const handleBug = useCallback(() => {
+    window.open("https://forms.gle/coS8sQid3S9JGeKk9", "_blank", "noopener,noreferrer");
+  }, []);
   const handleInfo = useCallback(() => {}, []);
   const handleAdmin = useCallback(() => navigate({ pathname: "admin", search }), [navigate, search]);
 
@@ -80,17 +88,28 @@ export default function Perfil() {
     ...(user?.role === "ADMIN" ? [{ label: "Painel Admin", icon: PencilIcon, onClick: handleAdmin }] : []),
     { label: "Gerenciar Perfil", icon: UserIcon, onClick: handlePerfil },
     { label: "Alterar Senha", icon: PasswordIcon, onClick: handleSenha },
-    { label: "Notificações", icon: BellIcon, onClick: handleNotificacoes },
+    // { label: "Notificações", icon: BellIcon, onClick: handleNotificacoes },
     { label: isDark ? "Modo Claro" : "Modo Escuro", icon: isDark ? LightModeIcon : DarkModeIcon, onClick: handleDarkMode },
     { label: isReducedMotion ? "Ativar Animações" : "Desativar Animações", icon: isReducedMotion ? PlayIcon : PauseIcon, onClick: handleReducedMotionToggle },
     { label: "Relatar Bugs", icon: BugIcon, onClick: handleBug },
-    { label: "Informações", icon: InfoIcon, onClick: handleInfo },
+    // { label: "Informações", icon: InfoIcon, onClick: handleInfo },
     { label: "Sair", icon: LogoutIcon, onClick: signOut },
   ].map((action, index) => ({ ...action, id: index })), [isDark, user?.role, handleDarkMode, handleReducedMotionToggle, handleBug, handleInfo, handleNotificacoes, handlePerfil, handleSenha, handleAdmin, signOut]);
 
 
   return (
     <>
+      <ChangeNameModal
+        isOpen={isChangeNameOpen}
+        onClose={() => setIsChangeNameOpen(false)}
+        currentName={user?.name}
+      />
+
+      <ChangePasswordModal
+        isOpen={isChangePasswordOpen}
+        onClose={() => setIsChangePasswordOpen(false)}
+      />
+
       <header className="flex items-center flex-col text-paper dark:text-paper bg-violet-dark mb-6 py-12 gap-5 rounded-b-2xl">
         <h6 className="text-[20px]/[24px] text-center">Perfil</h6>
         {/* <img src="" alt="iamgem de perfil" />*/}

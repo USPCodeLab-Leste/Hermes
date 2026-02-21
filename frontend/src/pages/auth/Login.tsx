@@ -113,7 +113,7 @@ export default function Login() {
           value={formData.email}
           onChange={handleChange}
           disabled={isLoading}
-          placeholder="E-mail USP"
+          placeholder="hermes@usp.br"
           hasError={errors.email}
           required={true}
         />
@@ -127,7 +127,7 @@ export default function Login() {
             value={formData.password}
             onChange={handleChange}
             disabled={isLoading}
-            placeholder="Senha"
+            placeholder="********"
             validation={false}
             autocomplete="current-password"
             hasError={errors.password}
