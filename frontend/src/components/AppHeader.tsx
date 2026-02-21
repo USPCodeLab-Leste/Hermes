@@ -39,7 +39,7 @@ export default function AppHeader({ children }: { children?: React.ReactNode }) 
               <h3 className="text-paper">{campus}</h3>
             </div>
           </div>
-          <NotificationButton />
+          {/* <NotificationButton /> */}
         </div>
 
         {children}

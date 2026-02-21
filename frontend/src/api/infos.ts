@@ -22,6 +22,7 @@ export function getMyInfos(infoTitle?: string) {
   )
 }
 
+// Faz o post de uma nova informação
 export function postInfo(data: {
   title: string
   body: string
@@ -30,6 +31,7 @@ export function postInfo(data: {
   type: InfoTagType
   icon_name?: string
 }) {
+  // Garante que as tags existam no mock (ou cria novas) e retorna os objetos de tag completos
   const tags = data.tags.map((tagName) => {
     const existing = mockInfoTags.find(
       (t) => t.name === tagName && t.type === data.type,
@@ -47,6 +49,7 @@ export function postInfo(data: {
     return created;
   });
 
+  // Adiciona a nova informação no início da lista (simulando que é a mais recente)
   infos.unshift({
     id: 'info-' + crypto.randomUUID(),
     title: data.title,

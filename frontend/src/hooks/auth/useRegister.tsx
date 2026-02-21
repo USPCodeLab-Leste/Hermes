@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import type { RegisterPayload } from '../types/payloads'
-import type { AuthService } from '../services/auth'
+import type { RegisterPayload } from '../../types/payloads'
+import type { AuthService } from '../../services/auth'
 
 export function useRegister(auth: AuthService) {
   const [loading, setLoading] = useState(false)

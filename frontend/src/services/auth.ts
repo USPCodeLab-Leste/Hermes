@@ -10,8 +10,7 @@ import {
 } from '../api/users'
 import type { UserMe } from '../types/user'
 
-// const TOKEN_KEY = 'auth_token'
-const USER_KEY = 'auth_user'
+export const USER_KEY = 'auth_user'
 
 export type AuthListener = (user: UserMe | null) => void
 
@@ -24,25 +23,19 @@ export interface AuthService {
 
 export function createAuthService(): AuthService {
   let listeners: AuthListener[] = []
-  // let currentToken: string | null = localStorage.getItem(TOKEN_KEY)
   let currentUser: UserMe | null = localStorage.getItem(USER_KEY) ? JSON.parse(localStorage.getItem(USER_KEY)!) : null
 
   function notify() {
-    // listeners.forEach(cb => cb(currentToken))
     listeners.forEach(cb => cb(currentUser))
   }
 
   function saveAuth(user: UserMe) {
-    // localStorage.setItem(TOKEN_KEY, token)
-    // currentToken = user
     localStorage.setItem(USER_KEY, JSON.stringify(user))
     currentUser = user
     notify()
   }
 
   function removeAuth() {
-    // localStorage.removeItem(TOKEN_KEY)
-    // currentToken = null
     localStorage.removeItem(USER_KEY)
     currentUser = null
     notify()
