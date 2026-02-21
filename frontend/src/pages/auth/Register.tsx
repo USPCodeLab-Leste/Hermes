@@ -131,7 +131,7 @@ export default function Register() {
           value={formData.email}
           onChange={handleChange}
           disabled={isLoading}
-          placeholder="E-mail USP"
+          placeholder="hermes@usp.br"
           hasError={errors.email.hasError}
           errorMessage={errors.email.message}
           required={true}
@@ -146,7 +146,7 @@ export default function Register() {
             value={formData.name}
             onChange={handleChange}
             disabled={isLoading}
-            placeholder="Usuário"
+            placeholder="Hermes"
             autocomplete="username"
             hasError={errors.name.hasError}
             errorMessage={errors.name.message}
@@ -158,7 +158,7 @@ export default function Register() {
             value={formData.password}
             onChange={handleChange}
             disabled={isLoading}
-            placeholder="Senha"
+            placeholder="********"
             validation={true}
             autocomplete="new-password"
             onValidationChange={setIsPasswordValid}
@@ -171,7 +171,7 @@ export default function Register() {
             value={formData.confirmPassword}
             onChange={handleChange}
             disabled={isLoading}
-            placeholder="Confirme a senha"
+            placeholder="********"
             validation={false}
             autocomplete="new-password"
             hasError={errors.confirmPassword.hasError}
