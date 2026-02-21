@@ -49,7 +49,12 @@ class UserController {
 
     } catch (err) {
       console.error(err);
-      res.status(400).json("Erro ao atualizar informações do usuario");
+
+      if (err.name === "ZodError") {
+        return res.status(400).json({ error: err });
+      }
+
+      res.status(500).json("Erro ao atualizar informações do usuario");
     }
   }
 
