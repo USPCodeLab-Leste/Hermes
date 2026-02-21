@@ -14,6 +14,7 @@ import type { Info, InfoCard as InfoCardType } from "../../types/infos";
 import SearchIcon from "../../assets/icons/search.svg?react";
 import { useCallback, useMemo, useState } from "react";
 import { MarkdownModal } from "../../components/modals/MarkdownModal";
+import { getInfoIconName } from "../../utils/icons";
 
 // Hooks
 import { useInfosByTitle } from "../../hooks/infos/useInfos";
@@ -99,7 +100,7 @@ const InfoCards = ({ isLoading, infos, type }: InfoTypeProps) => {
         } else {
           map.set(tag.name, {
             cardName: tag.name,
-            icon: tag.name.toLocaleLowerCase(),
+            icon: getInfoIconName(tag.name),
             count: 1
           })
         }

@@ -9,6 +9,11 @@ import { Label } from "../forms/Label";
 import { InputWrapper } from "../forms/InputWrapper";
 import { ModalWrapper } from "./Modal";
 import { MarkdownWritePreview } from "../forms/MarkdownWritePreview";
+import {
+  getDefaultIconOption,
+  IconPickerModal,
+} from "./IconPickerModal";
+import { LazySvg } from "../LazySvg";
 
 // API
 import { postInfo } from "../../api/infos";
@@ -16,6 +21,9 @@ import { postInfo } from "../../api/infos";
 // Types
 import { infoTypes } from "../../mocks/tags.mock";
 import type { InfoTagType } from "../../types/tag";
+
+// Icons
+import RightArrowIcon from "../../assets/icons/right-arrow.svg?react";
 
 export function CreateInfoModal({
   isOpen,
@@ -40,6 +48,7 @@ const defaultFormErrors = {
 };
 
 const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
+  const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
   const [confirmed, setConfirmed] = useState({
     clickCount: 0,
     isConfirmed: false,
@@ -47,6 +56,7 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
 
   const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
   const [isCreatingLoading, setIsCreatingLoading] = useState(false);
+  const [iconInfo, setIconInfo] = useState(() => getDefaultIconOption());
   const [formData, setFormData] = useState({
     type: "estudos" as InfoTagType,
     title: "",
@@ -115,7 +125,7 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
     if (tagsArray.length === 0) {
       newErrors.tags = {
         hasError: true,
-        message: "Pelo menos uma tag é obrigatória (separe por vírgulas).",
+        message: "Informe ao menos UMA tag (separadas por vírgula).",
       };
       hasLocalError = true;
     }
@@ -149,6 +159,7 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
         body: formData.body.trim(),
         local: formData.local.trim(),
         tags: tagsArray,
+        icon_name: iconInfo?.name ?? "unknown",
       };
 
       await postInfo(payload);
@@ -165,6 +176,16 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className="flex flex-col gap-4">
+      <IconPickerModal
+        isOpen={isIconPickerOpen}
+        onClose={() => setIsIconPickerOpen(false)}
+        selectedIconName={iconInfo?.name}
+        onSelect={(option) => {
+          resetConfirm();
+          setIconInfo(option);
+        }}
+      />
+
       <div className="flex flex-col gap-1 overflow-y-auto max-h-[60dvh]">
         <form onSubmit={handleCreate} className="flex flex-col gap-3">
           <InputText
@@ -205,6 +226,34 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
             required={true}
           />
 
+          {/* Icon */}
+          <div className="flex flex-col gap-1">
+            <Label id="icon_name" label="Ícone" required />
+            <InputWrapper disabled={isCreatingLoading} hasError={false}>
+              <button
+                id="icon_name"
+                type="button"
+                onClick={() => setIsIconPickerOpen(true)}
+                disabled={isCreatingLoading}
+                className="flex items-center gap-2 w-full cursor-pointer"
+                aria-label="Selecionar ícone"
+              >
+                {iconInfo?.name && (
+                  <LazySvg
+                    name={iconInfo.name}
+                    className="size-5 text-paper"
+                    aria-hidden="true"
+                  />
+                )}
+                <span className="flex-1 text-left text-paper/90">
+                  {iconInfo?.label ?? "Selecionar ícone"}
+                </span>
+                <RightArrowIcon className="size-4 text-paper rotate-90" aria-hidden="true" />
+              </button>
+            </InputWrapper>
+          </div>
+
+          {/* Info Types */}
           <div className="flex flex-col gap-1">
             <Label id="type" label="Tipo" required={true} />
             <InputWrapper hasError={errors.type.hasError} disabled={isCreatingLoading}>
@@ -228,6 +277,7 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
             />
           </div>
 
+          {/* Tags */}
           <InputText
             id="tags"
             label="Tags (separe por vírgula)"
