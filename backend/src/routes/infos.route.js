@@ -25,12 +25,14 @@ const infosController = new BaseContentController(
  *         name: title
  *         schema:
  *           type: string
+ * 
  *       - in: query
- *         name: tags
+ *         name: tag
  *         schema:
  *           type: array
- *           items:
- *             type: string
+ *         description: >
+ *           Filtra infos por uma ou mais tags.
+ * 
  *         style: form
  *         explode: true
  *       - in: query
