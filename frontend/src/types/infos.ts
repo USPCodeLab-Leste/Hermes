@@ -5,6 +5,7 @@ export interface Info<T = InfoTagType> {
   title: string
   tags: Tag<T>[]
   body: string
+  local?: string
   status: 'draft' | 'published' | 'archived'
   created_at: string    
   autor_id: string

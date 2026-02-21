@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { ModalWrapper } from "./Modal";
 import MarkdownRenderer from "../MarkdownRenderer";
 import { GenericButton } from "../GenericButton";
+import { AdminEditDeleteButtons } from "../admin/AdminEditDeleteButtons";
 
 // Types
 import type { Info } from "../../types/infos";
@@ -15,9 +16,10 @@ interface MarkdownModalProps {
   modalOpen: boolean;
   handleModalClose: () => void;
   selectedInfo: Info | undefined;
+  isAdmin?: boolean;
 }
 
-export function MarkdownModal({ modalOpen, handleModalClose, selectedInfo }: MarkdownModalProps) {
+export function MarkdownModal({ modalOpen, handleModalClose, selectedInfo, isAdmin = false }: MarkdownModalProps) {
   const share = useShare();
 
   const handleShareArticle = useCallback((info: Info) => {
@@ -39,11 +41,13 @@ export function MarkdownModal({ modalOpen, handleModalClose, selectedInfo }: Mar
               <h2 className="text-2xl font-bold mb-4 before:content-['#_']">{selectedInfo?.title}</h2>
               <MarkdownRenderer>{selectedInfo.body}</MarkdownRenderer>
             </div>
-            <GenericButton
-              onClick={() => handleShareArticle(selectedInfo)}
-            >
-              <span className="text-paper">Compartilhar Artigo</span>
-            </GenericButton>
+            {isAdmin ? (
+              <AdminEditDeleteButtons onEdit={() => {}} onDelete={() => {}} />
+            ) : (
+              <GenericButton onClick={() => handleShareArticle(selectedInfo)}>
+                <span className="text-paper">Compartilhar Artigo</span>
+              </GenericButton>
+            )}
           </section>
         ) : (
           <section className="min-h-70">

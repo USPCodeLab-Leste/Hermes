@@ -15,7 +15,7 @@ import { ModalWrapper } from "./Modal";
 import { postEvent } from "../../api/events";
 
 // Utils
-import { fileToBase64, uploadBase64ToImgbb } from "../../utils/files";
+import { fileToBase64, uploadBannerAndGetUrl, uploadBase64ToImgbb } from "../../utils/files";
 
 export function CreateEventModal({
   isOpen,
@@ -99,13 +99,6 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
     },
     [resetConfirm],
   );
-
-  const uploadBannerAndGetUrl = useCallback(async (file: File) => {
-    const base64 = await fileToBase64(file);
-    const imageUrl = await uploadBase64ToImgbb(base64);
-
-    return imageUrl;
-  }, []);
 
   // Valida cada um dos campos manualmente
   const validate = useCallback(() => {

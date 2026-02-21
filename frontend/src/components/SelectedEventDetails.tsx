@@ -10,13 +10,17 @@ import type { Event } from "../types/events"
 import { Tags } from "./Events"
 import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
+import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
 
 interface SelectedEventDetailsProps {
   event: Event | null;
   search?: string;
+  isAdmin?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export function SelectedEventDetails({ event, search }: SelectedEventDetailsProps) {
+export function SelectedEventDetails({ event, search, isAdmin = false, onEdit, onDelete }: SelectedEventDetailsProps) {
   const share = useShare();
 
   // Handlers
@@ -30,7 +34,7 @@ export function SelectedEventDetails({ event, search }: SelectedEventDetailsProp
   return (
     <div className="flex flex-col gap-4">
       <div
-        className="aspect-5/3 w-auto bg-no-repeat bg-cover overflow-hidden bg-violet-dark rounded-xl -mx-6 -mt-12 mb-4"
+        className="aspect-video w-auto bg-no-repeat bg-cover overflow-hidden bg-violet-dark rounded-xl -mx-6 -mt-12 mb-4"
         style={{ backgroundImage: `url('${event?.img_banner}')` }}
       />
       <div className="flex flex-col gap-1 overflow-y-auto max-h-[40dvh]">
@@ -43,11 +47,16 @@ export function SelectedEventDetails({ event, search }: SelectedEventDetailsProp
         </div>
         <p className="text-[16px] dark:text-paper/50 text-ink/50 text-justify hyphens-auto indent-2">{event?.body}</p>
       </div>
-      <GenericButton
-        onClick={handleShare}
-      >
-        <span className="text-paper">Compartilhar Evento</span>
-      </GenericButton>
+      {isAdmin ? (
+        <AdminEditDeleteButtons
+          onEdit={onEdit ?? (() => {})}
+          onDelete={onDelete ?? (() => {})}
+        />
+      ) : (
+        <GenericButton onClick={handleShare}>
+          <span className="text-paper">Compartilhar Evento</span>
+        </GenericButton>
+      )}
     </div>
   )
 }
