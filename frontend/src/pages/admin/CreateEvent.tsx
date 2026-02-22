@@ -1,5 +1,6 @@
 import { useCallback, useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Components
 import { EventCard } from "../../components/Events";
@@ -31,7 +32,8 @@ interface AdminEventsGridProps {
 
 function AdminEventsGrid({ search }: AdminEventsGridProps) {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-  const { data: events, isLoading, isTyping, refetch } = useMyEvents(search);
+  const queryClient = useQueryClient();
+  const { data: events, isLoading, isTyping } = useMyEvents(search);
 
   // Modal States
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
@@ -53,8 +55,13 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
 
   const handleCreateEventModalClose = useCallback(() => {
     setIsCreateModalOpen(false);
-    refetch();
   }, []);
+
+  const handleOnCreated = useCallback(() => {
+    queryClient.invalidateQueries({ predicate: (query: any) => {
+      return query.queryKey[0] === 'my-events' || query.queryKey[0] === 'events';
+    }})
+  }, [])
 
   // Memos
   const selectedEventData = useMemo(
@@ -80,7 +87,11 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
       </ModalWrapper>
 
       {/* Modal Cria Evento */}
-      <CreateEventModal isOpen={isCreateModalOpen} onClose={handleCreateEventModalClose} />
+      <CreateEventModal
+        isOpen={isCreateModalOpen}
+        onClose={handleCreateEventModalClose}
+        onCreated={handleOnCreated}
+      />
 
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
         <motion.button
@@ -96,7 +107,7 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
               <PlusIcon className="size-full text-paper" />
             </div>
             <span className="text-[20px]/[24px] font-semibold my-3 text-paper">
-              Crie um novo evento
+              Crie um novo Evento
             </span>
             <span className="text-[16px]/[18px] font-light text-wrap text-center md:w-6/10 w-8/10 text-paper">
               Escreva um novo evento para o Hermes

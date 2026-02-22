@@ -85,7 +85,7 @@ export function IconPickerModal({
                       : "bg-violet-dark hover:shadow-lg hover:bg-violet-light"
                   }
                 `}
-                aria-title={option.label}
+                title={option.label}
                 aria-label={option.label}
                 aria-pressed={isActive}
               >

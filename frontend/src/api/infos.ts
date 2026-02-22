@@ -2,6 +2,7 @@ import { fakeRequest } from './client'
 import { mockInfos as infos } from '../mocks/infos.mock'
 import { mockInfoTags } from '../mocks/tags.mock'
 import type { InfoTagType, Tag } from '../types/tag'
+import { normalizeString } from '../utils/string'
 
 // Retorna todas as informações
 export function getInfos() {
@@ -10,14 +11,14 @@ export function getInfos() {
 
 // Retorna as informações filtradas por título
 export function getInfosByTitle(infoTitle: string) {
-  return fakeRequest(infos.filter(info => info.title.toLowerCase().includes(infoTitle.toLowerCase())))
+  return fakeRequest(infos.filter(info => normalizeString(info.title).includes(normalizeString(infoTitle))))
 }
 
 // Retorna as informações do autor (mock) filtradas por título
 export function getMyInfos(infoTitle?: string) {
   return fakeRequest(
     infos.filter(info => {
-      return infoTitle ? info.title.toLowerCase().includes(infoTitle.toLowerCase()) : true
+      return infoTitle ? normalizeString(info.title).includes(normalizeString(infoTitle)) : true
     })
   )
 }
@@ -70,13 +71,13 @@ export function postInfo(data: {
 // Retorna as informações filtradas por tag
 export function getInfosByTag(tagName: string, infoTitle?: string) {
   return fakeRequest(infos.filter(info => {
-    return info.tags.some(tag => tag.name === tagName) && (!infoTitle || info.title.toLowerCase().includes(infoTitle.toLowerCase()))
+    return info.tags.some(tag => tag.name === tagName) && (!infoTitle || normalizeString(info.title).includes(normalizeString(infoTitle)))
   }))
 }
 
 // Retorna as informações filtradas por tipo
 export function getInfoByType(type: string, title?: string) {
   return fakeRequest(infos.filter(info => {
-    return info.tags.some(tag => tag.type === type) && (!title || info.title.toLowerCase().includes(title.toLowerCase()))
+    return info.tags.some(tag => tag.type === type) && (!title || normalizeString(info.title).includes(normalizeString(title)))
   }))
 }

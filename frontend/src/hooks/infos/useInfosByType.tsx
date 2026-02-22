@@ -4,7 +4,7 @@ import type { Info } from '../../types/infos'
 
 export function useInfosByType(type: string, query?: string) {
   return useQuery<Info[]>({
-    queryKey: ['info', query, type],
+    queryKey: ['infos', query, type],
     queryFn: () => getInfoByType(type, query)
   })
 }
