@@ -1,11 +1,4 @@
-
-function normalizeKey(value: string) {
-	return value
-		.trim()
-		.toLowerCase()
-		.normalize("NFD")
-		.replace(/[\u0300-\u036f]/g, "");
-}
+import { normalizeString } from "./string";
 
 const infoTagToIconName: Record<string, string> = {
 	matricula: "book",
@@ -21,7 +14,7 @@ const infoTagToIconName: Record<string, string> = {
 };
 
 export function getInfoIconName(tagName: string): string {
-	const key = normalizeKey(tagName);
+	const key = normalizeString(tagName);
 	return infoTagToIconName[key] ?? "unknown";
 }
 

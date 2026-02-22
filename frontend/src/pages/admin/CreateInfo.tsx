@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Hooks
 import { useSharedSearch } from "../../hooks/useSharedSearch";
@@ -30,7 +31,8 @@ interface AdminInfosGridProps {
 }
 
 function AdminInfosGrid({ search }: AdminInfosGridProps) {
-  const { data: infos, isLoading, isTyping, refetch } = useMyInfos(search);
+  const queryClient = useQueryClient();
+  const { data: infos, isLoading, isTyping } = useMyInfos(search);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [articleId, setArticleId] = useState<string | null>(null);
@@ -43,8 +45,7 @@ function AdminInfosGrid({ search }: AdminInfosGridProps) {
 
   const handleCreateInfoModalClose = useCallback(() => {
     setIsCreateModalOpen(false);
-    refetch();
-  }, [refetch]);
+  }, []);
 
   const handleSelectInfo = useCallback((id: string) => {
     setArticleId(id);
@@ -56,6 +57,12 @@ function AdminInfosGrid({ search }: AdminInfosGridProps) {
     setArticleId(null);
   }, []);
 
+  const handleOnCreated = useCallback(() => {
+    queryClient.invalidateQueries({ predicate: (query: any) => {
+      return query.queryKey[0] === 'my-infos' || query.queryKey[0] === 'infos';
+    }})
+  }, [])
+
   const selectedInfo = useMemo(
     () => infos?.find((info) => info.id === articleId),
     [infos, articleId],
@@ -63,7 +70,11 @@ function AdminInfosGrid({ search }: AdminInfosGridProps) {
 
   return (
     <>
-      <CreateInfoModal isOpen={isCreateModalOpen} onClose={handleCreateInfoModalClose} />
+      <CreateInfoModal
+        isOpen={isCreateModalOpen}
+        onClose={handleCreateInfoModalClose}
+        onCreated={handleOnCreated}
+      />
 
       <MarkdownModal
         modalOpen={modalOpen}
@@ -119,7 +130,7 @@ const CreateInfoButton = ({ onClick }: { onClick: () => void }) => {
 
     >
       <PlusIcon className="size-5 text-paper" />
-      <span className='inline-block text-left whitespace-nowrap text-ellipsis overflow-hidden flex-1'>Cria Informação</span>
+      <span className='inline-block text-left whitespace-nowrap text-ellipsis overflow-hidden flex-1'>Crie uma nova Informação</span>
     </motion.button>
   )
 }

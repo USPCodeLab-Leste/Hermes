@@ -82,7 +82,6 @@ export default function Login() {
 
   useEffect(() => {
     if (signInError) {
-      console.error(signInError);
       toast.error("Credenciais inválidas!"); // Ou use error.message se vier do back
       setErrors({ email: true, password: true });
     }

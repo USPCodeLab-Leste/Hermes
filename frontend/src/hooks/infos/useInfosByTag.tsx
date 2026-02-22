@@ -7,7 +7,7 @@ export function useInfosByTag(tagName: string, infoTitle?: string) {
   const debouncedTitle = useDebounce(infoTitle);
 
   const query = useQuery<Info[]>({
-    queryKey: ['info', tagName, debouncedTitle],
+    queryKey: ['infos', tagName, debouncedTitle],
     queryFn: () => getInfosByTag(tagName, debouncedTitle),
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,

@@ -28,13 +28,15 @@ import RightArrowIcon from "../../assets/icons/right-arrow.svg?react";
 export function CreateInfoModal({
   isOpen,
   onClose,
+  onCreated,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onCreated?: () => void;
 }) {
   return (
     <ModalWrapper isOpen={isOpen} onClose={onClose}>
-      <CreateInfoModalContent onClose={onClose} />
+      <CreateInfoModalContent onClose={onClose} onCreated={onCreated} />
     </ModalWrapper>
   );
 }
@@ -47,7 +49,13 @@ const defaultFormErrors = {
   tags: { hasError: false, message: "" },
 };
 
-const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
+const CreateInfoModalContent = ({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void;
+  onCreated?: () => void;
+}) => {
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
   const [confirmed, setConfirmed] = useState({
     clickCount: 0,
@@ -158,6 +166,7 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
       await postInfo(payload);
       toast.success("Informação criada com sucesso!");
 
+      onCreated?.();
       onClose();
       setConfirmed((prev) => ({ ...prev, isConfirmed: true }));
     } catch (error) {
@@ -165,7 +174,7 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
     } finally {
       setIsCreatingLoading(false);
     }
-  }, [confirmed.clickCount, formData.body, formData.local, formData.title, formData.type, isCreatingLoading, onClose, tagsArray, validate]);
+  }, [confirmed.clickCount, formData.body, formData.local, formData.title, formData.type, isCreatingLoading, onClose, onCreated, tagsArray, validate]);
 
   return (
     <div className="flex flex-col gap-4">
