@@ -5,16 +5,19 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^7.0.12",
     "pg": "^8.16.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "nodemailer": "^7.0.12",
     "zod": "^4.2.1"
   },
   "scripts": {
+    "start": "node ./src/app.js",
     "dev": "nodemon ./src/app.js"
   },
   "type": "module"
