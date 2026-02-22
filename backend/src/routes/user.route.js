@@ -54,6 +54,8 @@ router.get("/users/me", authMiddleware, UserController.getInfoMe);
  *       401:
  *         description: Usuário não autenticado
  *       400:
+ *         description: Dados inválidos
+ *       500:
  *         description: Erro ao atualizar informações do usuario
  */
 router.patch("/users/me", authMiddleware, UserController.patchInfoMe);

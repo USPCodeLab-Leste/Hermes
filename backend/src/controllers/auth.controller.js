@@ -4,6 +4,8 @@ import { registerSchema, changePasswordSchema } from "../validators/auth.validat
 import jwt from "jsonwebtoken";
 import { sendVerificationEmail } from "../services/email.service.js";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 class AuthController {
 
   async register(req, res) {
@@ -96,13 +98,13 @@ class AuthController {
       res.cookie("access_token", accessToken, {
         httpOnly: true,
         sameSite: "lax",
-        secure: false // true em produção
+        secure: isProduction
       });
 
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         sameSite: "lax",
-        secure: false
+        secure: isProduction
       });
 
       res.status(200).json({ message: "Login realizado com sucesso" });
@@ -120,13 +122,13 @@ class AuthController {
       await res.clearCookie("access_token", {
         httpOnly: true,
         sameSite: "lax",
-        secure: false
+        secure: isProduction
       });
 
       await res.clearCookie("refresh_token", {
         httpOnly: true,
         sameSite: "lax",
-        secure: false
+        secure: isProduction
       });
 
       return res.status(200).json({ message: "Logout realizado com sucesso" });

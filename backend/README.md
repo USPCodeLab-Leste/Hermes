@@ -6,15 +6,15 @@
 
 Tenha instalado na máquina:
 
-- **Docker**
-- **Docker Compose (v1)**
+- **Docker (Engine v29+)**
+- **Docker Compose (v2, via docker compose)**
 
 <br>
 
 Verifique:
 ```bash
 docker --version
-docker-compose --version
+docker compose --version
 ```
 
 <br>
@@ -25,10 +25,27 @@ Renomeie o arquivo .env.example para .env
 <br>
 
 ### 3️⃣ Subir a aplicação com Docker
-Dentro da pasta backend, execute:
+O projeto utiliza dois arquivos Docker Compose:
+
+<br>
+
+- `docker-compose.yml`: configuração principal, define todos os serviços necessários, incluindo backend, banco de dados e nginx.
+- `docker-compose.override.yml`: usado no desenvolvimento para mapear o código local e habilitar hot reload no backend.
+
+<br>
+
+Para rodar no modo desenvolvimento, basta executar:
 
 ```bash
-sudo docker-compose up -d --build
+docker compose up -d --build
+```
+
+<br>
+
+Para subir apenas o ambiente de produção:
+
+```bash
+docker compose -f docker-compose.yml up -d --build
 ```
 
 Isso irá:
@@ -42,21 +59,15 @@ Isso irá:
 Confira os containers:
 
 ```bash
-sudo docker ps
+docker ps
 ```
-
-<br>
-
-Você deve ver:
-- hermes_api (backend)
-- hermes_db (postgres)  
 
 <br>
 
 ## 📚 Documentação da API (Swagger)
 Após subir o projeto, a documentação estará disponível em:
 
-> http://localhost:3000/docs
+> http://localhost/docs
 
 <br>
 
@@ -64,19 +75,19 @@ Após subir o projeto, a documentação estará disponível em:
 
 Para ver os logs do backend:
 ```bash
-sudo docker-compose logs backend
+docker compose logs backend
 ```
 
 <br>
 
 Ou em tempo real:
 ```bash
-sudo docker-compose logs -f backend
+docker compose logs -f backend
 ```
 
 <br>
 
-Para remover o docker-compose
+Para parar e remover containers, volumes e rede
 ```bash
-sudo docker-compose down -v
+docker compose down -v
 ```

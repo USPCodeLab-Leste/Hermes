@@ -2,6 +2,8 @@ import "./config/env.js";
 
 import express from "express";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import cors from "cors";
 
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger/swagger.js";
@@ -15,6 +17,19 @@ import tagRoutes from "./routes/tag.route.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
+const backUrl = process.env.BASE_URL;
+const frontUrl = process.env.FRONT_URL;
+app.use(cors({
+  origin: [
+    backUrl,
+    frontUrl
+  ],
+  credentials: true
+}));
+
+app.use(helmet()); // Help secure by setting HTTP response headers
 app.use(express.json());
 app.use(cookieParser());
 
@@ -29,8 +44,9 @@ app.use(tagRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
+  console.log(`-------- Servidor rodando em ${process.env.NODE_ENV} --------`);
   console.log(`------------------------------------------------`);
-  console.log(` Listening on   -> http://localhost:${PORT}`);
-  console.log(` Documentation  -> http://localhost:${PORT}/docs`);
+  console.log(` Listening on   -> http://localhost`);
+  console.log(` Documentation  -> http://localhost/docs`);
   console.log(`------------------------------------------------`);
 });
