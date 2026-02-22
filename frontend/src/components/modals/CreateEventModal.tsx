@@ -15,18 +15,20 @@ import { ModalWrapper } from "./Modal";
 import { postEvent } from "../../api/events";
 
 // Utils
-import { fileToBase64, uploadBannerAndGetUrl, uploadBase64ToImgbb } from "../../utils/files";
+import { uploadBannerAndGetUrl } from "../../utils/files";
 
 export function CreateEventModal({
   isOpen,
   onClose,
+  onCreated,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onCreated?: () => void;
 }) {
   return (
     <ModalWrapper isOpen={isOpen} onClose={onClose}>
-      <CreateEventModalContent onClose={onClose} />
+      <CreateEventModalContent onClose={onClose} onCreated={onCreated} />
     </ModalWrapper>
   );
 }
@@ -41,7 +43,13 @@ const defaultFormErrors = {
   tags: { hasError: false, message: "" },
 };
 
-const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
+const CreateEventModalContent = ({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void;
+  onCreated?: () => void;
+}) => {
   const [confirmed, setConfirmed] = useState({
     clickCount: 0,
     isConfirmed: false,
@@ -158,7 +166,6 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
       };
       hasLocalError = true;
     } else if (!bannerFile.type.startsWith("image/")) {
-      console.log("Arquivo selecionado não é uma imagem:", bannerFile);
       newErrors.img_banner = {
         hasError: true,
         message: "O arquivo deve ser uma imagem.",
@@ -191,7 +198,6 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
   // Valida os dados e simula/confirma a criação do evento
   const handleCreate = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Tentando criar evento com dados:", formData, bannerFile, tagsArray);
 
     if (isCreatingLoading) return;
     if (!validate()) return;
@@ -231,10 +237,10 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
       await postEvent(payload);
       toast.success("Evento criado com sucesso!");
 
+      onCreated?.();
       onClose();
       setConfirmed((prev) => ({ ...prev, isConfirmed: true }));
     } catch (err) {
-      console.error("Erro ao criar evento:", err);
       toast.error("Não foi possível criar o evento.");
     } finally {
       setIsCreatingLoading(false);
@@ -246,6 +252,7 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
     formData,
     isCreatingLoading,
     onClose,
+    onCreated,
     tagsArray,
     uploadBannerAndGetUrl,
     validate,
