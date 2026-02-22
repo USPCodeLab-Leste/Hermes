@@ -92,13 +92,13 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
           aria-label="Adicionar novo evento"
         >
           <div className="flex flex-col items-center">
-            <div className="size-14 p-2 bg-teal-light rounded-full flex items-center justify-center">
+            <div className="size-12 md:size-14 p-2 bg-teal-light rounded-full flex items-center justify-center">
               <PlusIcon className="size-full text-paper" />
             </div>
             <span className="text-[20px]/[24px] font-semibold my-3 text-paper">
               Crie um novo evento
             </span>
-            <span className="text-[16px]/[18px] font-light text-wrap text-center w-6/10 text-paper">
+            <span className="text-[16px]/[18px] font-light text-wrap text-center md:w-6/10 w-8/10 text-paper">
               Escreva um novo evento para o Hermes
             </span>
           </div>
