@@ -216,24 +216,18 @@ const CreateEventModalContent = ({
 
       const img_banner = await uploadBannerAndGetUrl(bannerFile!);
 
+      
       const payload = {
         title: formData.title.trim(),
         body: formData.body.trim(),
         local: formData.local.trim(),
-        data_inicio: new Date(formData.data_inicio).toLocaleString("pt-BR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }),
-        data_fim: new Date(formData.data_fim).toLocaleString("pt-BR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }),
+        data_inicio: formData.data_inicio+":00Z",
+        data_fim: formData.data_fim+":00Z",
         img_banner,
         tags: tagsArray,
       };
 
+      console.log(formData.data_inicio, payload.data_inicio);
       await postEvent(payload);
       toast.success("Evento criado com sucesso!");
 
