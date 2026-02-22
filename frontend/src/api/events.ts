@@ -10,6 +10,7 @@ function paginate<T>(items: T[], offset: number, limit: number) {
 
   return { data, hasMore }
 }
+
 interface GetEventsParams {
   offset: number
   limit: number

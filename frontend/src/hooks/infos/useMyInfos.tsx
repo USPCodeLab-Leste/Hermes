@@ -1,22 +1,22 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getMyInfos } from '../../api/infos'
-import type { Info } from '../../types/infos'
+import type { InfosResponse } from '../../types/infos'
 import { useDebounce } from '../useDebounce';
 
 export function useMyInfos(infoTitle?: string) {
-  const debouncedTitle = useDebounce(infoTitle, infoTitle ? 500 : 0);
+  const debouncedTitle = useDebounce(infoTitle);
 
-  const query = useQuery<Info[]>({
+  const query = useQuery<InfosResponse>({
     queryKey: ['my-infos', debouncedTitle],
     queryFn: () => getMyInfos(debouncedTitle),
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
   })
 
-  const isTyping = infoTitle !== debouncedTitle || query.isFetching;
 
   return {
-    ...query,
-    isTyping
+    data: query.data?.data ?? [],
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
   }
 }

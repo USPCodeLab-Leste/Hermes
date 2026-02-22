@@ -32,7 +32,7 @@ interface AdminInfosGridProps {
 
 function AdminInfosGrid({ search }: AdminInfosGridProps) {
   const queryClient = useQueryClient();
-  const { data: infos, isLoading, isTyping } = useMyInfos(search);
+  const { data: infos, isLoading, isFetching } = useMyInfos(search);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [articleId, setArticleId] = useState<string | null>(null);
@@ -100,7 +100,7 @@ function AdminInfosGrid({ search }: AdminInfosGridProps) {
                 key={info.id}
                 onClick={() => handleSelectInfo(info.id)}
                 btnName={info.title}
-                isFetching={isTyping}
+                isFetching={isFetching}
                 icon={
                   <LazySvg
                     name={info.icon_name ?? 'unknown'}
@@ -111,7 +111,7 @@ function AdminInfosGrid({ search }: AdminInfosGridProps) {
             ))}
           </>
         ) : (
-          <p className={`text-center font-medium p-4 ${isTyping ? 'opacity-50' : ''}`}>
+          <p className={`text-center font-medium p-4 ${isFetching ? 'opacity-50' : ''}`}>
             Nenhuma informação encontrada com essa busca.
           </p>
         )}
