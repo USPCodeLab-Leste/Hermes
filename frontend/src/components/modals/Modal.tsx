@@ -97,8 +97,9 @@ function Modal({ children, onClose, ref }: ModalProps) {
   )
 }
 
+const modalRoot = document.getElementById('modal-root')
+
 export function ModalWrapper({ isOpen, onClose, children }: ModalProps) {
-  const modalRoot = document.getElementById('modal-root')
   const modalRef = useRef<HTMLDivElement | null>(null)
 
   if (!modalRoot) return null

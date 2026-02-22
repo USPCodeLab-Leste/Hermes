@@ -189,71 +189,72 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
   }, [formData, tagsArray, bannerFile]);
 
   // Valida os dados e simula/confirma a criação do evento
-  const handleCreate = useCallback(async (e?: React.FormEvent) => {
-      e?.preventDefault();
-      if (isCreatingLoading) return;
-      if (!validate()) return;
+  const handleCreate = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Tentando criar evento com dados:", formData, bannerFile, tagsArray);
 
-      if (confirmed.clickCount === 0) {
-        setConfirmed((prev) => ({
-          ...prev,
-          clickCount: prev.clickCount + 1,
-          isConfirmed: false,
-        }));
-        return;
-      }
+    if (isCreatingLoading) return;
+    if (!validate()) return;
 
-      try {
-        setIsCreatingLoading(true);
+    if (confirmed.clickCount === 0) {
+      setConfirmed((prev) => ({
+        ...prev,
+        clickCount: prev.clickCount + 1,
+        isConfirmed: false,
+      }));
+      return;
+    }
 
-        const img_banner = await uploadBannerAndGetUrl(bannerFile!);
+    try {
+      setIsCreatingLoading(true);
 
-        const payload = {
-          title: formData.title.trim(),
-          body: formData.body.trim(),
-          local: formData.local.trim(),
-          data_inicio: new Date(formData.data_inicio).toLocaleString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          }),
-          data_fim: new Date(formData.data_fim).toLocaleString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          }),
-          img_banner,
-          tags: tagsArray,
-        };
+      const img_banner = await uploadBannerAndGetUrl(bannerFile!);
 
-        await postEvent(payload);
-        toast.success("Evento criado com sucesso!");
+      const payload = {
+        title: formData.title.trim(),
+        body: formData.body.trim(),
+        local: formData.local.trim(),
+        data_inicio: new Date(formData.data_inicio).toLocaleString("pt-BR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
+        data_fim: new Date(formData.data_fim).toLocaleString("pt-BR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
+        img_banner,
+        tags: tagsArray,
+      };
 
-        onClose();
-        setConfirmed((prev) => ({ ...prev, isConfirmed: true }));
-      } catch (err) {
-        console.error("Erro ao criar evento:", err);
-        toast.error("Não foi possível criar o evento.");
-      } finally {
-        setIsCreatingLoading(false);
-      }
-    },
-    [
-      bannerFile,
-      confirmed.clickCount,
-      formData,
-      isCreatingLoading,
-      onClose,
-      tagsArray,
-      uploadBannerAndGetUrl,
-      validate,
-    ],
-  );
+      await postEvent(payload);
+      toast.success("Evento criado com sucesso!");
+
+      onClose();
+      setConfirmed((prev) => ({ ...prev, isConfirmed: true }));
+    } catch (err) {
+      console.error("Erro ao criar evento:", err);
+      toast.error("Não foi possível criar o evento.");
+    } finally {
+      setIsCreatingLoading(false);
+    }
+  },
+  [
+    bannerFile,
+    confirmed.clickCount,
+    formData,
+    isCreatingLoading,
+    onClose,
+    tagsArray,
+    uploadBannerAndGetUrl,
+    validate,
+  ]);
 
   return (
     <div className="flex flex-col gap-4">
         <form onSubmit={handleCreate} className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1 overflow-y-auto max-h-[60dvh]">
+          <div className="flex flex-col gap-3 overflow-y-auto max-h-[60dvh]">
           {/* Título */}
           <InputText
             id="title"
@@ -359,6 +360,7 @@ const CreateEventModalContent = ({ onClose }: { onClose: () => void }) => {
             errorMessage={errors.img_banner.message}
             required={true}
             disabled={isCreatingLoading}
+            tooltip="A proporção ideal para o banner é 16:9 (ex: 1920x1080)"
           />
 
           {/* Tags */}
