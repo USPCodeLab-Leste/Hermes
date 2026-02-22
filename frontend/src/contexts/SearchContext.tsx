@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, createContext } from "react";
 import { useSearchParams } from "react-router-dom";
-
-import { createContext } from "react";
+import { useDebounce } from "../hooks/useDebounce";
 
 type SearchContextType = {
   value: string;
@@ -19,24 +18,32 @@ export function SearchProvider({
 }) {
   const [params, setParams] = useSearchParams();
   const [search, setSearch] = useState(params.get(param) ?? "");
+  const searchValue = useDebounce(search)
 
   const setValue = useCallback((newValue: string) => {
-    setValue(newValue);
+    setSearch(newValue);
   }, [])
 
   useEffect(() => {
+    if (searchValue === params.get(param)) return;
+
     setParams(prev => {
-      if (search) {
-        prev.set(param, search);
+      const next = new URLSearchParams(prev)
+      if (searchValue) {
+        next.set(param, searchValue);
       } else {
-        prev.delete(param)
+        next.delete(param)
       }
-      return prev
+      return next
     }, { replace: true })
-  }, [param, search])
+  }, [param, searchValue, params, setParams])
+
+  const value = useMemo(() => {
+    return { value: search, setValue }
+  }, [search, setValue])
 
   return (
-    <SearchContext.Provider value={{ value: search, setValue: setSearch }}>
+    <SearchContext.Provider value={value}>
       {children}
     </SearchContext.Provider>
   );

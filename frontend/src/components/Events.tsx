@@ -104,8 +104,8 @@ export function Tags({ tags, className }: TagsProps) {
       className={`flex flex-row gap-2 md:flex-wrap overflow-hidden ${className}`}
       variants={tagsVariants}
     >
-      {tags.map((tag, index) => (
-        <Tag key={index} tag={tag} />
+      {tags.map((tag) => (
+        <Tag key={tag.id} tag={tag} />
       ))}
     </motion.div>
   )
@@ -126,8 +126,8 @@ export function SelectTags({ tags, className, activeTags, onClick }: SelectTagsP
       className={`flex flex-row gap-2 flex-wrap ${className}`}
       variants={tagsVariants}
     >
-      {tags.map((tag, index) => (
-        <SelectTag key={index} tag={tag} active={!!activeTags[tag.id]} onClick={onClick} />
+      {tags.map((tag) => (
+        <SelectTag key={`select-tag-${tag.id}`} tag={tag} active={!!activeTags[tag.id]} onClick={onClick} />
       ))}
     </motion.div>
   )
@@ -153,7 +153,7 @@ export function RemoveFilterTags({ tags, className, onClick }: RemoveFilterTagsP
     >
       <AnimatePresence mode="popLayout">
         {tags.map(tag => (
-          <RemoveFilterTag key={tag.id} tag={tag} onClick={onClick}  />
+          <RemoveFilterTag key={`remove-filter-tag-${tag.id}`} tag={tag} onClick={onClick}  />
         ))}
       </AnimatePresence>
     </motion.div>

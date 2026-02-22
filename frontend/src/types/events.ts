@@ -7,3 +7,15 @@ export interface Event extends Info<EventTagType> {
   local: string
   img_banner: string
 }
+
+
+export interface EventsResponse {
+  data: Event[]
+  hasMore: boolean
+}
+
+export interface UseEventsParams {
+  eventTitle?: string
+  tags?: string[]
+  limit?: number
+}

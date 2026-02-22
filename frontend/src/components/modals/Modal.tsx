@@ -105,6 +105,8 @@ export function ModalWrapper({ isOpen, onClose, children }: ModalProps) {
   if (!modalRoot) return null
 
   useEffect(() => {
+    if (!isOpen) return
+
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose()
@@ -115,7 +117,7 @@ export function ModalWrapper({ isOpen, onClose, children }: ModalProps) {
     return () => {
       window.removeEventListener('keydown', handleEsc)
     }
-  }, [onClose])
+  }, [isOpen, onClose])
 
   return createPortal(
     <AnimatePresence>

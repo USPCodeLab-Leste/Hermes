@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // Hooks
 import { useAuth } from './hooks/auth/useAuth'
 import { useTheme } from './hooks/useTheme';
+// import { useDebug } from './hooks/useDebug'
 
 // Layouts
 import AuthLayout from './layouts/AuthLayout'

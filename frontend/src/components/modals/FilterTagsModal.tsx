@@ -70,10 +70,10 @@ export function FilterTagsModal({ isOpen, onClose, activeTags, onFilter, onClean
   // ==================
 
   useEffect(() => {
-    if (isOpen) {
-      setActiveTagsCopy(structuredClone(activeTags))
-    }
-  }, [isOpen])
+    if (!isOpen) return
+
+    setActiveTagsCopy(structuredClone(activeTags))
+  }, [isOpen, activeTags])
 
   return (
     <ModalWrapper
