@@ -17,7 +17,7 @@ export async function sendVerificationEmail(userEmail,token) {
 
     const verificationLink = `${baseUrl}/auth/verify-email?token=${token}`;
     const info = await transporter.sendMail({
-        from: `"Sistema Hermes" <no-reply@${baseUrl}>`,
+        from: `"Sistema Hermes" <no-reply@hermes.kauamoreno.dev>`,
         to: userEmail,
         subject: "Ative sua conta no Hermes",
         html: `
