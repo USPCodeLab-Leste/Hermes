@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 
 const pass = process.env.SMTP_PASS;
+const baseUrl = process.env.BASE_URL;
 
 export async function sendVerificationEmail(userEmail,token) {
 
@@ -14,9 +15,9 @@ export async function sendVerificationEmail(userEmail,token) {
         },
     });
 
-    const verificationLink = `http://localhost:3000/auth/verify-email?token=${token}`;
+    const verificationLink = `${baseUrl}/auth/verify-email?token=${token}`;
     const info = await transporter.sendMail({
-        from: '"Sistema Hermes" <no-reply@hermes.kauamoreno.dev>',
+        from: `"Sistema Hermes" <no-reply@${baseUrl}>`,
         to: userEmail,
         subject: "Ative sua conta no Hermes",
         html: `

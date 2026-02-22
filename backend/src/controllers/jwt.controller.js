@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 class JwtController {
 
   async refresh(req, res) {
@@ -34,7 +36,7 @@ class JwtController {
           res.cookie("access_token", newAccessToken, {
             httpOnly: true,
             sameSite: "lax",
-            secure: false // true em produção
+            secure: isProduction
           });
 
           return res.status(200).json({
