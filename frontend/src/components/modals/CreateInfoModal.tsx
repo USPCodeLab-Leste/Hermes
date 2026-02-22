@@ -180,7 +180,7 @@ const CreateInfoModalContent = ({ onClose }: { onClose: () => void }) => {
       />
 
       <form onSubmit={handleCreate} className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1 overflow-y-auto max-h-[60dvh]">
+        <div className="flex flex-col gap-3 overflow-y-auto max-h-[60dvh]">
           <InputText
             id="title"
             label="Título"

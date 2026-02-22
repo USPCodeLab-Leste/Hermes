@@ -4,6 +4,7 @@ import { ErrorMessage } from "./ErrorMessage";
 
 // Icons
 import UploadIcon from "../../assets/icons/upload.svg?react";
+import { Tooltip } from "../Tooltip";
 // import CloseIcon from "../../assets/icons/close.svg?react";
 
 interface InputUploadFileProps {
@@ -16,9 +17,10 @@ interface InputUploadFileProps {
   selectedFile: File | null;
   disabled?: boolean;
   changeSelectedFile: (file: File | null) => void;
+  tooltip?: string;
 }
  
- export function InputUploadFile({ id, label, hasError, errorMessage, required, accept, selectedFile, disabled, changeSelectedFile }: InputUploadFileProps) {
+ export function InputUploadFile({ id, label, hasError, errorMessage, required, accept, selectedFile, disabled, tooltip, changeSelectedFile }: InputUploadFileProps) {
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -77,7 +79,10 @@ interface InputUploadFileProps {
 
   return (
     <div className="flex flex-col gap-1">
-      <Label id={id} label={label} required={required} />
+      <div className="flex flex-row items-center gap-2">
+        <Label id={id} label={label} required={required} />
+        {tooltip && <Tooltip content={tooltip} />}
+      </div>
       <input
         type="file"
         accept={accept}
