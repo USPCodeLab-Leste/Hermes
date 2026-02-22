@@ -4,7 +4,7 @@ import MarkdownRenderer from "../MarkdownRenderer";
 import { ErrorMessage } from "./ErrorMessage";
 import { Label } from "./Label";
 
-import ShowIcon from "../../assets/icons/watch.svg?react";
+import ShowIcon from "../../assets/icons/eye.svg?react";
 import PencilIcon from "../../assets/icons/pencil.svg?react";
 
 import { uploadBannerAndGetUrl } from "../../utils/files";
@@ -130,7 +130,7 @@ export function MarkdownWritePreview({
       <div
         className={`
           border-3 rounded-2xl p-2 bg-transparent transition-colors duration-300
-          ${hasError ? "border-red-300 text-red-200" : "border-paper text-paper focus-within:border-teal-light"}
+          ${hasError ? "border-red-300 text-red-200" : "dark:border-paper border-ink dark:text-paper text-ink focus-within:border-teal-light"}
         `}
       >
         {isPreview ? (
@@ -176,7 +176,7 @@ function MarkdownModeSwitch({
         activeClass="bg-teal-light/70 hover:bg-teal-light/80"
         disabled={disabled}
       >
-        <PencilIcon className="size-4 text-paper" />
+        <PencilIcon className="size-4" />
         <span className="text-[12px]">Editar</span>
       </ModeButton>
 
@@ -187,7 +187,7 @@ function MarkdownModeSwitch({
         activeClass="bg-teal-light/70 hover:bg-teal-light/80"
         disabled={disabled}
       >
-        <ShowIcon className="size-4 text-paper" />
+        <ShowIcon className="size-4" />
         <span className="text-[12px]">Exibir</span>
       </ModeButton>
     </div>

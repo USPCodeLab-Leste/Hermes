@@ -132,14 +132,14 @@ export default function Login() {
             hasError={errors.password}
             required={true}
           />
-          <Link to={{ pathname: "/auth/reset-password", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="text-sm text-paper text-right mb-2 hover:underline">Esqueci minha senha</Link>
+          <Link to={{ pathname: "/auth/reset-password", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="self-end text-sm mb-2 hover:underline w-fit">Esqueci minha senha</Link>
         </div>
       </div>
 
-      <SubmitButton waiting={isLoading || passwordShort} text={isLoading ? "Carregando..." : "Entrar"} />
+      <SubmitButton waiting={isLoading || passwordShort} text={isLoading ? "Carregando..." : "Entrar"} className="dark:bg-teal-light bg-teal-mid" />
 
-      <p className="text-paper text-center">
-        ou <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Registre-se</Link>
+      <p className="text-center">
+        ou <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="dark:text-teal-light text-teal-mid hover:text-teal-mid font-bold transition-colors">Registre-se</Link>
       </p>
 
     </form>

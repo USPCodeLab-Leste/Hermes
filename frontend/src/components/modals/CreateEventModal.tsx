@@ -279,7 +279,7 @@ const CreateEventModalContent = ({
                 ${
                   errors.body.hasError
                     ? "border-red-300 text-red-200"
-                    : "border-paper text-paper focus-within:border-teal-light"
+                    : "focus-within:border-teal-light"
                 }
               `}
             >

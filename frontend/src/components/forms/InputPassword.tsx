@@ -1,8 +1,8 @@
 import { useState, useEffect, memo } from 'react';
 import { Label } from './Label';
 
-import Watch from '../../assets/icons/watch.svg?react';
-import WatchOff from '../../assets/icons/watch-off.svg?react';
+import Watch from '../../assets/icons/eye.svg?react';
+import WatchOff from '../../assets/icons/eye-off.svg?react';
 import { Input } from './Input';
 import { ErrorMessage } from './ErrorMessage';
 import { InputWrapper } from './InputWrapper';
@@ -81,28 +81,25 @@ const InputPassword = ({ id, label, value, onChange, disabled, placeholder, vali
 }
 
 const Validation = ({validations}: { validations: ValidationInfo[] }) => (
-  <div className="mt-3 bg-white/5 p-3 rounded-lg border border-white/10">
-    <p className="text-xs font-semibold text-paper/80 mb-2 uppercase tracking-wide">
+  <div className="mt-3 p-3 rounded-lg border-2 border-dashed ">
+    <p className="text-xs font-semibold dark:text-paper/80 text-ink/80 mb-2 uppercase tracking-wide">
       Sua senha deve ter:
     </p>
     <ul className="space-y-2">
       {validations.map((item) => (
         <li
           key={item.id}
-          className={`flex items-center text-sm transition-all duration-300 ${item.isValid
-            ? 'text-green-600 font-medium translate-x-1'
-            : 'text-paper/80'
-          }`}
+          className={`flex items-center text-sm transition-all duration-300 ${item.isValid ? 'text-green-600 font-medium translate-x-1' : 'dark:text-paper/80 text-ink/80'}`}
         >
           {/* Ícone */}
           <div className={`mr-2 shrink-0 flex items-center justify-center w-5 h-5 rounded-full border transition-colors duration-300 ${item.isValid
             ? 'bg-green-100 border-green-700' // Ícone de check verde
-            : 'bg-transparent border-paper/80' // Círculo cinza
+            : 'bg-transparent dark:border-paper/80 border-ink/80' // Círculo cinza
             }`}>
             {item.isValid ? (
               <CheckIcon />
             ) : (
-              <div className="w-1.5 h-1.5 rounded-full bg-paper/80" /> // Bolinha central
+              <div className="w-1.5 h-1.5 rounded-full dark:bg-paper/80 bg-ink/80" /> // Bolinha central
             )}
           </div>
 

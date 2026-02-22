@@ -129,7 +129,7 @@ const CreateInfoButton = ({ onClick }: { onClick: () => void }) => {
                  rounded-2xl transition-colors duration-200 ease-in hover:bg-violet-mid/50 focus:bg-violet-mid/50 outline-none group"
 
     >
-      <PlusIcon className="size-5 text-paper" />
+      <PlusIcon className="size-5" />
       <span className='inline-block text-left whitespace-nowrap text-ellipsis overflow-hidden flex-1'>Crie uma nova Informação</span>
     </motion.button>
   )
