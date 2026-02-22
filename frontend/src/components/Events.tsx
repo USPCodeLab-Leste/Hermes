@@ -53,7 +53,7 @@ const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
       }}
       className={`aspect-video w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat 
                 bg-center justify-between cursor-pointer shadow-lg hover:shadow-2xl 
-                outline-2 hover:outline-paper focus:outline-paper outline-transparent ${isReady && !isReducedMotion ? 'transition-all' : ''}`}
+                outline-2 hover:dark:outline-paper focus:outline-paper outline-transparent ${isReady && !isReducedMotion ? 'transition-all' : ''}`}
       style={{ backgroundImage: `url('${event.img_banner}')` }}
       whileHover={{y: -8}}
       onClick={() => selectEvent(event.id)}
