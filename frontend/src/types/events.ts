@@ -8,7 +8,6 @@ export interface Event extends Info<EventTagType> {
   img_banner: string
 }
 
-
 export interface EventsResponse {
   data: Event[]
   hasMore: boolean
