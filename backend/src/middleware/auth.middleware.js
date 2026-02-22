@@ -20,6 +20,20 @@ export function authMiddleware(req, res, next) {
   }
 }
 
+export function emailVerifiedMiddleware(req, res, next) {
+
+  if (!req.user) {
+    return res.status(401).json({ error: "Token inválido ou expirado" });
+  }
+
+  // Verifica se o e-mail foi verificado
+  if (!req.user.is_verified) {
+    return res.status(403).json({ error: "E-mail não verificado" });
+  }
+
+  next();
+}
+
 export function adminMiddleware(req, res, next) {
 
   if (!req.user) {
