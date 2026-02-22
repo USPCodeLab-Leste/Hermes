@@ -39,7 +39,7 @@ export default function Info() {
   const { tagName } = useParams()
   const { value: search } = useSharedSearch();
   const [params, setParams] = useSearchParams()
-  const { data: infos, isLoading: isLoadingInfos, isTyping } = useInfosByTag(tagName!, search);
+  const { data: infos, isLoading: isLoadingInfos, isFetching } = useInfosByTag(tagName!, search);
   const [modalOpen, setModalOpen] = useState(false);
   const [articleId, setArticleId] = useState<string | null>(null);
 
@@ -104,8 +104,8 @@ export default function Info() {
         <section 
           className="justify-start w-full"
           style={{
-            opacity: isTyping ? 0.5 : 1,
-            pointerEvents: isTyping ? "none" : "auto"
+            opacity: isFetching ? 0.5 : 1,
+            pointerEvents: isFetching ? "none" : "auto"
           }}
         >
           {isLoadingInfos ? (

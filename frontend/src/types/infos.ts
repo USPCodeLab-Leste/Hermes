@@ -17,3 +17,8 @@ export interface InfoCard {
   icon: string
   count: number
 }
+
+export interface InfosResponse {
+  data: Info[]
+  hasMore: boolean
+}

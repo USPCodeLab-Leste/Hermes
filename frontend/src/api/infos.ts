@@ -4,23 +4,30 @@ import { mockInfoTags } from '../mocks/tags.mock'
 import type { InfoTagType, Tag } from '../types/tag'
 import { normalizeString } from '../utils/string'
 
+function paginate<T>(items: T[]) {
+  const data = items
+  const hasMore = true
+
+  return { data, hasMore }
+}
+
 // Retorna todas as informações
 export function getInfos() {
-  return fakeRequest(infos)
+  return fakeRequest(paginate(infos))
 }
 
 // Retorna as informações filtradas por título
 export function getInfosByTitle(infoTitle: string) {
-  return fakeRequest(infos.filter(info => normalizeString(info.title).includes(normalizeString(infoTitle))))
+  const filtered = infos.filter(info => normalizeString(info.title).includes(normalizeString(infoTitle)))
+
+  return fakeRequest(paginate(filtered))
 }
 
 // Retorna as informações do autor (mock) filtradas por título
 export function getMyInfos(infoTitle?: string) {
-  return fakeRequest(
-    infos.filter(info => {
-      return infoTitle ? normalizeString(info.title).includes(normalizeString(infoTitle)) : true
-    })
-  )
+  const filtered = infos.filter(info => infoTitle ? normalizeString(info.title).includes(normalizeString(infoTitle)) : true)
+
+  return fakeRequest(paginate(filtered))
 }
 
 // Faz o post de uma nova informação
@@ -70,14 +77,14 @@ export function postInfo(data: {
 
 // Retorna as informações filtradas por tag
 export function getInfosByTag(tagName: string, infoTitle?: string) {
-  return fakeRequest(infos.filter(info => {
+  return fakeRequest(paginate(infos.filter(info => {
     return info.tags.some(tag => tag.name === tagName) && (!infoTitle || normalizeString(info.title).includes(normalizeString(infoTitle)))
-  }))
+  })))
 }
 
 // Retorna as informações filtradas por tipo
 export function getInfoByType(type: string, title?: string) {
-  return fakeRequest(infos.filter(info => {
+  return fakeRequest(paginate(infos.filter(info => {
     return info.tags.some(tag => tag.type === type) && (!title || normalizeString(info.title).includes(normalizeString(title)))
-  }))
+  })))
 }

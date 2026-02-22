@@ -17,7 +17,7 @@ import { MarkdownModal } from "../../components/modals/MarkdownModal";
 import { getInfoIconName } from "../../utils/icons";
 
 // Hooks
-import { useInfosByTitle } from "../../hooks/infos/useInfos";
+import { useInfos } from "../../hooks/infos/useInfos";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useSharedSearch } from "../../hooks/useSharedSearch";
 
@@ -151,7 +151,7 @@ interface InfoSearchResultsProps {
 
 const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
   const debounceSearch = useDebounce(search);
-  const { data: infos, isLoading, isFetching } = useInfosByTitle(debounceSearch);
+  const { data: infos, isLoading, isFetching } = useInfos(debounceSearch);
 
   const isTyping = search !== debounceSearch || isFetching;
 
