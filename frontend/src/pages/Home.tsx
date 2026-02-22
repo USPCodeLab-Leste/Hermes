@@ -13,12 +13,9 @@ import type { ActiveTags, GenericTag } from "../types/tag"
 import type { Event } from "../types/events"
 
 // Componentes
-import { ModalWrapper } from "../components/modals/Modal"
 import AppHeader from "../components/AppHeader"
 import { EventCard, RemoveFilterTags } from "../components/Events"
 import SearchBar from "../components/SearchBar"
-import { SelectedEventDetails } from "../components/SelectedEventDetails"
-import { SelectedEventDetailsSkeleton } from "../components/skeletons/SelectedEventDetailsSkeleton"
 import { FilterTagsModal } from "../components/modals/FilterTagsModal"
 import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton"
 import { LoadMoreTrigger } from "../components/LoadMoreTrigger"
@@ -26,6 +23,7 @@ import { LoadMoreTrigger } from "../components/LoadMoreTrigger"
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
 import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
+import { EventModal } from "../components/modals/EventModal"
 
 
 export default function Home() {
@@ -131,19 +129,13 @@ export default function Home() {
   return (
     <>
       {/* Modal Card Event */}
-      <ModalWrapper
+      <EventModal
         isOpen={isCardModalOpen}
         onClose={handleModalEventClose}
-      >
-        {(selectedEventId && selectedEventData) ? (
-          <SelectedEventDetails
-            event={selectedEventData}
-            search={searchQuery}
-          />
-        ) : (
-          <SelectedEventDetailsSkeleton />
-        ) }
-      </ModalWrapper>
+        selectedEventId={selectedEventId}
+        selectedEventData={selectedEventData}
+        searchQuery={searchQuery}
+      />
 
       {/* Modal Filter */}
       <FilterTagsModal 

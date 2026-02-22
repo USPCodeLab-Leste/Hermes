@@ -10,7 +10,7 @@ import { useMyInfos } from "../../hooks/infos/useMyInfos";
 import PerfilButton from "../../components/PerfilButton";
 import { LazySvg } from "../../components/LazySvg";
 import { PerfilButtonSkeleton } from "../../components/skeletons/PerfilButtonSkeleton";
-import { MarkdownModal } from '../../components/modals/MarkdownModal';
+import { InfoModal } from '../../components/modals/InfoModal';
 import { CreateInfoModal } from '../../components/modals/CreateInfoModal';
 
 // Icons
@@ -76,7 +76,7 @@ function AdminInfosGrid({ search }: AdminInfosGridProps) {
         onCreated={handleOnCreated}
       />
 
-      <MarkdownModal
+      <InfoModal
         modalOpen={modalOpen}
         handleModalClose={handleModalClose}
         selectedInfo={selectedInfo}

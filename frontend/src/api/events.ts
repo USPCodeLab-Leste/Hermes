@@ -98,3 +98,19 @@ export function postEvent(data: any) {
     message: "Evento criado com sucesso",
   });
 }
+
+// Deleta um evento pelo id
+export function deleteEvent(eventId: string) {
+  const index = events.findIndex((event) => event.id === eventId)
+
+  if (index === -1) {
+    throw new Error('Evento não encontrado')
+  }
+
+  events.splice(index, 1)
+
+  return fakeRequest({
+    message: 'Evento deletado com sucesso',
+    id: eventId,
+  })
+}

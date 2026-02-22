@@ -1,26 +1,32 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 // Componentes
 import { ModalWrapper } from "./Modal";
 import MarkdownRenderer from "../MarkdownRenderer";
 import { GenericButton } from "../GenericButton";
 import { AdminEditDeleteButtons } from "../admin/AdminEditDeleteButtons";
+import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
 // Types
 import type { Info } from "../../types/infos";
 
 // Hooks
 import { useShare } from "../../hooks/useShare";
+import { useDeleteInfo } from "../../hooks/infos/useDeleteInfo";
 
-interface MarkdownModalProps {
+interface InfoModalProps {
   modalOpen: boolean;
   handleModalClose: () => void;
   selectedInfo: Info | undefined;
   isAdmin?: boolean;
 }
 
-export function MarkdownModal({ modalOpen, handleModalClose, selectedInfo, isAdmin = false }: MarkdownModalProps) {
+export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin = false }: InfoModalProps) {
   const share = useShare();
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [del, isDeleteLoading, errorDelete] = useDeleteInfo();
+
+  // Handlers
 
   const handleShareArticle = useCallback((info: Info) => {
     if (!info) return;
@@ -30,19 +36,55 @@ export function MarkdownModal({ modalOpen, handleModalClose, selectedInfo, isAdm
     const url = window.location.href.split('/info/')[0]+link;
 
     share({ url, title: info.title, text: `Confira o artigo ${info.title} no Hermes!` });
-  }, [selectedInfo, share]);
+  }, [share]);
+
+  const handleOpenConfirmDelete = useCallback(() => {
+    setIsConfirmDeleteOpen(true);
+  }, []);
+
+  const handleCloseConfirmDelete = useCallback(() => {
+    if (isDeleteLoading) return;
+    
+    setIsConfirmDeleteOpen(false);
+  }, [isDeleteLoading]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!selectedInfo) return;
+
+    try {
+      await del(selectedInfo.id);
+      setIsConfirmDeleteOpen(false);
+      handleModalClose();
+    } catch {
+      // erro é exposto via errorDelete
+    }
+  }, [del, handleModalClose, selectedInfo]);
     
   return (
     <ModalWrapper isOpen={modalOpen} onClose={handleModalClose}>
       <>
+        <ConfirmDeleteModal
+          isOpen={isConfirmDeleteOpen}
+          onCancel={handleCloseConfirmDelete}
+          onConfirm={handleConfirmDelete}
+          isLoading={isDeleteLoading}
+          error={errorDelete}
+          title="Excluir artigo"
+          description={
+            selectedInfo
+              ? `Tem certeza que deseja excluir a informação "${selectedInfo.title}"? Essa ação não pode ser desfeita.`
+              : "Tem certeza que deseja excluir? Essa ação não pode ser desfeita."
+          }
+        />
+
         {selectedInfo ? (
           <section className="flex flex-col gap-4">
             <div className="max-h-[60dvh] overflow-auto">
-              <h2 className="text-2xl font-bold mb-4 before:content-['#_']">{selectedInfo?.title}</h2>
+              <h2 className="text-2xl font-bold mb-4 before:content-['#_'] before:text-paper/75">{selectedInfo?.title}</h2>
               <MarkdownRenderer>{selectedInfo.body}</MarkdownRenderer>
             </div>
             {isAdmin ? (
-              <AdminEditDeleteButtons onEdit={() => {}} onDelete={() => {}} />
+              <AdminEditDeleteButtons onEdit={() => {}} onDelete={handleOpenConfirmDelete} />
             ) : (
               <GenericButton onClick={() => handleShareArticle(selectedInfo)}>
                 <span className="text-paper">Compartilhar Artigo</span>
@@ -51,7 +93,7 @@ export function MarkdownModal({ modalOpen, handleModalClose, selectedInfo, isAdm
           </section>
         ) : (
           <section className="min-h-70">
-            <MarkdownModalSkeleton />
+            <InfoModalSkeleton />
           </section>
         )}
       </>
@@ -59,7 +101,7 @@ export function MarkdownModal({ modalOpen, handleModalClose, selectedInfo, isAdm
   );
 }
 
-const MarkdownModalSkeleton = () => {
+const InfoModalSkeleton = () => {
   return (
     <div aria-hidden="true">
       <h2 className="text-2xl font-bold mb-4 shimmer text-transparent rounded-2xl w-fit">título grandao</h2>

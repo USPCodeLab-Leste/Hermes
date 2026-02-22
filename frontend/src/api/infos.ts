@@ -75,6 +75,22 @@ export function postInfo(data: {
   });
 }
 
+// Deleta uma informação pelo id
+export function deleteInfo(infoId: string) {
+  const index = infos.findIndex((info) => info.id === infoId)
+
+  if (index === -1) {
+    throw new Error('Informação não encontrada')
+  }
+
+  infos.splice(index, 1)
+
+  return fakeRequest({
+    message: 'Informação deletada com sucesso',
+    id: infoId,
+  })
+}
+
 // Retorna as informações filtradas por tag
 export function getInfosByTag(tagName: string, infoTitle?: string) {
   return fakeRequest(paginate(infos.filter(info => {
