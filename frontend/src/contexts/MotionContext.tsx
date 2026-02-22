@@ -1,6 +1,6 @@
 import { MotionConfig } from "framer-motion";
 import { useReducedMotion } from "framer-motion";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
 
 export type MotionPreference = "system" | "always" | "never";
 
@@ -14,25 +14,26 @@ type MotionContextType = {
   isReducedMotion: boolean;
 };
 
+const getDefaultPreference = (): MotionPreference => {
+  const stored = localStorage.getItem(STORAGE_KEY) as MotionPreference | null;
+  if (stored === "system" || stored === "always" || stored === "never") {
+    return stored;
+  }
+  return "system";
+}
+
 export const MotionContext = createContext<MotionContextType | null>(null);
 
 export function MotionProvider({ children }: { children: React.ReactNode }) {
   const systemReduced = useReducedMotion();
-  const [preference, setPreferenceState] = useState<MotionPreference>("system");
+  const [preference, setPreferenceState] = useState<MotionPreference>(getDefaultPreference());
 
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as MotionPreference | null;
-    if (stored === "system" || stored === "always" || stored === "never") {
-      setPreferenceState(stored);
-    }
+  const setPreference = useCallback((value: MotionPreference) => {
+    setPreferenceState((prev) => (Object.is(prev, value) ? prev : value));
+    localStorage.setItem(STORAGE_KEY, value);
   }, []);
 
-  const setPreference = (value: MotionPreference) => {
-    setPreferenceState(value);
-    localStorage.setItem(STORAGE_KEY, value);
-  };
-
-  const togglePreference = () => {
+  const togglePreference = useCallback(() => {
     setPreferenceState(prev => {
       let next: MotionPreference;
 
@@ -45,15 +46,24 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEY, next);
       return next;
     });
-  };
+  }, [systemReduced]);
 
   const isReducedMotion =
     preference === "system"
       ? systemReduced
       : preference === "always";
 
+  const value = useMemo(() => {
+    return {
+      preference,
+      setPreference,
+      togglePreference,
+      isReducedMotion: !!isReducedMotion,
+    }
+  }, [preference, setPreference, togglePreference, isReducedMotion])
+
   return (
-    <MotionContext.Provider value={{ preference, setPreference, togglePreference, isReducedMotion: !!isReducedMotion }}>
+    <MotionContext.Provider value={value}>
       <MotionConfig reducedMotion={isReducedMotion ? "always" : "never"}>
         {children}
       </MotionConfig>

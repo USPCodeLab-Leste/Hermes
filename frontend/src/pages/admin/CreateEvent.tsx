@@ -15,13 +15,14 @@ import PlusIcon from "../../assets/icons/plus.svg?react";
 // Hooks
 import { useMyEvents } from "../../hooks/events/useMyEvents";
 import { useSharedSearch } from "../../hooks/useSharedSearch";
+import { LoadMoreTrigger } from "../../components/LoadMoreTrigger";
 
 export default function CreateEvent() {
   const { value: search } = useSharedSearch()
 
   return (
     <>
-        <AdminEventsGrid search={search} />
+      <AdminEventsGrid search={search} />
     </>
   );
 }
@@ -33,7 +34,7 @@ interface AdminEventsGridProps {
 function AdminEventsGrid({ search }: AdminEventsGridProps) {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const { data: events, isLoading, isTyping } = useMyEvents(search);
+  const { events, isLoading, isFetching, hasNextPage, fetchNextPage } = useMyEvents(search);
 
   // Modal States
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
@@ -114,23 +115,34 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
             </span>
           </div>
         </motion.button>
-        {isLoading ? (
+        {(events && events.length > 0) || isLoading ? (
           <>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div>
-                <EventCardSkeleton key={`event-card-skeleton-${i}`} />
-              </div>
+            {events.map((eventItem) => (
+              <EventCard
+                key={eventItem.id}
+                event={eventItem}
+                selectEvent={handleSelectEvent}
+                isFetching={isFetching}
+              />
             ))}
+            {(hasNextPage || isLoading) && (
+              <>
+                {/* Skeleton observável */}
+                {hasNextPage && !isFetching && (
+                  <LoadMoreTrigger
+                    onVisible={fetchNextPage}
+                  >
+                    <EventCardSkeleton />
+                  </LoadMoreTrigger>
+                )}
+  
+                {/* Skeletons normais */}
+                <EventCardSkeleton />
+              </>
+            )}
           </>
-        ): (events && events.length > 0) ? events.map((eventItem) => (
-          <EventCard
-            key={eventItem.id}
-            event={eventItem}
-            selectEvent={handleSelectEvent}
-            isFetching={isTyping}
-          />
-        )) : (
-          <div className="flex justify-center items-center">
+        )  : (
+          <div className="flex justify-center items-center" style={{opacity: isFetching ? 0.5 : 1}}>
             <p className="text-center font-medium p-4">Nenhum evento encontrado com essa busca.</p>
           </div>
         )}
