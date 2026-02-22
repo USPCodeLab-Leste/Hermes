@@ -15,7 +15,7 @@ export const LoadMoreTrigger = ({ onVisible, children }: { onVisible: () => void
   }, [isInView, onVisible])
 
   return (
-    <div ref={ref}>
+    <div ref={ref} className="w-full flex items-center justify-center">
       {children}
     </div>
   )

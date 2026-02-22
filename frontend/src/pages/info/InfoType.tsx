@@ -13,7 +13,7 @@ import type { Info, InfoCard as InfoCardType } from "../../types/infos";
 // Icons
 import SearchIcon from "../../assets/icons/search.svg?react";
 import { useCallback, useMemo, useState } from "react";
-import { MarkdownModal } from "../../components/modals/MarkdownModal";
+import { InfoModal } from "../../components/modals/InfoModal";
 import { getInfoIconName } from "../../utils/icons";
 
 // Hooks
@@ -190,7 +190,7 @@ const InfoSearchResultCards = ({ infos, search }: { infos: Info[]; search: strin
 
   return (
     <>
-      <MarkdownModal
+      <InfoModal
         modalOpen={modalOpen}
         handleModalClose={() => setModalOpen(false)}
         selectedInfo={selectedInfo}

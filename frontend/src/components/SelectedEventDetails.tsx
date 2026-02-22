@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 
 // Hooks
 import { useShare } from "../hooks/useShare"
@@ -11,17 +11,21 @@ import { Tags } from "./Events"
 import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
+import { ConfirmDeleteModal } from "./modals/ConfirmDeleteModal"
+
+import { useDeleteEvent } from "../hooks/events/useDeleteEvent"
 
 interface SelectedEventDetailsProps {
   event: Event | null;
   search?: string;
   isAdmin?: boolean;
-  onEdit?: () => void;
-  onDelete?: () => void;
+  onDeleted?: () => void;
 }
 
-export function SelectedEventDetails({ event, search, isAdmin = false, onEdit, onDelete }: SelectedEventDetailsProps) {
+export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted }: SelectedEventDetailsProps) {
   const share = useShare();
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [del, isDeleteLoading, errorDelete] = useDeleteEvent();
 
   // Handlers
   const handleShare = useCallback(() => {
@@ -31,8 +35,43 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onEdit, o
     share({ url, title: event.title, text: `Confira o evento ${event.title} no Hermes!` });
   }, [event, search, share]);
 
+  const handleOpenConfirmDelete = useCallback(() => {
+    setIsConfirmDeleteOpen(true);
+  }, []);
+
+  const handleCloseConfirmDelete = useCallback(() => {
+    if (isDeleteLoading) return;
+    setIsConfirmDeleteOpen(false);
+  }, [isDeleteLoading]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!event) return;
+
+    try {
+      await del(event.id);
+      setIsConfirmDeleteOpen(false);
+      onDeleted?.();
+    } catch {
+      // erro é exposto via errorDelete
+    }
+  }, [del, event, onDeleted]);
+
   return (
     <div className="flex flex-col gap-4">
+      <ConfirmDeleteModal
+        isOpen={isConfirmDeleteOpen}
+        onCancel={handleCloseConfirmDelete}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleteLoading}
+        error={errorDelete}
+        title="Excluir evento"
+        description={
+          event
+            ? `Tem certeza que deseja excluir o evento "${event.title}"? Essa ação não pode ser desfeita.`
+            : "Tem certeza que deseja excluir? Essa ação não pode ser desfeita."
+        }
+      />
+
       <div
         className="aspect-video w-auto bg-no-repeat bg-cover overflow-hidden bg-violet-dark rounded-xl -mx-6 -mt-12 mb-4"
         style={{ backgroundImage: `url('${event?.img_banner}')` }}
@@ -49,8 +88,8 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onEdit, o
       </div>
       {isAdmin ? (
         <AdminEditDeleteButtons
-          onEdit={onEdit ?? (() => {})}
-          onDelete={onDelete ?? (() => {})}
+          onEdit={() => {}}
+          onDelete={handleOpenConfirmDelete}
         />
       ) : (
         <GenericButton onClick={handleShare}>
