@@ -89,8 +89,8 @@ export default function ResetPassword() {
   if (!token) {
     return (
       <>
-        <h2 className="text-center text-paper font-bold text-2xl">Redefinir senha</h2>
-        <p className="text-center text-paper mt-4 mb-6 max-w-70">
+        <h2 className="text-center font-bold text-2xl">Redefinir senha</h2>
+        <p className="text-center mt-4 mb-6 max-w-70">
           Insira seu e-mail USP para receber o link de redefinição de senha
         </p>
         <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
@@ -115,10 +115,11 @@ export default function ResetPassword() {
                   isRunning ? `Aguarde ${seconds}s` :
                     "Enviar link"
               }
+              className="dark:bg-teal-light bg-teal-mid"
             />
           </div>
 
-          <p className="text-paper text-center">
+          <p className="text-center">
             volte para <Link to={{ pathname: "/auth/login", search: email ? `?email=${email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Login</Link>
           </p>
         </form>

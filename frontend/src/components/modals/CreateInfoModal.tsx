@@ -243,14 +243,14 @@ const CreateInfoModalContent = ({
                 {iconInfo?.name && (
                   <LazySvg
                     name={iconInfo.name}
-                    className="size-5 text-paper"
+                    className="size-5"
                     aria-hidden="true"
                   />
                 )}
-                <span className="flex-1 text-left text-paper/90">
+                <span className="flex-1 text-left">
                   {iconInfo?.label ?? "Selecionar ícone"}
                 </span>
-                <RightArrowIcon className="size-4 text-paper rotate-90" aria-hidden="true" />
+                <RightArrowIcon className="size-4 rotate-90" aria-hidden="true" />
               </button>
             </InputWrapper>
           </div>

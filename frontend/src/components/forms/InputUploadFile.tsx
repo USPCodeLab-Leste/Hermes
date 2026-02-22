@@ -107,7 +107,7 @@ interface InputUploadFileProps {
                    ${isDragActive ? "cursor-grabbing" : "cursor-pointer"} 
                    `}
       >
-        <UploadIcon className={`size-14 rounded-full p-3.5 ${isDragActive ? "bg-teal-mid" : "bg-violet-dark"} group-hover:bg-violet-dark/75 transition-colors pointer-events-none`} />
+        <UploadIcon className={`size-14 rounded-full p-3.5 ${isDragActive ? "bg-teal-mid" : "dark:bg-violet-dark bg-violet-light"} group-hover:dark:bg-violet-dark/75 group-hover:bg-violet-light/75 transition-colors pointer-events-none`} />
         <span className="font-medium pointer-events-none">
           {selectedFile
             ? selectedFile.name
