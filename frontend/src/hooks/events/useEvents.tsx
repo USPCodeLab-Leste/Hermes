@@ -1,32 +1,79 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { getEvents, getFeed } from '../../api/events'
-import type { Event } from '../../types/events'
+import type { EventsResponse, UseEventsParams } from '../../types/events'
 import { useDebounce } from '../useDebounce'
+// import { useDebug } from '../useDebug'
 
-export function useEvents(eventTitle?: string, tags?: string[]) {
+
+export function useEvents({
+  eventTitle,
+  tags,
+  limit = 5,
+}: UseEventsParams) {
   const normalizedTitle = eventTitle?.trim()
-  const effectiveTitle = normalizedTitle ? normalizedTitle : undefined
+  const effectiveTitle = normalizedTitle || undefined
 
   const normalizedTags = tags
     ?.map((tag) => tag.trim())
     .filter(Boolean)
 
-  const hasTags = Boolean(normalizedTags && normalizedTags.length > 0)
+  const hasTags = Boolean(normalizedTags?.length)
   const shouldUseFeed = !effectiveTitle && !hasTags
 
-  const debouncedTitle = useDebounce(effectiveTitle, effectiveTitle ? 500 : 0)
-  
-  const query = useQuery<Event[]>({
-    queryKey: ['events', shouldUseFeed ? 'feed' : 'search', debouncedTitle, normalizedTags],
-    queryFn: () => (shouldUseFeed ? getFeed() : getEvents(debouncedTitle, normalizedTags)),
-    placeholderData: keepPreviousData,
+  const debouncedTitle = useDebounce(effectiveTitle)
+
+  // useDebug("useEvents", {
+  //   effectiveTitle,
+  //   debouncedTitle
+  // })
+
+  const query = useInfiniteQuery<EventsResponse, Error, { pages: EventsResponse[] }, readonly unknown[], number>({
+    queryKey: [
+      'events',
+      debouncedTitle,
+      normalizedTags,
+      limit,
+    ],
+
+    queryFn: ({ pageParam = 0 }) => {
+      const params = {
+        offset: pageParam,
+        limit,
+        title: debouncedTitle,
+        tags: normalizedTags,
+      }
+
+      return shouldUseFeed ? getFeed(params) : getEvents(params)
+    },
+
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.hasMore) return undefined
+
+      const totalLoaded = allPages.reduce(
+        (sum, page) => sum + page.data.length,
+        0
+      )
+
+      return totalLoaded as number
+    },
+
+    placeholderData: (prev) => prev,
     staleTime: 5 * 60 * 1000,
+    initialPageParam: 0,
   })
 
-  const isTyping = effectiveTitle !== debouncedTitle || query.isFetching
-  
+  const events = query.data?.pages.flatMap((page) => page.data) ?? []
+
   return {
-    ...query,
-    isTyping
+    events: events,
+
+    fetchNextPage: query.fetchNextPage,
+    hasNextPage: query.hasNextPage,
+    isFetchingNextPage: query.isFetchingNextPage,
+
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
   }
 }

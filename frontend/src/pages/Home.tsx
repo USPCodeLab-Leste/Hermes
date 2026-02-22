@@ -1,14 +1,16 @@
-import { useCallback, useMemo, useState, useEffect } from "react"
+import { useCallback, useMemo, useState, useEffect, memo } from "react"
 import { useSearchParams } from "react-router-dom"
 import { toast } from "react-toastify"
 
 // Hooks
-import { useEvents } from "../hooks/events/useEvents"
 import { useActiveTags } from "../hooks/tags/useActiveTags"
 import { useSharedSearch } from "../hooks/useSharedSearch"
+import { useEvents } from "../hooks/events/useEvents"
+// import { useDebug } from "../hooks/useDebug"
 
 // Types
 import type { ActiveTags, GenericTag } from "../types/tag"
+import type { Event } from "../types/events"
 
 // Componentes
 import { ModalWrapper } from "../components/modals/Modal"
@@ -19,6 +21,7 @@ import { SelectedEventDetails } from "../components/SelectedEventDetails"
 import { SelectedEventDetailsSkeleton } from "../components/skeletons/SelectedEventDetailsSkeleton"
 import { FilterTagsModal } from "../components/modals/FilterTagsModal"
 import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton"
+import { LoadMoreTrigger } from "../components/LoadMoreTrigger"
 
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
@@ -28,8 +31,10 @@ import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
 export default function Home() {
   const {value: searchQuery, setValue: setSearchQuery} = useSharedSearch()
   const [params, setParams] = useSearchParams()
+  const eventId = params.get("event")
+
   const {activeTags, setActiveTags, activeTagsNames, activeTagsValues} = useActiveTags()
-  const { data: events, isLoading: isLoadingEvents, isTyping } = useEvents(searchQuery, activeTagsNames)
+  const {events, hasNextPage, isLoading: isLoadingEvents, isFetching: isEventsFetching, fetchNextPage} = useEvents({eventTitle: searchQuery, tags: activeTagsNames})
 
   // Modal States
   const [isCardModalOpen, setIsCardModalOpen] = useState(false)
@@ -57,7 +62,7 @@ export default function Home() {
 
     setSelectedEventId(null);
     setIsCardModalOpen(false);
-  }, [setParams, setSelectedEventId, setIsCardModalOpen])
+  }, [setParams])
 
   // Abre modal de filtros
   const handleFilterClick = useCallback(() => {
@@ -97,18 +102,31 @@ export default function Home() {
   const countActiveFilters = useMemo(() => Object.values(activeTags).length, [activeTags])
   const selectedEventData = useMemo(() => events?.find((e) => e.id === selectedEventId) ?? null, [events, selectedEventId])
 
+  // useDebug("Home", {
+  //   eventId,
+  //   searchQuery,
+  //   activeTagsKeys: Object.keys(activeTags ?? {}).join(","),
+  //   activeTagsNamesLen: activeTagsNames.length,
+  //   activeTagsValuesLen: activeTagsValues.length,
+  //   eventsLen: events.length,
+  //   isLoadingEvents,
+  //   isEventsFetching,
+  //   countActiveFilters,
+  //   selectedEventId,
+  //   selectedEventDataId: selectedEventData?.id ?? null,
+  //   paramsString: params.toString(),
+  // })
+
   // ===================
   // == Effects
   // ===================
 
   useEffect(() => {
-    const eventId = params.get("event");
+    if (!eventId) return;
 
-    if (eventId) {
-      setSelectedEventId(eventId);
-      setIsCardModalOpen(true);
-    }
-  }, [params])
+    setSelectedEventId(eventId);
+    setIsCardModalOpen(true);
+  }, [eventId])
 
   return (
     <>
@@ -168,24 +186,66 @@ export default function Home() {
       </AppHeader>
 
       <main className="main-app">
-        <section className={`m-auto mt-10 flex flex-col items-center gap-8`}>
-          {isLoadingEvents ? (
-            <>
-              {[1, 2, 3, 4].map((i) => (
-                <EventCardSkeleton key={`event-card-skeleton-${i}`} />
-              ))}
-            </>
-          ) : events && events.length > 0 ? (
-            <>
-                {events?.map((event) => (
-                  <EventCard key={event.id} event={event} selectEvent={handleEventCardClick} isFetching={isTyping}/>
-                ))}
-            </>
-          ) : (
-            <p className="text-center font-medium p-4" style={{opacity: isTyping ? 0.5 : 1}}>Nenhum evento encontrado com essa busca.</p>
-          )}
-        </section>
+        <EventsSectionMemo 
+          events={events}
+          isLoadingEvents={isLoadingEvents}
+          isEventsFetching={isEventsFetching}
+          hasNextPage={hasNextPage}
+          handleEventCardClick={handleEventCardClick}
+          fetchNextPage={fetchNextPage}
+        />
       </main>
     </>
   )
 }
+
+interface EventSectionProps {
+  events: Event[];
+  isLoadingEvents: boolean;
+  isEventsFetching: boolean;
+  hasNextPage: boolean;
+  handleEventCardClick: (id: string) => void;
+  fetchNextPage: () => void;
+}
+
+const EventsSection = ({ 
+  events, 
+  isLoadingEvents, 
+  isEventsFetching, 
+  hasNextPage, 
+  handleEventCardClick, 
+  fetchNextPage 
+}: EventSectionProps) => {
+  return (
+    <section className={`m-auto mt-10 flex flex-col items-center gap-8`}>
+      {(events && events.length > 0) || isLoadingEvents ? (
+        <>
+          {events?.map((event) => (
+            <EventCard key={event.id} event={event} selectEvent={handleEventCardClick} isFetching={isEventsFetching}/>
+          ))}
+          {(hasNextPage || isLoadingEvents) && (
+            <>
+            {/* Skeleton observável */}
+              {hasNextPage && !isEventsFetching && (
+                <LoadMoreTrigger
+                  onVisible={fetchNextPage}
+                >
+                  <EventCardSkeleton />
+                </LoadMoreTrigger>
+              )}
+
+              {/* Skeletons normais */}
+              {[2, 3].map((i) => (
+                <EventCardSkeleton key={`event-card-skeleton-${i}`} />
+              ))}
+            </>
+          )}
+        </>
+      ) : (
+        <p className="text-center font-medium p-4" style={{opacity: isEventsFetching ? 0.5 : 1}}>Nenhum evento encontrado com essa busca.</p>
+      )}
+    </section>
+  )
+}
+
+const EventsSectionMemo = memo(EventsSection)
