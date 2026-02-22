@@ -8,6 +8,7 @@ import ShowIcon from "../../assets/icons/watch.svg?react";
 import PencilIcon from "../../assets/icons/pencil.svg?react";
 
 import { uploadBannerAndGetUrl } from "../../utils/files";
+import { Tooltip } from "../Tooltip";
 
 interface MarkdownWritePreviewProps {
   id: string;
@@ -115,7 +116,10 @@ export function MarkdownWritePreview({
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-2">
-        <Label id={id} label={label} required={required} />
+        <div className="flex items-center gap-2">
+          <Label id={id} label={label} required={required} />
+          <Tooltip content="Use Markdown para formatar o texto." />
+        </div>
         <MarkdownModeSwitch
           isPreview={isPreview}
           setIsPreview={setIsPreview}

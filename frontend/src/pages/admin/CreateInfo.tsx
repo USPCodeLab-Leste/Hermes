@@ -78,7 +78,7 @@ function AdminInfosGrid({ search }: AdminInfosGridProps) {
         <CreateInfoButton onClick={handleNewInfo} />
         {isLoading ? (
           <>
-            {Array.from({ length: 7 }).map((_, index) => (
+            {Array.from({ length: 11 }).map((_, index) => (
               <PerfilButtonSkeleton key={`admin-info-skeleton-${index}`} />
             ))}
           </>
