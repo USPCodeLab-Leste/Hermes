@@ -4,10 +4,10 @@ import { useQueryClient } from "@tanstack/react-query";
 
 // Components
 import { EventCard } from "../../components/Events";
-import { SelectedEventDetails } from "../../components/SelectedEventDetails";
-import { ModalWrapper } from "../../components/modals/Modal";
 import { CreateEventModal } from "../../components/modals/CreateEventModal";
 import { EventCardSkeleton } from "../../components/skeletons/EventCardSkeleton";
+import { LoadMoreTrigger } from "../../components/LoadMoreTrigger";
+import { EventModal } from "../../components/modals/EventModal";
 
 // Icons
 import PlusIcon from "../../assets/icons/plus.svg?react";
@@ -15,15 +15,12 @@ import PlusIcon from "../../assets/icons/plus.svg?react";
 // Hooks
 import { useMyEvents } from "../../hooks/events/useMyEvents";
 import { useSharedSearch } from "../../hooks/useSharedSearch";
-import { LoadMoreTrigger } from "../../components/LoadMoreTrigger";
 
 export default function CreateEvent() {
   const { value: search } = useSharedSearch()
 
   return (
-    <>
-      <AdminEventsGrid search={search} />
-    </>
+    <AdminEventsGrid search={search} />
   );
 }
 
@@ -50,42 +47,29 @@ function AdminEventsGrid({ search }: AdminEventsGridProps) {
     setIsCardModalOpen(true);
   }, []);
 
-  const handleEditEvent = useCallback((_id: string) => {}, []);
-
-  const handleDeleteEvent = useCallback((_id: string) => {}, []);
-
   const handleCreateEventModalClose = useCallback(() => {
     setIsCreateModalOpen(false);
   }, []);
 
-  const handleOnCreated = useCallback(() => {
-    queryClient.invalidateQueries({ predicate: (query: any) => {
-      return query.queryKey[0] === 'my-events' || query.queryKey[0] === 'events';
-    }})
+  const handleOnCreated = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ["my-events"] });
+    await queryClient.invalidateQueries({ queryKey: ["events"] });
   }, [])
 
   // Memos
-  const selectedEventData = useMemo(
-    () => events?.find((event) => event.id === selectedEventId),
-    [events, selectedEventId],
-  );
+  const selectedEventData = useMemo(() => events?.find((event) => event.id === selectedEventId) ?? null, [events, selectedEventId]);
 
   return (
     <>
       {/* Modal Card Event */}
-      <ModalWrapper
+      <EventModal
         isOpen={isCardModalOpen}
         onClose={() => setIsCardModalOpen(false)}
-      >
-        {selectedEventId && selectedEventData && (
-          <SelectedEventDetails
-            event={selectedEventData}
-            isAdmin={true}
-            onEdit={() => handleEditEvent(selectedEventId)}
-            onDelete={() => handleDeleteEvent(selectedEventId)}
-          />
-        )}
-      </ModalWrapper>
+        selectedEventId={selectedEventId}
+        selectedEventData={selectedEventData}
+        searchQuery={search}
+        isAdmin
+       />
 
       {/* Modal Cria Evento */}
       <CreateEventModal

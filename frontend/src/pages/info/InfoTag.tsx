@@ -9,7 +9,7 @@ import { useSharedSearch } from "../../hooks/useSharedSearch";
 // Components
 import PerfilButton from "../../components/PerfilButton";
 import { LazySvg } from "../../components/LazySvg";
-import { MarkdownModal } from "../../components/modals/MarkdownModal";
+import { InfoModal } from "../../components/modals/InfoModal";
 import { PerfilButtonSkeleton } from "../../components/skeletons/PerfilButtonSkeleton";
 
 const variants: Variants = {
@@ -86,7 +86,7 @@ export default function Info() {
   
   return (
     <>
-      <MarkdownModal 
+      <InfoModal 
         modalOpen={modalOpen} 
         handleModalClose={handleModalClose} 
         selectedInfo={selectedInfo} 
