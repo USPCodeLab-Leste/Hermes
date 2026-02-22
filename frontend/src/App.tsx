@@ -1,4 +1,4 @@
-import type { JSX } from 'react'
+import { lazy, Suspense, type JSX } from 'react'
 import {
   createHashRouter,
   createRoutesFromElements,
@@ -19,6 +19,7 @@ import { useTheme } from './hooks/useTheme';
 import AuthLayout from './layouts/AuthLayout'
 import AppLayout from './layouts/AppLayout'
 import InfoLayout from './layouts/InfoLayout'
+const AdminLayout = lazy(() => import('./layouts/AdminLayout'))
 
 // Contexts
 import { AuthProvider } from './contexts/AuthContext'
@@ -36,15 +37,14 @@ import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
 import Info from './pages/info/InfoTag'
-import CreateEvent from './pages/admin/CreateEvent';
-import CreateInfo from './pages/admin/CreateInfo';
+const CreateEvent = lazy(() => import('./pages/admin/CreateEvent'))
+const CreateInfo = lazy(() => import('./pages/admin/CreateInfo'))
 
 // Components
 import Loading from './components/Loading'
-import AdminLayout from './layouts/AdminLayout';
 
 /* =========================
-   Guards de Autenticação
+   Gerais
 ========================= */
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
@@ -79,6 +79,14 @@ function InfoIndexRedirect({ pathname }: { pathname: string }) {
   const { search } = useLocation();
 
   return <Navigate to={{ pathname, search }} replace />;
+}
+
+function LazyRoute({children}: {children: JSX.Element}) {
+  return (
+    <Suspense fallback={<Loading />}>
+      {children}
+    </Suspense>
+  );
 }
 
 /* =========================
@@ -128,13 +136,29 @@ export const router = createHashRouter(
             path="admin" 
             element={
               <RequireAdmin>
-                <AdminLayout />
+                <LazyRoute>
+                  <AdminLayout />
+                </LazyRoute>
               </RequireAdmin>
             } 
           >
             <Route index element={<InfoIndexRedirect pathname="/perfil/admin/create_events" />} />
-            <Route path="create_events" element={<CreateEvent />} />
-            <Route path="create_infos" element={<CreateInfo />} />
+            <Route 
+              path="create_events" 
+              element={
+                <LazyRoute>
+                  <CreateEvent />
+                </LazyRoute>
+              } 
+            />
+            <Route 
+              path="create_infos" 
+              element={
+                <LazyRoute>
+                  <CreateInfo />
+                </LazyRoute>
+              } 
+            />
           </Route>
         </Route>
       </Route>
