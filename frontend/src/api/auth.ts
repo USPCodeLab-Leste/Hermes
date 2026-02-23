@@ -1,41 +1,27 @@
-import { fakeRequest } from './client'
-import { authUsers } from '../mocks/auth.mock'
+import { apiRequest } from './client'
 import type { LoginPayload, RegisterPayload } from '../types/payloads'
+import type { BaseResponse, RegisterResponse } from '../types/responses'
 
 export async function signIn(data: LoginPayload) {
-  const { email, password } = data
-  
-  const user = authUsers.find(
-    u => u.email === email && u.password === password
-  )
-
-  if (!user) {
-    await fakeRequest(null)
-    throw new Error('Credenciais inválidas')
-  }
-
-  localStorage.setItem('fake-cookie', user.uuid)
-
-  return fakeRequest({
-    message: 'Login realizado com sucesso',
+  return apiRequest<BaseResponse>('/auth/login', {
+    method: 'POST',
+    body: data,
+    skipAuthRefresh: true,
   })
 }
 
 export async function signOut() {
-  return fakeRequest(true)
+  await apiRequest<BaseResponse>('/auth/logout', {
+    method: 'POST',
+  })
+
+  return true
 }
 
 export async function register(data: RegisterPayload) {
-  const newUser = {
-    uuid: crypto.randomUUID(),
-    ...data,
-    role: 'USER',
-  } as const
-
-  authUsers.push(newUser)
-
-  return fakeRequest({
-    message: 'Usuário criado',
-    uuid: newUser.uuid,
+  return apiRequest<RegisterResponse>('/auth/register', {
+    method: 'POST',
+    body: data,
+    skipAuthRefresh: true,
   })
 }

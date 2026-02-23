@@ -1,9 +1,9 @@
-import { fakeRequest } from './client'
+import { apiRequest, fakeRequest } from './client'
 import { authUsers } from '../mocks/auth.mock'
 import type { UserMe } from '../types/user'
 import { USER_KEY } from '../services/auth'
-
-type HttpError = Error & { status: number }
+import type { HttpError } from '../types/error'
+import type { UserResponse } from '../types/responses'
 
 function createHttpError(status: number, message: string): HttpError {
   const error = new Error(message) as HttpError
@@ -12,30 +12,17 @@ function createHttpError(status: number, message: string): HttpError {
 }
 
 export async function getMe(): Promise<UserMe> {
-  const uuid = localStorage.getItem('fake-cookie')
-  
-  if (!uuid) {
-    throw new Error('Usuário não autenticado')
-  }
-
-  const authUser = authUsers.find(u => u.uuid === uuid)
-
-  if (!authUser) {
-    throw new Error('Usuário não encontrado')
-  }
-
-  return fakeRequest({
-    id: authUser.uuid,
-    name: authUser.name,
-    email: authUser.email,
-    role: authUser.role,
+  const response = await apiRequest<UserResponse>('/users/me', {
+    method: 'GET',
   })
+
+  return response.user
 }
 
 export async function postChangeName(data: { name: string }) {
-  const uuid = localStorage.getItem('fake-cookie')
+  const id = localStorage.getItem('fake-cookie')
 
-  if (!uuid) {
+  if (!id) {
     throw createHttpError(401, 'Usuário não autenticado')
   }
 
@@ -43,7 +30,7 @@ export async function postChangeName(data: { name: string }) {
     throw createHttpError(400, 'Erro ao atualizar informações do usuario')
   }
 
-  const authUser = authUsers.find(u => u.uuid === uuid)
+  const authUser = authUsers.find(u => u.id === id)
 
   if (!authUser) {
     throw createHttpError(400, 'Erro ao atualizar informações do usuario')
@@ -67,9 +54,9 @@ export async function postChangePassword(data: {
   oldPassword: string
   newPassword: string
 }) {
-  const uuid = localStorage.getItem('fake-cookie')
+  const id = localStorage.getItem('fake-cookie')
 
-  if (!uuid) {
+  if (!id) {
     throw createHttpError(401, 'Não autorizado')
   }
 
@@ -77,7 +64,7 @@ export async function postChangePassword(data: {
     throw createHttpError(400, 'Dados inválidos')
   }
 
-  const authUser = authUsers.find(u => u.uuid === uuid)
+  const authUser = authUsers.find(u => u.id === id)
 
   if (!authUser) {
     throw createHttpError(404, 'Utilizador não encontrado')
