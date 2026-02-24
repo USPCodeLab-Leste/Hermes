@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 // import { motion, AnimatePresence } from "motion/react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
@@ -10,6 +10,7 @@ import { SubmitButton } from "../../components/forms/SubmitButton";
 // hooks
 import { auth } from "../../services/auth";
 import { useRegister } from "../../hooks/auth/useRegister";
+import { toast } from "react-toastify/unstyled";
 
 const defaultFormErrors = {
   email: {
@@ -88,6 +89,10 @@ export default function Register() {
       newErrors.name.hasError = true;
       newErrors.name.message = "O campo nome é obrigatório!";
       hasLocalError = true;
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name.hasError = true;
+      newErrors.name.message = "O nome deve conter pelo menos 3 caracteres.";
+      hasLocalError = true;
     }
 
     if (hasLocalError) {
@@ -112,12 +117,37 @@ export default function Register() {
   }, [handleRegister]);
 
   useEffect(() => {
-    if (regError) {
-      // TODO: tratar erros vindos do backend de acordo com difrentes status codes
+    if (!regError) return
+
+    const status = regError.status
+
+    if (status === 400) {
+      toast.error('Dados inválidos')
+      return
     }
+
+    if (status === 409) {
+      toast.error('Email já está em uso')
+      setErrors({
+        ...defaultFormErrors,
+        email: {
+          hasError: true,
+          message: 'Este e-mail já está em uso. Por favor, utilize outro e-mail ou faça login.'
+        }
+      })
+      return
+    }
+
+    if (status === 500) {
+      toast.error('Falha ao criar usuario')
+      return
+    }
+
+    toast.error(regError.message || 'Ocorreu um erro ao criar usuário')
   }, [regError]);
 
   const isLoading = regLoading;
+  const hasError = useMemo(() => errors.email.hasError || errors.name.hasError || errors.password.hasError || errors.confirmPassword.hasError || !isPasswordValid, [errors, isPasswordValid]);
 
   return (
     <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
@@ -180,7 +210,7 @@ export default function Register() {
         </div>
       </div>
 
-      <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Cria Conta"} className="dark:bg-teal-light bg-teal-mid"/>
+      <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Cria Conta"} className="dark:bg-teal-light bg-teal-mid" disabled={hasError}/>
 
       <p className="text-center">
         ou faça <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Login</Link>

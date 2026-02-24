@@ -9,13 +9,14 @@ import {
   getMe as getMeAPI
 } from '../api/users'
 import type { UserMe } from '../types/user'
+import type { RegisterResponse } from '../types/responses'
 
 export const USER_KEY = 'auth_user'
 
 export type AuthListener = (user: UserMe | null) => void
 
 export interface AuthService {
-  register: (data: RegisterPayload) => Promise<{ message: string, uuid: string }>
+  register: (data: RegisterPayload) => Promise<RegisterResponse>
   signIn: (data: LoginPayload) => Promise<UserMe>
   signOut: () => Promise<boolean>
   onAuthStateChanged: (cb: AuthListener) => () => void
