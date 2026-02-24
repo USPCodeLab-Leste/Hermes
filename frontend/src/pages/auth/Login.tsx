@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { toast } from 'react-toastify';
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router";
 
@@ -79,12 +79,22 @@ export default function Login() {
 
   const isLoading = signInLoading;
   const passwordShort = formData.password.length < 8 && formData.password.length >= 0;
+  const hasError = useMemo(() => errors.email || errors.password, [errors])
 
   useEffect(() => {
-    if (signInError) {
-      toast.error("Credenciais inválidas!"); // Ou use error.message se vier do back
-      setErrors({ email: true, password: true });
+    if (!signInError) return
+
+    const status = signInError.status
+
+    if (status === 401) {
+      toast.error('Credenciais inválidas')
+    } else if (status === 400) {
+      toast.error('Dados inválidos ou falha no login')
+    } else {
+      toast.error(signInError.message || 'Ocorreu um erro ao fazer login')
     }
+
+    setErrors({ email: true, password: true })
   }, [signInError]);
 
   useEffect(() => {
@@ -136,7 +146,7 @@ export default function Login() {
         </div>
       </div>
 
-      <SubmitButton waiting={isLoading || passwordShort} text={isLoading ? "Carregando..." : "Entrar"} className="dark:bg-teal-light bg-teal-mid" />
+      <SubmitButton waiting={isLoading || passwordShort || hasError} text={isLoading ? "Carregando..." : "Entrar"} className="dark:bg-teal-light bg-teal-mid" disabled={isLoading || passwordShort || hasError} />
 
       <p className="text-center">
         ou <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="dark:text-teal-light text-teal-mid hover:text-teal-mid font-bold transition-colors">Registre-se</Link>
