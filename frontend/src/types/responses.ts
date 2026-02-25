@@ -15,3 +15,12 @@ export interface UserResponse {
     is_verified: boolean
   }
 }
+
+export interface UpdateUserResponse extends BaseResponse {
+  user: {
+    id: string
+    name: string
+    email: string
+    role: 'USER' | 'ADMIN'
+  }
+}
