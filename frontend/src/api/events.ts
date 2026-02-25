@@ -1,15 +1,5 @@
-import { fakeRequest } from './client'
-import { mockEvents as events } from '../mocks/events.mock'
-import { getEventTagByName, mockEventTags } from '../mocks/tags.mock';
-import type { EventTagType, Tag } from '../types/tag';
-import { normalizeString } from '../utils/string';
-
-function paginate<T>(items: T[], offset: number, limit: number) {
-  const data = items.slice(offset, offset + limit)
-  const hasMore = offset + limit < items.length
-
-  return { data, hasMore }
-}
+import { apiRequest } from './client'
+import type { Event, EventsResponse } from '../types/events';
 
 interface GetEventsParams {
   offset: number
@@ -18,24 +8,24 @@ interface GetEventsParams {
   tags?: string[]
 }
 
-// Retorna os eventos com base em um título e/ou tags
+// Retorna os eventos com base em um título e/ou tags da API /events
 export function getEvents({ offset, limit, title, tags }: GetEventsParams) {
-  const filteredEvents = events.filter((e) => {
-    const matchesTitle = title
-      ? normalizeString(e.title).includes(normalizeString(title))
-      : true
+  const params = new URLSearchParams()
 
-    const matchesTags =
-      tags && tags.length > 0
-        ? tags.every((tag) =>
-            e.tags.some((eventTag) => eventTag.name === tag)
-          )
-        : true
+  params.set('offset', String(offset))
+  params.set('limit', String(limit))
 
-    return matchesTitle && matchesTags
-  })
+  if (title) {
+    params.set('title', title)
+  }
 
-  return fakeRequest(paginate(filteredEvents, offset, limit))
+  if (tags && tags.length > 0) {
+    for (const tag of tags) {
+      params.append('tag', tag)
+    }
+  }
+
+  return apiRequest<EventsResponse>(`/events?${params.toString()}`)
 }
 
 interface GetFeedParams {
@@ -43,13 +33,26 @@ interface GetFeedParams {
   limit: number
 }
 
-export function getFeed({
+interface MuralResponse {
+  mural: Event[]
+  hasMore: boolean
+}
+
+// Retorna o mural personalizado do usuário a partir da rota /mural
+export async function getFeed({
   offset,
   limit,
-}: GetFeedParams) {
-  const publishedEvents = events.filter((e) => e.status === 'published')
+}: GetFeedParams): Promise<EventsResponse> {
+  const params = new URLSearchParams()
+  params.set('offset', String(offset))
+  params.set('limit', String(limit))
 
-  return fakeRequest(paginate(publishedEvents, offset, limit))
+  const response = await apiRequest<MuralResponse>(`/mural?${params.toString()}`)
+
+  return {
+    data: response.mural,
+    hasMore: response.hasMore,
+  }
 }
 
 // Retorna os eventos criados pelo usuário
@@ -63,54 +66,31 @@ interface GetMyEventsParams {
 export function getMyEvents(params: GetMyEventsParams) {
   const { offset, limit, title } = params
 
-  const filteredEvents = events.filter((e) => title ? normalizeString(e.title).includes(normalizeString(title)) : true)
-
-  return fakeRequest(paginate(filteredEvents, offset, limit))
+  // Por enquanto, reutiliza a mesma lógica de getEvents
+  return getEvents({
+    offset,
+    limit,
+    title,
+    tags: undefined,
+  })
 }
 
 // Retorna um evento específico pelo ID
 export function getEventById(id: string) {
-  return fakeRequest(events.find(e => e.id === id))
+  return apiRequest<Event>(`/events/${id}`)
 }
 
 // Faz o post de um evento
 export function postEvent(data: any) {
-  events.unshift({
-    ...data,
-    tags: data.tags.map((tag: string) => getEventTagByName(tag)) as Tag<EventTagType>[],
-    autor_id: 'fake-user-id-123',
-    created_at: new Date().toISOString(),
-    id: 'event-' + crypto.randomUUID(),
-    status: 'published',
-  })
-
-  for (const tagName of data.tags) {
-    if (!mockEventTags.some(tag => tag.name === tagName)) {
-      mockEventTags.push({
-        id: 'event-tag-outro-' + tagName,
-        name: tagName,
-        type: "outro",
-      });
-    }
-  }
-
-  return fakeRequest({
-    message: "Evento criado com sucesso",
+  return apiRequest<{ message: string }>("/events", {
+    method: "POST",
+    body: data,
   });
 }
 
 // Deleta um evento pelo id
 export function deleteEvent(eventId: string) {
-  const index = events.findIndex((event) => event.id === eventId)
-
-  if (index === -1) {
-    throw new Error('Evento não encontrado')
-  }
-
-  events.splice(index, 1)
-
-  return fakeRequest({
-    message: 'Evento deletado com sucesso',
-    id: eventId,
-  })
+  return apiRequest<{ message: string }>(`/events/${eventId}`, {
+    method: "DELETE",
+  });
 }
