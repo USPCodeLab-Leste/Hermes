@@ -9,8 +9,8 @@ interface CreateEventInput {
   title: string;
   body: string;
   local: string;
-  data_inicio: string; // datetime-local (sem timezone)
-  data_fim: string; // datetime-local (sem timezone)
+  data_inicio: string;
+  data_fim: string;
   tags: string[];
   bannerFile: File;
 }

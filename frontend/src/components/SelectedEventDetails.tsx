@@ -12,6 +12,7 @@ import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
 import { ConfirmDeleteModal } from "./modals/ConfirmDeleteModal"
+import { CreateEventModal } from "./modals/CreateEventModal"
 
 import { useDeleteEvent } from "../hooks/events/useDeleteEvent"
 
@@ -26,6 +27,7 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
   const share = useShare();
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [del, isDeleteLoading, errorDelete] = useDeleteEvent();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Handlers
   const handleShare = useCallback(() => {
@@ -56,8 +58,19 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
     }
   }, [del, event, onDeleted]);
 
+  const handleOpenEdit = useCallback(() => {
+    setIsEditModalOpen(true);
+  }, [])
+
   return (
     <div className="flex flex-col gap-4">
+      <CreateEventModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onCreated={onDeleted}
+        initialEvent={event}
+      />
+
       <ConfirmDeleteModal
         isOpen={isConfirmDeleteOpen}
         onCancel={handleCloseConfirmDelete}
@@ -88,7 +101,7 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
       </div>
       {isAdmin ? (
         <AdminEditDeleteButtons
-          onEdit={() => {}}
+          onEdit={handleOpenEdit}
           onDelete={handleOpenConfirmDelete}
         />
       ) : (

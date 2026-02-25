@@ -18,9 +18,10 @@ interface InputUploadFileProps {
   disabled?: boolean;
   changeSelectedFile: (file: File | null) => void;
   tooltip?: string;
+  bannerUrl: string | null;
 }
  
- export function InputUploadFile({ id, label, hasError, errorMessage, required, accept, selectedFile, disabled, tooltip, changeSelectedFile }: InputUploadFileProps) {
+ export function InputUploadFile({ id, label, hasError, errorMessage, required, accept, selectedFile, disabled, tooltip, bannerUrl, changeSelectedFile }: InputUploadFileProps) {
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -77,6 +78,8 @@ interface InputUploadFileProps {
     [changeSelectedFile, disabled],
   );
 
+  const fileName = bannerUrl ?? selectedFile?.name ?? (isDragActive ? "Solte o Arquivo aqui" : "Enviar Arquivo")
+
   return (
     <div className="flex flex-col gap-1">
       <div className="flex flex-row items-center gap-2">
@@ -101,20 +104,16 @@ interface InputUploadFileProps {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`flex flex-col gap-4 justify-center items-center p-8 rounded-2xl
+        className={`flex flex-col gap-4 justify-center items-center p-8 rounded-2xl aspect-video
                    border-3 border-dashed text-ink/75 dark:text-paper/75 group 
                    ${hasError ? "border-red-300" : isDragActive ? "border-teal-light" : " border-ink/50 dark:border-paper/50"}
                    ${isDragActive ? "cursor-grabbing" : "cursor-pointer"} 
                    `}
+        // style={{ backgroundImage: selectedFile ? `url('${URL.createObjectURL(selectedFile)}')` : bannerUrl ? `url('${bannerUrl}')` : "none", backgroundSize: "cover", backgroundPosition: "center" }}
       >
         <UploadIcon className={`size-14 rounded-full p-3.5 ${isDragActive ? "bg-teal-mid" : "dark:bg-violet-dark bg-violet-light"} group-hover:dark:bg-violet-dark/75 group-hover:bg-violet-light/75 transition-colors pointer-events-none`} />
-        <span className="font-medium pointer-events-none">
-          {selectedFile
-            ? selectedFile.name
-            : isDragActive
-              ? "Solte o Arquivo aqui"
-              : "Enviar Arquivo"
-          }
+        <span className="font-medium pointer-events-none text-shadow-2xs">
+          {fileName}
         </span>
       </button>
 
