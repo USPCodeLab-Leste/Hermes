@@ -56,10 +56,8 @@ export const infoSchemas = {
       tags: {
         type: "array",
         items: {
-          type: "string",
-          minLength: 1
-        },
-        example: ["Aviso", "Manutenção"]
+          $ref: "#/components/schemas/TagBase"
+        }
       }
     },
 

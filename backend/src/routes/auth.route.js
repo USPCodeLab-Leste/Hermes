@@ -78,8 +78,6 @@ router.post("/login", AuthController.login);
  *       O novo token é retornado em cookie HttpOnly.
  *     tags:
  *       - Auth
- *     security:
- *       - refreshCookie: []
  *     responses:
  *       200:
  *         description: Token renovado com sucesso
@@ -99,7 +97,7 @@ router.post("/login", AuthController.login);
  *       500:
  *         description: Erro interno ao renovar token
  */
-router.get("/refresh", authMiddleware, emailVerifiedMiddleware, JWTController.refresh);
+router.get("/refresh", JWTController.refresh);
 
 /**
  * @openapi

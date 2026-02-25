@@ -90,9 +90,14 @@ class ContentModel {
         p.*,
         u.name AS autor_nome,
         COALESCE(
-          ARRAY_AGG(DISTINCT t.name) 
-          FILTER (WHERE t.name IS NOT NULL),
-          '{}'
+          JSON_AGG(
+            DISTINCT JSONB_BUILD_OBJECT(
+              'id', t.id,
+              'name', t.name,
+              'type', t.type
+            )
+          ) FILTER (WHERE t.id IS NOT NULL),
+          '[]'
         ) AS tags
       FROM tb_content p
       JOIN tb_user u ON p.autor_id = u.id
@@ -173,9 +178,14 @@ class ContentModel {
         p.*,
         u.name AS autor_nome,
         COALESCE(
-          ARRAY_AGG(DISTINCT t.name)
-          FILTER (WHERE t.name IS NOT NULL),
-          '{}'
+          JSON_AGG(
+            DISTINCT JSONB_BUILD_OBJECT(
+              'id', t.id,
+              'name', t.name,
+              'type', t.type
+            )
+          ) FILTER (WHERE t.id IS NOT NULL),
+          '[]'
         ) AS tags
       FROM tb_content p
       JOIN tb_user u ON p.autor_id = u.id
