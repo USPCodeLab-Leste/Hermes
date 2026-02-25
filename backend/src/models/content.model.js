@@ -168,7 +168,23 @@ class ContentModel {
 
   // pra buscar um content pelo id
   async findById(id) {
-    const query = `SELECT * FROM tb_content WHERE id = $1`;
+    const query = `
+      SELECT 
+        p.*,
+        u.name AS autor_nome,
+        COALESCE(
+          ARRAY_AGG(DISTINCT t.name)
+          FILTER (WHERE t.name IS NOT NULL),
+          '{}'
+        ) AS tags
+      FROM tb_content p
+      JOIN tb_user u ON p.autor_id = u.id
+      LEFT JOIN tb_content_tag pt ON p.id = pt.content_id
+      LEFT JOIN tb_tag t ON pt.tag_id = t.id
+      WHERE p.id = $1
+      GROUP BY p.id, u.name
+    `;
+
     const result = await pool.query(query, [id]);
     return result.rows[0];
   }
