@@ -23,18 +23,27 @@ export function fileToBase64(file: File): Promise<string> {
 }
 
 export async function uploadBase64ToImgbb(base64Image: string): Promise<string> {
-  // TODO: trocar por ENV
-  const API_KEY = "d6e6acae5217b5d7c4daa4b9c7f115f0";
+  const API_KEY = import.meta.env.VITE_IMG_API_KEY as string | undefined;
+
+  if (!API_KEY) {
+    console.error("Chave de API para imgbb não encontrada. Verifique as variáveis de ambiente.");
+    throw new Error("Chave de API para imgbb não configurada");
+  }
 
   const formData = new FormData();
   formData.append("image", base64Image);
 
+  const params = new URLSearchParams({
+    expiration: "600",
+    key: API_KEY,
+  });
+
   const response = await fetch(
-    `https://api.imgbb.com/1/upload?expiration=600&key=${API_KEY}`,
+    `https://api.imgbb.com/1/upload?${params.toString()}`,
     {
       method: "POST",
-      body: formData
-    }
+      body: formData,
+    },
   );
 
   if (!response.ok) {
