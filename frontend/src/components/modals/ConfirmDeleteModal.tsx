@@ -1,7 +1,8 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 import { ModalWrapper } from "./Modal";
 import { GenericButton } from "../GenericButton";
+import { toast } from "react-toastify";
 
 export function ConfirmDeleteModal({
   isOpen,
@@ -30,8 +31,11 @@ export function ConfirmDeleteModal({
     onConfirm();
   }, [isLoading, onConfirm]);
 
-  const errorMessage =
-    error instanceof Error ? error.message : "Erro ao excluir";
+  useEffect(() => {
+    if (!error) return;
+
+    toast.error("Ocorreu um erro ao tentar excluir. Por favor, tente novamente.");
+  }, [error]);
 
   return (
     <ModalWrapper isOpen={isOpen} onClose={onCancel}>
@@ -40,12 +44,6 @@ export function ConfirmDeleteModal({
           <h2 className="text-2xl font-bold">{title}</h2>
           <p className="opacity-80">{description}</p>
         </header>
-
-        {Boolean(error) && (
-          <p className="text-sm text-red-500/90">
-            {errorMessage}
-          </p>
-        )}
 
         <div className="grid grid-cols-2 gap-2">
           <GenericButton onClick={onCancel} disabled={isLoading}>
