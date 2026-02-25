@@ -88,6 +88,14 @@ export function postEvent(data: any) {
   });
 }
 
+// Atualiza parcialmente um evento
+export function patchEvent(id: string, data: any) {
+  return apiRequest<{ message: string }>(`/events/${id}`, {
+    method: "PATCH",
+    body: data,
+  });
+}
+
 // Deleta um evento pelo id
 export function deleteEvent(eventId: string) {
   return apiRequest<{ message: string }>(`/events/${eventId}`, {
