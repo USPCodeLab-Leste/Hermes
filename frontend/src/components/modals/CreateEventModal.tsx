@@ -13,20 +13,24 @@ import { ModalWrapper } from "./Modal";
 
 // API
 import { useCreateEvent } from "../../hooks/events/useCreateEvent";
+import { useUpdateEvent } from "../../hooks/events/useUpdateEvent";
 import { useNavigate } from "react-router-dom";
+import type { Event } from "../../types/events";
 
 export function CreateEventModal({
   isOpen,
   onClose,
   onCreated,
+  initialEvent,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onCreated?: () => void;
+  initialEvent?: Event | null;
 }) {
   return (
     <ModalWrapper isOpen={isOpen} onClose={onClose}>
-      <CreateEventModalContent onClose={onClose} onCreated={onCreated} />
+      <CreateEventModalContent onClose={onClose} onCreated={onCreated} initialEvent={initialEvent ?? null} />
     </ModalWrapper>
   );
 }
@@ -44,12 +48,15 @@ const defaultFormErrors = {
 const CreateEventModalContent = ({
   onClose,
   onCreated,
+  initialEvent,
 }: {
   onClose: () => void;
   onCreated?: () => void;
+  initialEvent: Event | null;
 }) => {
   const navigate = useNavigate();
-  const [createEvent, isCreatingLoading, createError] = useCreateEvent();
+  const [createEvent, isCreateLoading, createError] = useCreateEvent();
+  const [updateEvent, isUpdateLoading, updateError] = useUpdateEvent();
 
   const [confirmed, setConfirmed] = useState({
     clickCount: 0,
@@ -58,6 +65,7 @@ const CreateEventModalContent = ({
 
   const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
   const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [existingBannerUrl, setExistingBannerUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     body: "",
@@ -66,6 +74,23 @@ const CreateEventModalContent = ({
     data_fim: "", // datetime-local
     tags: "", // comma-separated
   });
+
+  const isEditMode = Boolean(initialEvent);
+
+  useEffect(() => {
+    if (!initialEvent) return;
+
+    setFormData({
+      title: initialEvent.title ?? "",
+      body: initialEvent.body ?? "",
+      local: initialEvent.local ?? "",
+      data_inicio: initialEvent.data_inicio ? initialEvent.data_inicio.slice(0, 16) : "",
+      data_fim: initialEvent.data_fim ? initialEvent.data_fim.slice(0, 16) : "",
+      tags: (initialEvent.tags ?? []).map((t) => t.name).join(", "),
+    });
+
+    setExistingBannerUrl(initialEvent.img_banner ?? null);
+  }, [initialEvent]);
 
   const tagsArray = useMemo(() => {
     return formData.tags
@@ -189,19 +214,21 @@ const CreateEventModalContent = ({
       }
     }
 
-    if (!bannerFile) {
+    const hasExistingImage = Boolean(existingBannerUrl);
+
+    if (!bannerFile && !hasExistingImage) {
       newErrors.img_banner = {
         hasError: true,
         message: "O banner é obrigatório.",
       };
       hasLocalError = true;
-    } else if (!bannerFile.type.startsWith("image/")) {
+    } else if (bannerFile && !bannerFile.type.startsWith("image/")) {
       newErrors.img_banner = {
         hasError: true,
         message: "O arquivo deve ser uma imagem.",
       };
       hasLocalError = true;
-    } else if (bannerFile.size > 5 * 1024 * 1024) {
+    } else if (bannerFile && bannerFile.size > 5 * 1024 * 1024) {
       newErrors.img_banner = {
         hasError: true,
         message: "A imagem deve ser menor que 5MB.",
@@ -223,12 +250,13 @@ const CreateEventModalContent = ({
     }
 
     return true;
-  }, [formData, tagsArray, bannerFile]);
+  }, [formData, tagsArray, bannerFile, existingBannerUrl]);
 
   useEffect(() => {
-    if (!createError) return;
+    const activeError = (isEditMode ? updateError : createError) as any;
+    if (!activeError) return;
 
-    const anyError = createError as any;
+    const anyError = activeError as any;
     const status = anyError.status;
     const message = (anyError && anyError.message) || "Não foi possível criar o evento.";
 
@@ -245,13 +273,15 @@ const CreateEventModalContent = ({
     } else {
       toast.error(message);
     }
-  }, [createError]);
+  }, [createError, updateError, isEditMode]);
 
   // Valida os dados e simula/confirma a criação do evento
   const handleCreate = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isCreatingLoading) return;
+    const isSaving = isEditMode ? isUpdateLoading : isCreateLoading;
+
+    if (isSaving) return;
     if (!validate()) return;
 
     if (confirmed.clickCount === 0) {
@@ -264,17 +294,33 @@ const CreateEventModalContent = ({
     }
 
     try {
-      await createEvent({
-        title: formData.title,
-        body: formData.body,
-        local: formData.local,
-        data_inicio: formData.data_inicio,
-        data_fim: formData.data_fim,
-        tags: tagsArray,
-        bannerFile: bannerFile!,
-      });
+      if (isEditMode && initialEvent) {
+        await updateEvent({
+          id: initialEvent.id,
+          title: formData.title,
+          body: formData.body,
+          local: formData.local,
+          data_inicio: formData.data_inicio,
+          data_fim: formData.data_fim,
+          tags: tagsArray,
+          bannerFile: bannerFile ?? null,
+          existingBannerUrl,
+        });
 
-      toast.success("Evento criado com sucesso!");
+        toast.success("Evento atualizado com sucesso!");
+      } else {
+        await createEvent({
+          title: formData.title,
+          body: formData.body,
+          local: formData.local,
+          data_inicio: formData.data_inicio,
+          data_fim: formData.data_fim,
+          tags: tagsArray,
+          bannerFile: bannerFile!,
+        });
+
+        toast.success("Evento criado com sucesso!");
+      }
 
       onCreated?.();
       onClose();
@@ -287,12 +333,17 @@ const CreateEventModalContent = ({
     bannerFile,
     confirmed.clickCount,
     createEvent,
+    updateEvent,
     formData,
-    isCreatingLoading,
+    isCreateLoading,
+    isUpdateLoading,
+    existingBannerUrl,
+    initialEvent,
     onClose,
     onCreated,
     tagsArray,
     validate,
+    isEditMode,
   ]);
 
   return (
@@ -309,7 +360,7 @@ const CreateEventModalContent = ({
             autocomplete="off"
             hasError={errors.title.hasError}
             errorMessage={errors.title.message}
-            disabled={isCreatingLoading}
+            disabled={isCreateLoading}
             required={true}
           />
 
@@ -332,7 +383,7 @@ const CreateEventModalContent = ({
                 onChange={handleChange}
                 placeholder="Evento sobre boas práticas em Node.js"
                 className="flex-1 bg-transparent outline-none w-full resize-none min-h-24"
-                disabled={isCreatingLoading}
+                disabled={isCreateLoading}
               />
             </div>
             <ErrorMessage
@@ -351,7 +402,7 @@ const CreateEventModalContent = ({
             autocomplete="off"
             hasError={errors.local.hasError}
             errorMessage={errors.local.message}
-            disabled={isCreatingLoading}
+            disabled={isCreateLoading}
             required={true}
           />
 
@@ -365,7 +416,7 @@ const CreateEventModalContent = ({
                 value={formData.data_inicio}
                 onChange={handleChange}
                 autocomplete="off"
-                disabled={isCreatingLoading}
+                disabled={isCreateLoading}
               />
             </InputWrapper>
             <ErrorMessage
@@ -384,7 +435,7 @@ const CreateEventModalContent = ({
                 value={formData.data_fim}
                 onChange={handleChange}
                 autocomplete="off"
-                disabled={isCreatingLoading}
+                disabled={isCreateLoading}
               />
             </InputWrapper>
             <ErrorMessage
@@ -403,8 +454,9 @@ const CreateEventModalContent = ({
             hasError={errors.img_banner.hasError}
             errorMessage={errors.img_banner.message}
             required={true}
-            disabled={isCreatingLoading}
+            disabled={isCreateLoading}
             tooltip="A proporção ideal para o banner é 16:9 (ex: 1920x1080)"
+            bannerUrl={existingBannerUrl}
           />
 
           {/* Tags */}
@@ -417,18 +469,18 @@ const CreateEventModalContent = ({
             autocomplete="off"
             hasError={errors.tags.hasError}
             errorMessage={errors.tags.message}
-            disabled={isCreatingLoading}
+            disabled={isCreateLoading}
             required={true}
           />
         </div>
         
-        <GenericButton type="submit" disabled={isCreatingLoading}>
+        <GenericButton type="submit" disabled={isCreateLoading}>
           <span className="text-paper">
             {confirmed.clickCount === 0
-              ? "Criar Evento"
-              : isCreatingLoading
-                ? "Criando evento..."
-                : "Confirmar Criação"}
+              ? (isEditMode ? "Salvar alterações" : "Criar Evento")
+              : (isEditMode
+                  ? (isUpdateLoading ? "Salvando..." : "Confirmar alterações")
+                  : (isCreateLoading ? "Criando evento..." : "Confirmar Criação"))}
           </span>
         </GenericButton>
       </form>
