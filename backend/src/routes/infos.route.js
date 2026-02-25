@@ -1,6 +1,6 @@
 import { Router } from "express";
 import BaseContentController from "../controllers/content.controller.js";
-import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware.js"
+import { authMiddleware, emailVerifiedMiddleware, adminMiddleware } from "../middleware/auth.middleware.js"
 
 import { createInfoSchema, updateInfoSchema } from "../validators/content.validator.js";
 
@@ -20,6 +20,8 @@ const infosController = new BaseContentController(
  *     summary: Lista infos
  *     description: Retorna avisos e comunicados
  *     tags: [Infos]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: query
  *         name: title
@@ -53,8 +55,12 @@ const infosController = new BaseContentController(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/InfoListResponse"
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: E-mail não verificado
  */
-router.get("/infos", infosController.get.bind(infosController));
+router.get("/infos", authMiddleware, emailVerifiedMiddleware, infosController.get.bind(infosController));
 
 /**
  * @swagger
@@ -83,11 +89,11 @@ router.get("/infos", infosController.get.bind(infosController));
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Acesso restrito a administradores
+ *         description: Acesso restrito a administradores e/ou E-mail não verificado
  *       500:
  *         description: Falha na criação da info
  */
-router.post("/infos", authMiddleware, adminMiddleware, infosController.create.bind(infosController));
+router.post("/infos", authMiddleware, emailVerifiedMiddleware, adminMiddleware, infosController.create.bind(infosController));
 
 /**
  * @swagger
@@ -96,6 +102,8 @@ router.post("/infos", authMiddleware, adminMiddleware, infosController.create.bi
  *     summary: Buscar info por ID
  *     description: Retorna uma info específica pelo ID
  *     tags: [Infos]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -111,12 +119,15 @@ router.post("/infos", authMiddleware, adminMiddleware, infosController.create.bi
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/Info"
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: E-mail não verificado
  *       404:
  *         description: Info não encontrada
  */
 router.get(
-  "/infos/:id",
-  infosController.getById.bind(infosController)
+  "/infos/:id", authMiddleware, emailVerifiedMiddleware, infosController.getById.bind(infosController)
 );
 
 /**
@@ -150,11 +161,12 @@ router.get(
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Sem permissão
+ *         description: Acesso restrito a administradores e/ou E-mail não verificado
  */
 router.patch(
   "/infos/:id",
   authMiddleware,
+  emailVerifiedMiddleware,
   adminMiddleware,
   infosController.patch.bind(infosController)
 );
@@ -192,11 +204,12 @@ router.patch(
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Sem permissão
+ *         description: Acesso restrito a administradores e/ou E-mail não verificado
  */
 router.delete(
   "/infos/:id",
   authMiddleware,
+  emailVerifiedMiddleware,
   adminMiddleware,
   infosController.delete.bind(infosController)
 );

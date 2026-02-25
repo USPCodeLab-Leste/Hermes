@@ -1,7 +1,7 @@
 import express from "express";
 import AuthController from "../controllers/auth.controller.js";
 import JWTController from "../controllers/jwt.controller.js";
-import { authMiddleware } from "../middleware/auth.middleware.js"
+import { authMiddleware, emailVerifiedMiddleware } from "../middleware/auth.middleware.js"
 
 const router = express.Router();
 
@@ -78,8 +78,6 @@ router.post("/login", AuthController.login);
  *       O novo token é retornado em cookie HttpOnly.
  *     tags:
  *       - Auth
- *     security:
- *       - refreshCookie: []
  *     responses:
  *       200:
  *         description: Token renovado com sucesso
@@ -204,26 +202,13 @@ router.post('/logout', authMiddleware, AuthController.logout);
  *         description: Dados inválidos
  *       401:
  *         description: Não autorizado ou senha antiga incorreta
+ *       403:
+ *         description: E-mail não verificado
  *       404:
  *         description: Utilizador não encontrado
  *       500:
  *         description: Erro interno do servidor
  */
-router.patch("/change-password", authMiddleware, AuthController.changePassword);
-
-// rota teste 
-// router.get('/teste-envio', async (req,res) => {
-//   try {
-//     const emailFake = "hermes@usp.br";
-//     const token = jwt.sign({email: emailFake }, process.env.JWT_EMAIL_SECRET || 'segredinho secreto'); // token qualquer so pra testar o link
-
-//     await sendVerificationEmail(emailFake,token);
-//     res.send("<h1>E-mail enviado com sucesso!<h1> <p>Verifique a url no console pra verificar o email<p>");
-
-//   } catch (error) {
-//     res.status(500).send("Houve um error ao enviar: " + error.message);
-//   }
-
-// });
+router.patch("/change-password", authMiddleware, emailVerifiedMiddleware, AuthController.changePassword);
 
 export default router;

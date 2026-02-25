@@ -26,7 +26,13 @@ export const userSchemas = {
           },
           is_verified: {
             type: "boolean",
-            example: "false"
+            example: false
+          },
+          userTags: {
+            type: "array",
+            items: {
+              $ref: "#/components/schemas/TagBase"
+            }
           }
         },
         required: ["id", "name", "email", "role"]

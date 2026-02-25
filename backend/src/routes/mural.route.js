@@ -1,6 +1,6 @@
 import express from "express";
 import muralController from "../controllers/mural.controller.js";
-import { authMiddleware } from "../middleware/auth.middleware.js";
+import { authMiddleware, emailVerifiedMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -41,11 +41,13 @@ const router = express.Router();
  *               $ref: '#/components/schemas/MuralResponse'
  *       401:
  *         description: Usuário não autenticado
+ *       403:
+ *         description: E-mail não verificado
  *       404:
  *         description: Usuário não encontrado
  *       500:
  *         description: Erro interno do servidor
  */
-router.get("/mural", authMiddleware,  muralController.getMural);
+router.get("/mural", authMiddleware, emailVerifiedMiddleware,  muralController.getMural);
 
 export default router;

@@ -27,7 +27,8 @@ class JwtController {
           const newAccessToken = jwt.sign(
             {
               id: payload.id,
-              role: payload.role || "USER"
+              role: payload.role || "USER",
+              is_verified: payload.is_verified || false
             },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "1h" }
