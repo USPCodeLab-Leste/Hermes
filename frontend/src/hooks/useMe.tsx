@@ -1,13 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
-import { getMe } from '../api/users'
 import type { UserMe } from '../types/user'
+import { useAuth } from './auth/useAuth'
 
 export function useMe() {
-  return useQuery<UserMe>({
-    queryKey: ['me'],
-    enabled: !!localStorage.getItem('fake-cookie'),
-    queryFn: async () => {
-      return await getMe()
-    }
-  })
+  const { user, loading, error } = useAuth()
+
+  return {
+    data: user as UserMe | null,
+    isLoading: loading,
+    error,
+  }
 }

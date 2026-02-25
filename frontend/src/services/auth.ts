@@ -11,35 +11,45 @@ import {
 import type { UserMe } from '../types/user'
 import type { RegisterResponse } from '../types/responses'
 
-export const USER_KEY = 'auth_user'
-
 export type AuthListener = (user: UserMe | null) => void
 
 export interface AuthService {
   register: (data: RegisterPayload) => Promise<RegisterResponse>
   signIn: (data: LoginPayload) => Promise<UserMe>
   signOut: () => Promise<boolean>
+  refresh: () => Promise<UserMe | null>
   onAuthStateChanged: (cb: AuthListener) => () => void
 }
 
 export function createAuthService(): AuthService {
   let listeners: AuthListener[] = []
-  let currentUser: UserMe | null = localStorage.getItem(USER_KEY) ? JSON.parse(localStorage.getItem(USER_KEY)!) : null
+  let currentUser: UserMe | null = null
+
+  // isHyydrated = usuário já foi buscado?
+  let isHydrated = false
+  let hydratePromise: Promise<void> | null = null
 
   function notify() {
     listeners.forEach(cb => cb(currentUser))
   }
 
-  function saveAuth(user: UserMe) {
-    localStorage.setItem(USER_KEY, JSON.stringify(user))
-    currentUser = user
-    notify()
-  }
+  async function ensureHydrated() {
+    if (isHydrated) return
+    if (hydratePromise) return hydratePromise
 
-  function removeAuth() {
-    localStorage.removeItem(USER_KEY)
-    currentUser = null
-    notify()
+    hydratePromise = (async () => {
+      try {
+        currentUser = await getMeAPI()
+      } catch {
+        currentUser = null
+      } finally {
+        isHydrated = true
+        hydratePromise = null
+        notify()
+      }
+    })()
+
+    return hydratePromise
   }
 
   async function register(data: RegisterPayload) {
@@ -51,20 +61,45 @@ export function createAuthService(): AuthService {
     await signInAPI(data)
     const user = await getMeAPI()
 
-    saveAuth(user)
+    currentUser = user
+    isHydrated = true
+    notify()
     return user
   }
 
   async function signOut() {
     const response = await signOutAPI()
-    removeAuth()
+
+    currentUser = null
+    isHydrated = true
+    notify()
 
     return response
   }
 
+  async function refresh() {
+    try {
+      const user = await getMeAPI()
+      currentUser = user
+      isHydrated = true
+      notify()
+      return user
+    } catch {
+      currentUser = null
+      isHydrated = true
+      notify()
+      return null
+    }
+  }
+
   function onAuthStateChanged(cb: AuthListener) {
     listeners.push(cb)
-    cb(currentUser)
+
+    if (isHydrated) {
+      cb(currentUser)
+    } else {
+      void ensureHydrated()
+    }
 
     return () => {
       listeners = listeners.filter(l => l !== cb)
@@ -75,6 +110,7 @@ export function createAuthService(): AuthService {
     register,
     signIn,
     signOut,
+    refresh,
     onAuthStateChanged,
   }
 }

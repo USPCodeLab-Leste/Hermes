@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { ModalWrapper } from "./Modal";
 import { MemoizedInputText as InputText } from "../forms/InputText";
 import { GenericButton } from "../GenericButton";
 
 import { useChangeName } from "../../hooks/auth/useChangeName";
+import { auth } from "../../services/auth";
 
 export function ChangeNameModal({
   isOpen,
@@ -17,7 +17,6 @@ export function ChangeNameModal({
   onClose: () => void;
   currentName?: string;
 }) {
-  const queryClient = useQueryClient();
   const [changeName, isLoading, apiError] = useChangeName();
 
   const initialName = useMemo(() => currentName ?? "", [currentName]);
@@ -67,11 +66,11 @@ export function ChangeNameModal({
     const result = await changeName({ name: name.trim() });
 
     if (result) {
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
+      await auth.refresh();
       toast.success("Nome atualizado com sucesso!");
       onClose();
     }
-  }, [changeName, isLoading, name, onClose, queryClient, validate]);
+  }, [changeName, isLoading, name, onClose, validate]);
 
   return (
     <ModalWrapper isOpen={isOpen} onClose={onClose}>
