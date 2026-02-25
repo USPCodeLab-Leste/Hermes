@@ -1,6 +1,6 @@
 import express from "express";
 import UserController from "../controllers/user.controller.js";
-import { authMiddleware } from "../middleware/auth.middleware.js";
+import { authMiddleware, emailVerifiedMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -25,8 +25,10 @@ const router = express.Router();
  *         description: Usuário não autenticado
  *       400:
  *         description: Erro ao pegar informações do usuario
+ *       403:
+ *         description: E-mail não verificado
  */
-router.get("/users/me", authMiddleware, UserController.getInfoMe);
+router.get("/users/me", authMiddleware, emailVerifiedMiddleware, UserController.getInfoMe);
 
 /**
  * @openapi
@@ -55,10 +57,12 @@ router.get("/users/me", authMiddleware, UserController.getInfoMe);
  *         description: Usuário não autenticado
  *       400:
  *         description: Dados inválidos
+ *       403:
+ *         description: E-mail não verificado
  *       500:
  *         description: Erro ao atualizar informações do usuario
  */
-router.patch("/users/me", authMiddleware, UserController.patchInfoMe);
+router.patch("/users/me", authMiddleware, emailVerifiedMiddleware, UserController.patchInfoMe);
 
 /**
  * @openapi
@@ -87,10 +91,12 @@ router.patch("/users/me", authMiddleware, UserController.patchInfoMe);
  *         description: Usuário não autenticado
  *       400:
  *         description: tagId é obrigatório
+ *       403:
+ *         description: E-mail não verificado
  *       500:
  *         description: Erro ao seguir tag
  */
-router.post("/users/me/tags", authMiddleware, UserController.followTag);
+router.post("/users/me/tags", authMiddleware, emailVerifiedMiddleware, UserController.followTag);
 
 /**
  * @openapi
@@ -121,9 +127,11 @@ router.post("/users/me/tags", authMiddleware, UserController.followTag);
  *         description: Usuário não autenticado
  *       400:
  *         description: tagId é obrigatório
+ *       403:
+ *         description: E-mail não verificado
  *       500:
  *         description: Erro ao remover tag
  */
-router.delete("/users/me/tags/:tagId", authMiddleware, UserController.unfollowTag);
+router.delete("/users/me/tags/:tagId", authMiddleware, emailVerifiedMiddleware, UserController.unfollowTag);
 
 export default router;

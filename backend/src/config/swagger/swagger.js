@@ -14,7 +14,9 @@ const swaggerSpec = swaggerJSDoc({
     info: {
       title: "Hermes API",
       version: "1.0.0",
-      description: "Documentação da API do Hermes"
+      description: "O Hermes é a API oficial do mural digital de eventos, centralizando a comunicação entre entidades estudantis e alunos.<br><br> \
+                    Para garantir a segurança e a confiabilidade das informações, todas as rotas são protegidas: apenas usuários autenticados com e-mail verificado podem acessar os recursos da API.<br> \
+                    A plataforma permite criar, consultar e gerenciar eventos de forma organizada, filtrada por interesses e com controle de permissões, oferecendo uma experiência segura e eficiente."
     },
     servers: [
       {

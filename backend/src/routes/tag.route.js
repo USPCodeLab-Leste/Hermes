@@ -1,6 +1,6 @@
 import express from "express";
 import tagController from "../controllers/tag.controller.js";
-import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware.js";
+import { authMiddleware, emailVerifiedMiddleware, adminMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -12,6 +12,8 @@ const router = express.Router();
  *     description: Retorna todas as tags ativas cadastradas no sistema
  *     tags:
  *       - Tags
+ *     security:
+ *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Lista de tags
@@ -24,12 +26,16 @@ const router = express.Router();
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/TagResponse'
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: E-mail não verificado
  *       404:
  *         description: Nenhuma tag encontrada
  *       500:
  *         description: Erro interno
  */
-router.get("/tags", tagController.getTags);
+router.get("/tags", authMiddleware, emailVerifiedMiddleware, tagController.getTags);
 
 /**
  * @openapi
@@ -39,6 +45,8 @@ router.get("/tags", tagController.getTags);
  *     description: Retorna uma tag específica pelo nome (case insensitive)
  *     tags:
  *       - Tags
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: name
@@ -56,12 +64,16 @@ router.get("/tags", tagController.getTags);
  *               properties:
  *                 tag:
  *                   $ref: '#/components/schemas/TagResponse'
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: E-mail não verificado
  *       404:
  *         description: Tag não encontrada
  *       500:
  *         description: Erro interno
  */
-router.get("/tags/:name", tagController.getTagByName);
+router.get("/tags/:name", authMiddleware, emailVerifiedMiddleware, tagController.getTagByName);
 
 /**
  * @openapi
@@ -97,7 +109,7 @@ router.get("/tags/:name", tagController.getTagByName);
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Acesso restrito a administradores
+ *         description: Acesso restrito a administradores e/ou E-mail não verificado
  *       409:
  *         description: Tag já existe
  *       500:
@@ -106,6 +118,7 @@ router.get("/tags/:name", tagController.getTagByName);
 router.post(
   "/tags",
   authMiddleware,
+  emailVerifiedMiddleware,
   adminMiddleware,
   tagController.createTag
 );

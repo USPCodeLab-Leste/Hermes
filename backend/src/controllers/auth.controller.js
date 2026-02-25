@@ -78,7 +78,8 @@ class AuthController {
       const accessToken = jwt.sign(
         {
           id: user.id,
-          role: user.role || "USER"
+          role: user.role || "USER",
+          is_verified: user.is_verified || false
         },
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: "1h" }
@@ -88,7 +89,8 @@ class AuthController {
       const refreshToken = jwt.sign(
         {
           id: user.id,
-          role: user.role || "USER"
+          role: user.role || "USER",
+          is_verified: user.is_verified || false
         },
         process.env.ACCESS_TOKEN_SECRET_REFRESH,
         { expiresIn: "7d" }

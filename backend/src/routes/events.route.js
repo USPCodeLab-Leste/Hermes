@@ -1,6 +1,6 @@
 import { Router } from "express";
 import BaseContentController from "../controllers/content.controller.js";
-import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware.js"
+import { authMiddleware, emailVerifiedMiddleware, adminMiddleware } from "../middleware/auth.middleware.js"
 
 import { createEventSchema, updateEventSchema } from "../validators/content.validator.js";
 
@@ -21,6 +21,8 @@ const eventsController = new BaseContentController(
  *     description: Retorna eventos com paginação e filtro opcional por título e/ou tags
  *     tags:
  *       - Events
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: query
  *         name: title
@@ -60,8 +62,12 @@ const eventsController = new BaseContentController(
  *         description: Eventos não encontrados
  *       400:
  *         description: Falha na busca de eventos
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: E-mail não verificado
  */
-router.get("/events", eventsController.get.bind(eventsController));
+router.get("/events", authMiddleware, emailVerifiedMiddleware, eventsController.get.bind(eventsController));
 
 /**
  * @openapi
@@ -69,6 +75,8 @@ router.get("/events", eventsController.get.bind(eventsController));
  *   get:
  *     tags:
  *       - Events
+ *     security:
+ *       - cookieAuth: []
  *     summary: Buscar evento por ID
  *     description: Retorna um evento específico pelo ID
  *     parameters:
@@ -86,10 +94,14 @@ router.get("/events", eventsController.get.bind(eventsController));
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/Event"
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: E-mail não verificado
  *       404:
  *         description: Evento não encontrado
  */
-router.get("/events/:id", eventsController.getById.bind(eventsController));
+router.get("/events/:id", authMiddleware, emailVerifiedMiddleware, eventsController.getById.bind(eventsController));
 
 /**
  * @openapi
@@ -119,11 +131,11 @@ router.get("/events/:id", eventsController.getById.bind(eventsController));
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Acesso restrito a administradores
+ *         description: Acesso restrito a administradores e/ou E-mail não verificado
  *       500:
  *         description: Falha na criação do evento
  */
-router.post("/events", authMiddleware, adminMiddleware, eventsController.create.bind(eventsController));
+router.post("/events", authMiddleware, emailVerifiedMiddleware, adminMiddleware, eventsController.create.bind(eventsController));
 
 /**
  * @openapi
@@ -131,10 +143,10 @@ router.post("/events", authMiddleware, adminMiddleware, eventsController.create.
  *   patch:
  *     tags:
  *       - Events
+ *     security:
+ *       - cookieAuth: []
  *     summary: Atualizar evento
  *     description: Atualiza parcialmente um evento existente (apenas autor ou admin)
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -161,11 +173,12 @@ router.post("/events", authMiddleware, adminMiddleware, eventsController.create.
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Sem permissão
+ *         description: Acesso restrito a administradores e/ou E-mail não verificado
  */
 router.patch(
   "/events/:id",
   authMiddleware,
+  emailVerifiedMiddleware,
   adminMiddleware,
   eventsController.patch.bind(eventsController)
 );
@@ -176,10 +189,10 @@ router.patch(
  *   delete:
  *     tags:
  *       - Events
+ *     security:
+ *       - cookieAuth: []
  *     summary: Deletar evento
  *     description: Remove um evento existente (apenas autor ou admin)
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -204,11 +217,12 @@ router.patch(
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Sem permissão
+ *         description: Acesso restrito a administradores e/ou E-mail não verificado
  */
 router.delete(
   "/events/:id",
   authMiddleware,
+  emailVerifiedMiddleware,
   adminMiddleware,
   eventsController.delete.bind(eventsController)
 );
