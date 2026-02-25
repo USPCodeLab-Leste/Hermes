@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 // Componentes
@@ -12,10 +12,8 @@ import { Label } from "../forms/Label";
 import { ModalWrapper } from "./Modal";
 
 // API
-import { postEvent } from "../../api/events";
-
-// Utils
-import { uploadBannerAndGetUrl } from "../../utils/files";
+import { useCreateEvent } from "../../hooks/events/useCreateEvent";
+import { useNavigate } from "react-router-dom";
 
 export function CreateEventModal({
   isOpen,
@@ -50,13 +48,15 @@ const CreateEventModalContent = ({
   onClose: () => void;
   onCreated?: () => void;
 }) => {
+  const navigate = useNavigate();
+  const [createEvent, isCreatingLoading, createError] = useCreateEvent();
+
   const [confirmed, setConfirmed] = useState({
     clickCount: 0,
     isConfirmed: false,
   });
 
   const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
-  const [isCreatingLoading, setIsCreatingLoading] = useState(false);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -116,6 +116,12 @@ const CreateEventModalContent = ({
     if (formData.title.trim() === "") {
       newErrors.title = { hasError: true, message: "O título é obrigatório." };
       hasLocalError = true;
+    } else if (formData.title.trim().length < 3) {
+      newErrors.title = {
+        hasError: true,
+        message: "O título deve conter ao menos 3 caracteres.",
+      };
+      hasLocalError = true;
     }
 
     if (formData.body.trim() === "") {
@@ -124,10 +130,34 @@ const CreateEventModalContent = ({
         message: "A descrição é obrigatória.",
       };
       hasLocalError = true;
+    } else if (formData.body.trim().length < 10) {
+      newErrors.body = {
+        hasError: true,
+        message: "A descrição deve conter ao menos 10 caracteres.",
+      };
+      hasLocalError = true;
+    } else if (formData.body.trim().length > 1000) {
+      newErrors.body = {
+        hasError: true,
+        message: "A descrição deve conter no máximo 1000 caracteres.",
+      };
+      hasLocalError = true;
     }
 
     if (formData.local.trim() === "") {
       newErrors.local = { hasError: true, message: "O local é obrigatório." };
+      hasLocalError = true;
+    } else if (formData.local.trim().length < 3) {
+      newErrors.local = {
+        hasError: true,
+        message: "O local deve conter ao menos 3 caracteres.",
+      };
+      hasLocalError = true;
+    } else if (formData.local.trim().length > 100) {
+      newErrors.local = {
+        hasError: true,
+        message: "O local deve conter no máximo 100 caracteres.",
+      };
       hasLocalError = true;
     }
 
@@ -195,6 +225,28 @@ const CreateEventModalContent = ({
     return true;
   }, [formData, tagsArray, bannerFile]);
 
+  useEffect(() => {
+    if (!createError) return;
+
+    const anyError = createError as any;
+    const status = anyError.status;
+    const message = (anyError && anyError.message) || "Não foi possível criar o evento.";
+
+    if (status === 400) {
+      toast.error("Dados inválidos. Verifique os campos e tente novamente.");
+    } else if (status === 401) {
+      toast.error("Não autenticado");
+      onClose()
+      navigate("/auth/login");
+    } else if (status === 403) {
+      toast.error("Acesso restrito a adminsitradores");
+      onClose()
+      navigate("/");
+    } else {
+      toast.error(message);
+    }
+  }, [createError]);
+
   // Valida os dados e simula/confirma a criação do evento
   const handleCreate = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,43 +264,34 @@ const CreateEventModalContent = ({
     }
 
     try {
-      setIsCreatingLoading(true);
-
-      const img_banner = await uploadBannerAndGetUrl(bannerFile!);
-
-      
-      const payload = {
-        title: formData.title.trim(),
-        body: formData.body.trim(),
-        local: formData.local.trim(),
-        data_inicio: formData.data_inicio+":00Z",
-        data_fim: formData.data_fim+":00Z",
-        img_banner,
+      await createEvent({
+        title: formData.title,
+        body: formData.body,
+        local: formData.local,
+        data_inicio: formData.data_inicio,
+        data_fim: formData.data_fim,
         tags: tagsArray,
-      };
+        bannerFile: bannerFile!,
+      });
 
-      console.log(formData.data_inicio, payload.data_inicio);
-      await postEvent(payload);
       toast.success("Evento criado com sucesso!");
 
       onCreated?.();
       onClose();
       setConfirmed((prev) => ({ ...prev, isConfirmed: true }));
-    } catch (err) {
-      toast.error("Não foi possível criar o evento.");
-    } finally {
-      setIsCreatingLoading(false);
+    } catch {
+      // O erro já será tratado via useEffect observando createError
     }
   },
   [
     bannerFile,
     confirmed.clickCount,
+    createEvent,
     formData,
     isCreatingLoading,
     onClose,
     onCreated,
     tagsArray,
-    uploadBannerAndGetUrl,
     validate,
   ]);
 
