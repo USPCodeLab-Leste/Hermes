@@ -140,6 +140,10 @@ const CreateEventModalContent = ({
         [tag.id]: tag,
       };
     });
+    setErrors((prev) => ({
+      ...prev,
+      tags: { hasError: false, message: "" },
+    }));
   }, []);
 
   // Valida cada um dos campos manualmente
@@ -355,6 +359,18 @@ const CreateEventModalContent = ({
     isEditMode,
   ]);
 
+  const hasAnyError = useMemo(
+    () =>
+      errors.title.hasError ||
+      errors.body.hasError ||
+      errors.local.hasError ||
+      errors.data_inicio.hasError ||
+      errors.data_fim.hasError ||
+      errors.img_banner.hasError ||
+      errors.tags.hasError,
+    [errors],
+  );
+
   return (
     <div className="flex flex-col gap-4">
         <form onSubmit={handleCreate} className="flex flex-col gap-3">
@@ -487,7 +503,10 @@ const CreateEventModalContent = ({
           </div>
         </div>
         
-        <GenericButton type="submit" disabled={isCreateLoading}>
+        <GenericButton
+          type="submit"
+          disabled={(isEditMode ? isUpdateLoading : isCreateLoading) || hasAnyError}
+        >
           <span className="text-paper">
             {confirmed.clickCount === 0
               ? (isEditMode ? "Salvar alterações" : "Criar Evento")

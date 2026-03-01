@@ -13,6 +13,7 @@ import type { Info } from "../../types/infos";
 // Hooks
 import { useShare } from "../../hooks/useShare";
 import { useDeleteInfo } from "../../hooks/infos/useDeleteInfo";
+import { CreateInfoModal } from "./CreateInfoModal";
 
 interface InfoModalProps {
   modalOpen: boolean;
@@ -25,6 +26,7 @@ export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin =
   const share = useShare();
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [del, isDeleteLoading, errorDelete] = useDeleteInfo();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Handlers
 
@@ -63,6 +65,12 @@ export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin =
   return (
     <ModalWrapper isOpen={modalOpen} onClose={handleModalClose}>
       <>
+        <CreateInfoModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onCreated={handleModalClose}
+          initialInfo={selectedInfo}
+        />
         <ConfirmDeleteModal
           isOpen={isConfirmDeleteOpen}
           onCancel={handleCloseConfirmDelete}
@@ -84,7 +92,7 @@ export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin =
               <MarkdownRenderer>{selectedInfo.body}</MarkdownRenderer>
             </div>
             {isAdmin ? (
-              <AdminEditDeleteButtons onEdit={() => {}} onDelete={handleOpenConfirmDelete} />
+              <AdminEditDeleteButtons onEdit={() => setIsEditModalOpen(true)} onDelete={handleOpenConfirmDelete} />
             ) : (
               <GenericButton onClick={() => handleShareArticle(selectedInfo)}>
                 <span className="text-paper">Compartilhar Artigo</span>
