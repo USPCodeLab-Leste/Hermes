@@ -5,7 +5,7 @@ import { useAuth } from "../hooks/auth/useAuth"
 import YoutubeIcon from '../assets/icons/brand-youtube.svg?react'
 import DiscordIcon from '../assets/icons/brand-discord.svg?react'
 import InstagramIcon from '../assets/icons/brand-instagram.svg?react'
-import LogoHermes from '../assets/logo.png'
+import LogoHermes from '../assets/LOGO.svg'
 
 export default function AuthLayout() {
   const { isAuthenticated } = useAuth()
@@ -23,7 +23,7 @@ export default function AuthLayout() {
         <img src={LogoHermes} alt="Logo do Hermes" className="w-48 md:w-64 max-w-xs object-contain" />
 
         <p className="text-base md:text-center max-w-md pb-1 pt-6 text-paper">
-          Lorem ipsum dolor sit amet, consectet adipiscing elit. Cras finibus vehicula nulla quis maximus.
+          <span style={{ fontSize: 36 }}>Bem-vindo ao Hermes: a voz do campus.</span>
         </p>
       </section>
 
