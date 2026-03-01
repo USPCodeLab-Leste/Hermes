@@ -22,3 +22,9 @@ export interface InfosResponse {
   data: Info[]
   hasMore: boolean
 }
+
+export interface CreateInfoPayload {
+  title: string
+  body: string
+  tags: string[]
+}

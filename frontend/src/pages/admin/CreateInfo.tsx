@@ -15,13 +15,17 @@ import { CreateInfoModal } from '../../components/modals/CreateInfoModal';
 
 // Icons
 import PlusIcon from "../../assets/icons/plus.svg?react";
+import SearchBar from '../../components/SearchBar';
 
 export default function CreateInfo() {
-  const { value: search } = useSharedSearch();
+  const { value: search, setValue: setSearch } = useSharedSearch();
 
   return (
     <>
-        <AdminInfosGrid search={search} />
+      <div className="mb-10">
+        <SearchBar search={search} setSearch={setSearch} isDark={true} />
+      </div>
+      <AdminInfosGrid search={search} />
     </>
   );
 }

@@ -1,14 +1,10 @@
 import { Outlet } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
-import SearchBar from "../components/SearchBar";
-import { useSharedSearch } from "../hooks/useSharedSearch";
 import { motion } from "framer-motion";
 import { NavItem } from "../components/NavItem";
 
 
 export default function AdminLayout() {
-  const {value: search, setValue: setSearch} = useSharedSearch()
-
   return (
     <>
       <AppHeader />
@@ -25,14 +21,11 @@ export default function AdminLayout() {
             <ul className="flex items-center gap-6 justify-evenly py-2 md:py-1.5 px-4">
               <li><NavItem to="create_events" label="Eventos" /></li>
               <li><NavItem to="create_infos" label="Informações" /></li>
+              <li><NavItem to="create_tags" label="Tags" /></li>
             </ul>
           </motion.nav>
         </div>
-        <div className="mb-10">
-          <SearchBar search={search} setSearch={setSearch} isDark={true} />
-        </div>
-        {/* <p className="px-3 text-sm text-paper-light mt-5">clique para editar ou excluir</p> */}
-        <Outlet context={{ search, setSearch }} />
+        <Outlet />
       </main>
     </>
   );
