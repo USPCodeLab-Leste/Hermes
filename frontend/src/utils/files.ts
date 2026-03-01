@@ -33,10 +33,15 @@ export async function uploadBase64ToImgbb(base64Image: string): Promise<string> 
   const formData = new FormData();
   formData.append("image", base64Image);
 
+  const isDebug = import.meta.env.VITE_DEBUG === "true";
+
   const params = new URLSearchParams({
-    expiration: "600",
     key: API_KEY,
   });
+
+  if (isDebug) {
+    params.set("expiration", "600");
+  }
 
   const response = await fetch(
     `https://api.imgbb.com/1/upload?${params.toString()}`,
