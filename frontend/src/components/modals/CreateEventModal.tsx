@@ -10,12 +10,15 @@ import { Input } from "../forms/Input";
 import { InputWrapper } from "../forms/InputWrapper";
 import { Label } from "../forms/Label";
 import { ModalWrapper } from "./Modal";
+import { SelectTags } from "../Events";
 
 // API
 import { useCreateEvent } from "../../hooks/events/useCreateEvent";
 import { useUpdateEvent } from "../../hooks/events/useUpdateEvent";
 import { useNavigate } from "react-router-dom";
 import type { Event } from "../../types/events";
+import { useEventTags } from "../../hooks/tags/useEventTags";
+import type { ActiveTags, GenericTag } from "../../types/tag";
 
 export function CreateEventModal({
   isOpen,
@@ -72,8 +75,10 @@ const CreateEventModalContent = ({
     local: "",
     data_inicio: "", // datetime-local
     data_fim: "", // datetime-local
-    tags: "", // comma-separated
   });
+
+  const { data: availableTags = [], isLoading: isLoadingTags } = useEventTags(true);
+  const [activeTags, setActiveTags] = useState<ActiveTags>({} as ActiveTags);
 
   const isEditMode = Boolean(initialEvent);
 
@@ -86,52 +91,56 @@ const CreateEventModalContent = ({
       local: initialEvent.local ?? "",
       data_inicio: initialEvent.data_inicio ? initialEvent.data_inicio.slice(0, 16) : "",
       data_fim: initialEvent.data_fim ? initialEvent.data_fim.slice(0, 16) : "",
-      tags: (initialEvent.tags ?? []).map((t) => t.name).join(", "),
     });
+
+    const initialActiveTags: ActiveTags = {};
+    (initialEvent.tags ?? []).forEach((tag) => {
+      initialActiveTags[tag.id] = tag as GenericTag;
+    });
+    setActiveTags(initialActiveTags);
 
     setExistingBannerUrl(initialEvent.img_banner ?? null);
   }, [initialEvent]);
 
-  const tagsArray = useMemo(() => {
-    return formData.tags
-      .split(",")
-      .map((t) => {
-        const trimmed = t.trim();
-        const capitalized = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-        return capitalized;
-      })
-      .filter(Boolean);
-  }, [formData.tags]);
+  const tagsArray = useMemo(() => Object.values(activeTags).map((tag) => tag.name), [activeTags]);
 
   const resetConfirm = useCallback(() => {
     setConfirmed({ clickCount: 0, isConfirmed: false });
   }, []);
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { id, value } = e.target;
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
 
-      resetConfirm();
-      setFormData((prev) => ({ ...prev, [id]: value }));
-      setErrors((prev) => ({
-        ...prev,
-        [id]: { hasError: false, message: "" },
-      }));
-    },
-    [resetConfirm],
-  );
+    resetConfirm();
+    setFormData((prev) => ({ ...prev, [id]: value }));
+    setErrors((prev) => ({
+      ...prev,
+      [id]: { hasError: false, message: "" },
+    }));
+  }, [resetConfirm]);
 
-  const handleBannerChange = useCallback(
-    (file: File | null) => {
-      resetConfirm();
-      setBannerFile(file);
-      setErrors((prev) => ({
+  const handleBannerChange = useCallback((file: File | null) => {
+    resetConfirm();
+    setBannerFile(file);
+    setErrors((prev) => ({
+      ...prev,
+      img_banner: { hasError: false, message: "" },
+    }));
+  }, [resetConfirm]);
+
+  const handleToggleTag = useCallback((tag: GenericTag) => {
+    setActiveTags((prev) => {
+      if (prev[tag.id]) {
+        const { [tag.id]: _, ...rest } = prev;
+        return rest;
+      }
+
+      return {
         ...prev,
-        img_banner: { hasError: false, message: "" },
-      }));
-    },
-    [resetConfirm],
-  );
+        [tag.id]: tag,
+      };
+    });
+  }, []);
 
   // Valida cada um dos campos manualmente
   const validate = useCallback(() => {
@@ -349,7 +358,7 @@ const CreateEventModalContent = ({
   return (
     <div className="flex flex-col gap-4">
         <form onSubmit={handleCreate} className="flex flex-col gap-3">
-          <div className="flex flex-col gap-3 overflow-y-auto max-h-[60dvh]">
+          <div className="flex flex-col gap-3 overflow-y-auto max-h-[60dvh] pb-2">
           {/* Título */}
           <InputText
             id="title"
@@ -460,18 +469,22 @@ const CreateEventModalContent = ({
           />
 
           {/* Tags */}
-          <InputText
-            id="tags"
-            label="Tags (separe por vírgula)"
-            value={formData.tags}
-            onChange={handleChange}
-            placeholder="CodeLab, SI"
-            autocomplete="off"
-            hasError={errors.tags.hasError}
-            errorMessage={errors.tags.message}
-            disabled={isCreateLoading}
-            required={true}
-          />
+          <div className="flex flex-col gap-1">
+            <Label id="tags" label="Tags" required={true} />
+            {isLoadingTags ? (
+              <p className="text-sm text-gray-500">Carregando tags...</p>
+            ) : (
+              <SelectTags
+                tags={availableTags as GenericTag[]}
+                activeTags={activeTags}
+                onClick={handleToggleTag}
+              />
+            )}
+            <ErrorMessage
+              hasError={errors.tags.hasError}
+              errorMessage={errors.tags.message}
+            />
+          </div>
         </div>
         
         <GenericButton type="submit" disabled={isCreateLoading}>

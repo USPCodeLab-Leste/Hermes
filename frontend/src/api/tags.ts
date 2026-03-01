@@ -40,13 +40,11 @@ export function createTag(payload: CreateTagPayload) {
 // Versão nova para event tags, baseada em getTags (não remove a antiga)
 export async function getEventTags() {
   const tags = await getTags();
-  console.log("Tags recebidas da API:", tags); // Log para depuração
   return tags.filter(isEventTag);
 }
 
 // Retorna somente as tags de infos
 export async function getInfoTags() {
   const tags = await getTags();
-  console.log("Tags recebidas da API:", tags); // Log para depuração
   return tags.filter(isInfoTag);
 }
