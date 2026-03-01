@@ -62,6 +62,13 @@ export function postInfo(data: CreateInfoPayload) {
   })
 }
 
+export function patchInfo(id: string, data: Partial<CreateInfoPayload>) {
+  return apiRequest<{ message: string }>(`/infos/${id}`, {
+    method: 'PATCH',
+    body: data,
+  })
+}
+
 // Deleta uma informação pelo id
 export function deleteInfo(infoId: string) {
   return apiRequest<{ message: string }>(`/infos/${infoId}`, {
