@@ -20,7 +20,12 @@ import { useTheme } from './hooks/useTheme';
 import AuthLayout from './layouts/AuthLayout'
 import AppLayout from './layouts/AppLayout'
 import InfoLayout from './layouts/InfoLayout'
+
+// Lazy
 const AdminLayout = lazy(() => import('./layouts/AdminLayout'))
+const CreateEvent = lazy(() => import('./pages/admin/CreateEvent'))
+const CreateInfo = lazy(() => import('./pages/admin/CreateInfo'))
+const CreateTags = lazy(() => import('./pages/admin/CreateTags'))
 
 // Contexts
 import { AuthProvider } from './contexts/AuthContext'
@@ -38,8 +43,6 @@ import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
 import Info from './pages/info/InfoTag'
-const CreateEvent = lazy(() => import('./pages/admin/CreateEvent'))
-const CreateInfo = lazy(() => import('./pages/admin/CreateInfo'))
 
 // Components
 import Loading from './components/Loading'
@@ -157,6 +160,14 @@ export const router = createHashRouter(
               element={
                 <LazyRoute>
                   <CreateInfo />
+                </LazyRoute>
+              } 
+            />
+            <Route 
+              path="create_tags" 
+              element={
+                <LazyRoute>
+                  <CreateTags />
                 </LazyRoute>
               } 
             />

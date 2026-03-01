@@ -15,12 +15,18 @@ import PlusIcon from "../../assets/icons/plus.svg?react";
 // Hooks
 import { useMyEvents } from "../../hooks/events/useMyEvents";
 import { useSharedSearch } from "../../hooks/useSharedSearch";
+import SearchBar from "../../components/SearchBar";
 
 export default function CreateEvent() {
-  const { value: search } = useSharedSearch()
+  const { value: search, setValue: setSearch } = useSharedSearch()
 
   return (
-    <AdminEventsGrid search={search} />
+    <>   
+      <div className="mb-10">
+        <SearchBar search={search} setSearch={setSearch} isDark={true} />
+      </div>
+      <AdminEventsGrid search={search} />
+    </>
   );
 }
 

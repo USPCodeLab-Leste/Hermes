@@ -19,7 +19,7 @@ import { LazySvg } from "../LazySvg";
 import { postInfo } from "../../api/infos";
 
 // Types
-import { infoTypes } from "../../mocks/tags.mock";
+import { infoTypes } from "../../types/tag";
 import type { InfoTagType } from "../../types/tag";
 
 // Icons

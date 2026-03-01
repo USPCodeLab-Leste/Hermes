@@ -2,9 +2,9 @@ import type { EventTag } from "../../types/tag";
 import { getEventTags } from "../../api/tags";
 import { useQuery } from "@tanstack/react-query";
 
-export function useTags(enabled: boolean = true) {
+export function useEventTags(enabled: boolean = true) {
   return useQuery<EventTag[]>({
-    queryKey: ['all-tags'],
+    queryKey: ['event-tags'],
     queryFn: () => getEventTags(),
     enabled
   });
