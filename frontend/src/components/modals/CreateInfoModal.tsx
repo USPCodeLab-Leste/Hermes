@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 // Components
@@ -10,15 +10,18 @@ import { ModalWrapper } from "./Modal";
 import { MarkdownWritePreview } from "../forms/MarkdownWritePreview";
 import {
   getDefaultIconOption,
+  getIconOptionByName,
   IconPickerModal,
 } from "./IconPickerModal";
 import { LazySvg } from "../LazySvg";
 import { SelectTags } from "../Events";
 
 // API
-import { postInfo } from "../../api/infos";
 import { useInfoTags } from "../../hooks/tags/useInfoTags";
+import { useCreateInfo } from "../../hooks/infos/useCreateInfo";
+import { useUpdateInfo } from "../../hooks/infos/useUpdateInfo";
 import type { ActiveTags, GenericTag } from "../../types/tag";
+import type { Info } from "../../types/infos";
 
 // Icons
 import RightArrowIcon from "../../assets/icons/right-arrow.svg?react";
@@ -28,14 +31,20 @@ export function CreateInfoModal({
   isOpen,
   onClose,
   onCreated,
+  initialInfo,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onCreated?: () => void;
+  initialInfo?: Info | null;
 }) {
   return (
     <ModalWrapper isOpen={isOpen} onClose={onClose}>
-      <CreateInfoModalContent onClose={onClose} onCreated={onCreated} />
+      <CreateInfoModalContent
+        onClose={onClose}
+        onCreated={onCreated}
+        initialInfo={initialInfo ?? null}
+      />
     </ModalWrapper>
   );
 }
@@ -49,10 +58,14 @@ const defaultFormErrors = {
 const CreateInfoModalContent = ({
   onClose,
   onCreated,
+  initialInfo,
 }: {
   onClose: () => void;
   onCreated?: () => void;
+  initialInfo: Info | null;
 }) => {
+  const [createInfo, isCreateLoading] = useCreateInfo();
+  const [updateInfo, isUpdateLoading] = useUpdateInfo();
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
   const [confirmed, setConfirmed] = useState({
     clickCount: 0,
@@ -60,7 +73,6 @@ const CreateInfoModalContent = ({
   });
 
   const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
-  const [isCreatingLoading, setIsCreatingLoading] = useState(false);
   const [iconInfo, setIconInfo] = useState(() => getDefaultIconOption());
   const [formData, setFormData] = useState({
     title: "",
@@ -69,6 +81,28 @@ const CreateInfoModalContent = ({
 
   const { data: availableTags = [], isLoading: isLoadingTags } = useInfoTags(true);
   const [activeTags, setActiveTags] = useState<ActiveTags>({} as ActiveTags);
+
+  const isEditMode = Boolean(initialInfo);
+
+  useEffect(() => {
+    if (!initialInfo) return;
+
+    setFormData({
+      title: initialInfo.title ?? "",
+      body: initialInfo.body ?? "",
+    });
+
+    const initialActiveTags: ActiveTags = {};
+    (initialInfo.tags ?? []).forEach((tag) => {
+      initialActiveTags[tag.id] = tag as GenericTag;
+    });
+    setActiveTags(initialActiveTags);
+
+    if (initialInfo.icon_name) {
+      const existingIcon = getIconOptionByName(initialInfo.icon_name);
+      setIconInfo(existingIcon ?? getDefaultIconOption());
+    }
+  }, [initialInfo]);
 
   const tagsArray = useMemo(() => Object.values(activeTags).map((tag) => tag.name), [activeTags]);
 
@@ -99,6 +133,12 @@ const CreateInfoModalContent = ({
         [tag.id]: tag,
       };
     });
+
+    // Ao alterar tags, limpamos o erro de tags pendente
+    setErrors((prev) => ({
+      ...prev,
+      tags: { hasError: false, message: "" },
+    }));
   }, []);
 
   const validate = useCallback(() => {
@@ -148,7 +188,9 @@ const CreateInfoModalContent = ({
   const handleCreate = useCallback(async (e?: React.FormEvent) => {
     e?.preventDefault();
 
-    if (isCreatingLoading) return;
+    const isSaving = isEditMode ? isUpdateLoading : isCreateLoading;
+
+    if (isSaving) return;
 
     if (!validate()) return;
 
@@ -162,27 +204,48 @@ const CreateInfoModalContent = ({
     }
 
     try {
-      setIsCreatingLoading(true);
+      if (isEditMode && initialInfo) {
+        await updateInfo({
+          id: initialInfo.id,
+          title: formData.title.trim(),
+          body: formData.body.trim(),
+          tags: tagsArray,
+        });
 
-      const payload = {
-        title: formData.title.trim(),
-        body: formData.body.trim(),
-        tags: tagsArray,
-        icon_name: iconInfo?.name ?? "unknown",
-      };
+        toast.success("Informação atualizada com sucesso!");
+      } else {
+        await createInfo({
+          title: formData.title.trim(),
+          body: formData.body.trim(),
+          tags: tagsArray,
+        });
 
-      await postInfo(payload);
-      toast.success("Informação criada com sucesso!");
+        toast.success("Informação criada com sucesso!");
+      }
 
       onCreated?.();
       onClose();
       setConfirmed((prev) => ({ ...prev, isConfirmed: true }));
     } catch (error) {
-      toast.error("Erro ao criar informação");
-    } finally {
-      setIsCreatingLoading(false);
+      toast.error("Erro ao salvar informação");
     }
-  }, [confirmed.clickCount, formData.body, formData.title, isCreatingLoading, onClose, onCreated, tagsArray, validate]);
+  }, [
+    confirmed.clickCount,
+    createInfo,
+    updateInfo,
+    formData.body,
+    formData.title,
+    initialInfo,
+    isCreateLoading,
+    isUpdateLoading,
+    isEditMode,
+    onClose,
+    onCreated,
+    tagsArray,
+    validate,
+  ]);
+
+  const hasAnyError = useMemo(() => errors.title.hasError || errors.body.hasError || errors.tags.hasError, [errors]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -207,7 +270,7 @@ const CreateInfoModalContent = ({
             autocomplete="off"
             hasError={errors.title.hasError}
             errorMessage={errors.title.message}
-            disabled={isCreatingLoading}
+            disabled={isEditMode ? isUpdateLoading : isCreateLoading}
             required={true}
           />
 
@@ -217,7 +280,7 @@ const CreateInfoModalContent = ({
             value={formData.body}
             onChange={(e) => handleChange(e)}
             placeholder="Informamos que o sistema ficará indisponível para manutenção."
-            disabled={isCreatingLoading}
+            disabled={isEditMode ? isUpdateLoading : isCreateLoading}
             required={true}
             hasError={errors.body.hasError}
             errorMessage={errors.body.message}
@@ -226,12 +289,12 @@ const CreateInfoModalContent = ({
           {/* Icon */}
           <div className="flex flex-col gap-1">
             <Label id="icon_name" label="Ícone" required />
-            <InputWrapper disabled={isCreatingLoading} hasError={false}>
+            <InputWrapper disabled={isEditMode ? isUpdateLoading : isCreateLoading} hasError={false}>
               <button
                 id="icon_name"
                 type="button"
                 onClick={() => setIsIconPickerOpen(true)}
-                disabled={isCreatingLoading}
+                disabled={isEditMode ? isUpdateLoading : isCreateLoading}
                 className="flex items-center gap-2 w-full cursor-pointer"
                 aria-label="Selecionar ícone"
               >
@@ -269,13 +332,16 @@ const CreateInfoModalContent = ({
           </div>
         </div>
         
-        <GenericButton type="submit" disabled={isCreatingLoading}>
+        <GenericButton
+          type="submit"
+          disabled={(isEditMode ? isUpdateLoading : isCreateLoading) || hasAnyError}
+        >
           <span className="text-paper">
             {confirmed.clickCount === 0
-              ? "Criar Informação"
-              : isCreatingLoading
-                ? "Criando informação..."
-                : "Confirmar Criação"}
+              ? (isEditMode ? "Salvar alterações" : "Criar Informação")
+              : (isEditMode
+                  ? (isUpdateLoading ? "Salvando..." : "Confirmar alterações")
+                  : (isCreateLoading ? "Criando informação..." : "Confirmar Criação"))}
           </span>
         </GenericButton>
       </form>
