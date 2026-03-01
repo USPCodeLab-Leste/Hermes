@@ -2,7 +2,7 @@ import { motion, type Variants } from "framer-motion"
 import { useState, useMemo, useEffect, useCallback } from "react"
 
 // Hooks
-import { useTags } from "../../hooks/tags/useTags"
+import { useEventTags } from "../../hooks/tags/useEventTags"
 
 // Componentes
 import { ModalWrapper } from "./Modal"
@@ -10,6 +10,7 @@ import { SelectTags } from "../Events"
 import { GenericButton as Button } from "../GenericButton"
 import { type GenericTag, type ActiveTags } from "../../types/tag"
 import { FilterTagSkeleton } from "../skeletons/FilterTagSkeleton"
+import { groupByType } from "../../utils/tags"
 
 const filterVariants: Variants = {
   hidden: { opacity: 0 },
@@ -25,7 +26,7 @@ interface FilterTagsModalProps {
 }
 
 export function FilterTagsModal({ isOpen, onClose, activeTags, onFilter, onClean }: FilterTagsModalProps) {
-  const { data: tagsData, isLoading: isTagsLoading } = useTags(isOpen)
+  const { data: tagsData, isLoading: isTagsLoading } = useEventTags(isOpen)
   const [activeTagsCopy, setActiveTagsCopy] = useState<ActiveTags>({} as ActiveTags)
   
   // ==================
@@ -33,15 +34,7 @@ export function FilterTagsModal({ isOpen, onClose, activeTags, onFilter, onClean
   // ==================
 
   // Agrupa as tags por tipo
-  const tagsByType = useMemo(() => {
-    return tagsData?.reduce((acc, tag) => {
-      if (!acc[tag.type]) {
-        acc[tag.type] = [];
-      }
-      acc[tag.type].push(tag);
-      return acc;
-    }, {} as Record<string, typeof tagsData>);
-  }, [tagsData])
+  const tagsByType = useMemo(() => groupByType(tagsData), [tagsData])
 
   // Cria um array de entries para iteração no render
   const tagsEntries = useMemo(() => Object.entries(tagsByType ?? {}), [tagsByType])
