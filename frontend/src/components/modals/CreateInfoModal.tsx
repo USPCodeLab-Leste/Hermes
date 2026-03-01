@@ -111,10 +111,22 @@ const CreateInfoModalContent = ({
     if (formData.title.trim() === "") {
       newErrors.title = { hasError: true, message: "O título é obrigatório." };
       hasLocalError = true;
+    } else if (formData.title.trim().length < 3) {
+      newErrors.title = { hasError: true, message: "O título deve ter ao menos 3 caracteres." };
+      hasLocalError = true;
+    } else if (formData.title.trim().length > 100) {
+      newErrors.title = { hasError: true, message: "O título deve ter no máximo 100 caracteres." };
+      hasLocalError = true;
     }
 
     if (formData.body.trim() === "") {
       newErrors.body = { hasError: true, message: "O conteúdo é obrigatório." };
+      hasLocalError = true;
+    } else if (formData.body.trim().length < 10) {
+      newErrors.body = { hasError: true, message: "O conteúdo deve ter ao menos 10 caracteres." };
+      hasLocalError = true;
+    } else if (formData.body.trim().length > 1000) {
+      newErrors.body = { hasError: true, message: "O conteúdo deve ter no máximo 1000 caracteres." };
       hasLocalError = true;
     }
 
