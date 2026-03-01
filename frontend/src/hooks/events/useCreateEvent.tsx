@@ -15,31 +15,12 @@ interface CreateEventInput {
   bannerFile: File;
 }
 
-function createFakeHttpError(status: number, message: string): HttpError {
-  const error = new Error(message) as HttpError;
-  error.status = status;
-  return error;
-}
-
 export function useCreateEvent() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (input: CreateEventInput) => {
       const { bannerFile, title, body, local, data_inicio, data_fim, tags } = input;
-
-      // DEBUG ONLY: simula 401/403 em ambiente de desenvolvimento
-      if (import.meta.env.DEV) {
-        const trimmedTitle = title.trim().toLowerCase();
-
-        if (trimmedTitle.startsWith("[401]")) {
-          throw createFakeHttpError(401, "Simulação de erro 401 (não autenticado)");
-        }
-
-        if (trimmedTitle.startsWith("[403]")) {
-          throw createFakeHttpError(403, "Simulação de erro 403 (sem permissão)");
-        }
-      }
 
       const img_banner = await uploadBannerAndGetUrl(bannerFile);
 
