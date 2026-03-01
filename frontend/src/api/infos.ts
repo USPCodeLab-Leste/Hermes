@@ -57,7 +57,6 @@ export function postInfo(data: CreateInfoPayload) {
     body: {
       title: data.title,
       body: data.body,
-      local: data.local,
       tags: data.tags,
     },
   })

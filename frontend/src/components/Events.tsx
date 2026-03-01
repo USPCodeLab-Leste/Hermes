@@ -244,6 +244,7 @@ const TagWrapper = ({ children, canSelect, className, variants, onClick, disable
       layout
       variants={variants} 
       onClick={onClick}
+      type={canSelect ? 'button' : undefined}
       disabled={disabled}
       {...props}
     >
