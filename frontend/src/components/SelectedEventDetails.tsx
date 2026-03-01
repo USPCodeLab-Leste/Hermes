@@ -33,7 +33,10 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
   const handleShare = useCallback(() => {
     if (!event) return;
 
-    const url = window.location.href;
+    const urlObj = new URL(window.location.href);
+    urlObj.searchParams.set("q", event.title);
+    const url = urlObj.toString();
+
     share({ url, title: event.title, text: `Confira o evento ${event.title} no Hermes!` });
   }, [event, search, share]);
 
