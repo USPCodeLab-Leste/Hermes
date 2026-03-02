@@ -37,6 +37,12 @@ export function createTag(payload: CreateTagPayload) {
   });
 }
 
+export function deleteTag(tagId: string) {
+  return apiRequest(`/tags/${tagId}`, {
+    method: "DELETE",
+  });
+}
+
 // Versão nova para event tags, baseada em getTags (não remove a antiga)
 export async function getEventTags() {
   const tags = await getTags();
