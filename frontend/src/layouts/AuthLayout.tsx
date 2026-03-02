@@ -5,7 +5,7 @@ import { useAuth } from "../hooks/auth/useAuth"
 import YoutubeIcon from '../assets/icons/brand-youtube.svg?react'
 import DiscordIcon from '../assets/icons/brand-discord.svg?react'
 import InstagramIcon from '../assets/icons/brand-instagram.svg?react'
-import LogoHermes from '../assets/LOGO.svg'
+import LogoHermes from '../assets/LOGO 240x240.svg'
 
 export default function AuthLayout() {
   const { isAuthenticated } = useAuth()

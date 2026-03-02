@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import useMeasure from "react-use-measure";
 import { useLayoutEffect, useState } from "react";
 import NotificationButton from "./NotificationButton";
-import LogoHermes from "../assets/logo.png";
+import LogoHermes from "../assets/LOGO 150x150.svg";
 
 export default function AppHeader({ children }: { children?: React.ReactNode }) {
   const campus = "EACH";
-  
+
   const [measureRef, bounds] = useMeasure();
   const [height, setHeight] = useState<number | "auto">("auto");
 
@@ -30,7 +30,7 @@ export default function AppHeader({ children }: { children?: React.ReactNode }) 
       <div className="py-7 m-auto flex flex-col justify-between items-center w-95/100 max-w-2xl gap-4 px-4" ref={measureRef}>
         <div className="flex justify-between items-center w-full gap-4">
           <div className="flex items-center gap-4">
-            <img src={LogoHermes} className="size-17 rounded-full" ></img> 
+            <img src={LogoHermes} className="size-17 rounded-full" ></img>
 
             <div className="flex flex-col">
               <h2 className="text-paper text-[120%] font-bold leading-[120%]">
