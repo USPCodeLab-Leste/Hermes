@@ -5,6 +5,7 @@ import { AnimatePresence, motion, stagger, type Variants } from "framer-motion"
 import PlusIcon from "../assets/icons/plus.svg?react"
 import CheckIcon from "../assets/icons/check.svg?react"
 import XIcon from "../assets/icons/close.svg?react";
+import TrashIcon from "../assets/icons/trash.svg?react";
 
 // Types
 import type { Event } from "../types/events"
@@ -160,6 +161,25 @@ export function RemoveFilterTags({ tags, className, onClick }: RemoveFilterTagsP
   )
 }
 
+export function DeleteTags({ tags, className, onClick }: RemoveFilterTagsProps) {
+  return (
+    <motion.div 
+      className={`flex flex-row gap-2 flex-wrap ${className}`}
+      variants={tagsVariants}
+      initial="hidden"
+      animate={tags.length > 0 ? 'visible' : 'hidden'}
+      exit="hidden"
+      layout
+    >
+      <AnimatePresence mode="popLayout">
+        {tags.map(tag => (
+          <DeleteTag key={`remove-filter-tag-${tag.id}`} tag={tag} onClick={onClick}  />
+        ))}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
 // Tag para exibição simples, sem interação
 export const Tag = ({ tag }: { tag: GenericTag }) => {
   return (
@@ -220,6 +240,24 @@ export const RemoveFilterTag = ({ tag, onClick }: { tag: GenericTag; onClick: (t
       onClick={handleClick}
     >
       <XIcon className="size-4 text-paper shrink-0" />
+      <span className="text-paper">{tag.name}</span>
+    </TagWrapper>
+  )
+}
+
+export const DeleteTag = ({ tag, onClick }: { tag: GenericTag; onClick: (tag: GenericTag) => void }) => {
+  const handleClick = useCallback(() => {
+    onClick(tag)
+  }, [onClick, tag])
+
+  return (
+    <TagWrapper 
+      canSelect={true}
+      className="hover:bg-red-500/50"
+      variants={tagVariants}
+      onClick={handleClick}
+    >
+      <TrashIcon className="size-4 text-paper shrink-0" />
       <span className="text-paper">{tag.name}</span>
     </TagWrapper>
   )

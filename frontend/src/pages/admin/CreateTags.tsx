@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 // Components
 import { GenericButton } from "../../components/GenericButton";
 import { CreateTagModal } from "../../components/modals/CreateTagModal";
-import { Tags } from "../../components/Events";
+import { ConfirmDeleteModal } from "../../components/modals/ConfirmDeleteModal";
+import { DeleteTags } from "../../components/Events";
 
 // Hooks
 import { useEventTags } from "../../hooks/tags/useEventTags";
@@ -16,6 +17,8 @@ import { groupByType } from "../../utils/tags";
 // Icons
 import ArrowIcon from "../../assets/icons/right-arrow.svg?react";
 import PlusIcon from "../../assets/icons/plus.svg?react";
+import type { GenericTag } from "../../types/tag";
+import { useDeleteTag } from "../../hooks/tags/useDeleteTag";
 
 export default function CreateTags() {
   const { data: eventTags, isLoading: isLoadingEvents } = useEventTags(true);
@@ -90,11 +93,39 @@ function TagsSection({
   keyPrefix,
 }: TagsSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [deleteTag, isDeleting, deleteError] = useDeleteTag();
+  const [tagToDelete, setTagToDelete] = useState<GenericTag | null>(null);
 
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
+  const handleClickTag = useCallback((tag: GenericTag) => {
+    setTagToDelete(tag);
+  }, []);
+
+  const handleCancelDelete = useCallback(() => {
+    if (isDeleting) return;
+
+    setTagToDelete(null);
+  }, [isDeleting]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!tagToDelete) return;
+
+    await deleteTag(tagToDelete.id);
+    setTagToDelete(null);
+  }, [deleteTag, tagToDelete]);
+
   return (
     <section className="flex flex-col">
+      <ConfirmDeleteModal
+        isOpen={!!tagToDelete}
+        title="Excluir tag"
+        description={tagToDelete ? `Tem certeza que deseja excluir a tag "${tagToDelete.name}"? Essa ação não pode ser desfeita.` : undefined}
+        isLoading={isDeleting}
+        error={deleteError}
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+      />
       <button
         type="button"
         onClick={toggleOpen}
@@ -123,7 +154,7 @@ function TagsSection({
                 {Object.entries(tagsByType ?? {}).map(([type, tags]) => (
                   <div key={`${keyPrefix}-${type}`}>
                     <h3 className="font-medium capitalize mb-2 text-ink/80 dark:text-paper/80">{type}</h3>
-                    <Tags tags={tags} />
+                    <DeleteTags tags={tags} onClick={handleClickTag} />
                   </div>
                 ))}
               </div>
