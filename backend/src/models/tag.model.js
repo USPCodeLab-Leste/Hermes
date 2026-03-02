@@ -3,15 +3,15 @@ import crypto from "crypto";
 
 class TagModel {
   
-  // pra buscar tag pelo nome
-  async findByName(name) {
+  async findById(id) {
     const query = `
-      SELECT * 
-      FROM tb_tag 
-      WHERE LOWER(name) = LOWER($1)
+      SELECT *
+      FROM tb_tag
+      WHERE id = $1
       LIMIT 1
     `;
-    const result = await pool.query(query, [name]);
+
+    const result = await pool.query(query, [id]);
     return result.rows[0];
   }
 
