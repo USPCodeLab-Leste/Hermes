@@ -39,21 +39,22 @@ router.get("/tags", authMiddleware, emailVerifiedMiddleware, tagController.getTa
 
 /**
  * @openapi
- * /tags/{name}:
+ * /tags/{id}:
  *   get:
- *     summary: Buscar tag pelo nome
- *     description: Retorna uma tag específica pelo nome (case insensitive)
+ *     summary: Buscar tag pelo id
+ *     description: Retorna uma tag específica pelo id
  *     tags:
  *       - Tags
  *     security:
  *       - cookieAuth: []
  *     parameters:
  *       - in: path
- *         name: name
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Nome da tag
+ *           format: uuid
+ *         description: ID da tag
  *     responses:
  *       200:
  *         description: Tag encontrada
@@ -73,7 +74,12 @@ router.get("/tags", authMiddleware, emailVerifiedMiddleware, tagController.getTa
  *       500:
  *         description: Erro interno
  */
-router.get("/tags/:name", authMiddleware, emailVerifiedMiddleware, tagController.getTagByName);
+router.get(
+  "/tags/:id",
+  authMiddleware,
+  emailVerifiedMiddleware,
+  tagController.getTagById
+);
 
 /**
  * @openapi
