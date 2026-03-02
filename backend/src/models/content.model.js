@@ -84,7 +84,7 @@ class ContentModel {
   }
 
   // pra buscar todos (Feed) com filtros opcionais
-  async findAll({ title, tags, type, excludeIds, limit = 10, offset = 0 } = {}) {
+  async findAll({ title, tags, type, excludeIds, limit, offset } = {}) {
     let query = `
       SELECT 
         p.*,
@@ -152,11 +152,16 @@ class ContentModel {
     query += `
       GROUP BY p.id, u.name
       ORDER BY p.data_inicio ASC NULLS LAST
-      LIMIT $${index}
-      OFFSET $${index + 1}
     `;
 
-    values.push(limit + 1, offset);
+    if (limit !== undefined && offset !== undefined) {
+      query += `
+        LIMIT $${index}
+        OFFSET $${index + 1}
+      `;
+
+      values.push(limit + 1, offset);
+    }
 
     const result = await pool.query(query, values);
     const hasMore = result.rows.length > limit;
