@@ -11,6 +11,7 @@ class ContentModel {
     data_inicio = null,
     data_fim = null,
     img_banner = null,
+    icon_name = null,
     autor_id,
     tags = [],
     type = "post"
@@ -25,8 +26,8 @@ class ContentModel {
 
       const query = `
         INSERT INTO tb_content  
-        (id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id, type)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        (id, title, body, local, data_inicio, data_fim, img_banner, icon_name, status, autor_id, type)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
         RETURNING *
       `;
 
@@ -38,6 +39,7 @@ class ContentModel {
         data_inicio,
         data_fim,
         img_banner,
+        icon_name,
         status,
         autor_id,
         type
@@ -84,7 +86,7 @@ class ContentModel {
   }
 
   // pra buscar todos (Feed) com filtros opcionais
-  async findAll({ title, tags, type, excludeIds, limit = 10, offset = 0 } = {}) {
+  async findAll({ title, tags, type, excludeIds, limit, offset } = {}) {
     let query = `
       SELECT 
         p.*,
@@ -152,11 +154,16 @@ class ContentModel {
     query += `
       GROUP BY p.id, u.name
       ORDER BY p.data_inicio ASC NULLS LAST
-      LIMIT $${index}
-      OFFSET $${index + 1}
     `;
 
-    values.push(limit + 1, offset);
+    if (limit !== undefined && offset !== undefined) {
+      query += `
+        LIMIT $${index}
+        OFFSET $${index + 1}
+      `;
+
+      values.push(limit + 1, offset);
+    }
 
     const result = await pool.query(query, values);
     const hasMore = result.rows.length > limit;
@@ -243,6 +250,11 @@ class ContentModel {
     if (info.img_banner !== undefined) {
       updates.push(`img_banner = $${idx++}`);
       values.push(info.img_banner);
+    }
+
+    if (info.icon_name !== undefined) {
+      updates.push(`icon_name = $${idx++}`);
+      values.push(info.icon_name);
     }
 
     if (info.body !== undefined) {

@@ -123,4 +123,41 @@ router.post(
   tagController.createTag
 );
 
+/**
+ * @openapi
+ * /tags/{id}:
+ *   delete:
+ *     summary: Desativar uma tag
+ *     description: Desativa uma tag existente (soft delete - define active como false). Apenas administradores podem executar essa ação.
+ *     tags:
+ *       - Tags
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID da tag
+ *     responses:
+ *       200:
+ *         description: Tag desativada com sucesso
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: Acesso restrito a administradores e/ou E-mail não verificado
+ *       404:
+ *         description: Tag não encontrada
+ *       500:
+ *         description: Erro interno
+ */
+router.delete(
+  "/tags/:id",
+  authMiddleware,
+  emailVerifiedMiddleware,
+  adminMiddleware,
+  tagController.desativaTag
+);
 export default router;

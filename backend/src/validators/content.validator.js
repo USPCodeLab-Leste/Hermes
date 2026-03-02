@@ -27,6 +27,12 @@ export const createInfoSchema = z.object({
     .max(100)
     .optional(),
 
+  icon_name: z
+    .string()
+    .min(3)
+    .max(20)
+    .optional()
+
 }).strict();
 
 export const createEventSchema = z.object({

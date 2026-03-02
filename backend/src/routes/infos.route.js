@@ -37,17 +37,6 @@ const infosController = new BaseContentController(
  * 
  *         style: form
  *         explode: true
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           maximum: 20
- *           example: 10
- *       - in: query
- *         name: offset
- *         schema:
- *           type: integer
- *           example: 0
  *     responses:
  *       200:
  *         description: Lista de infos
