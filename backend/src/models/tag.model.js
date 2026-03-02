@@ -33,6 +33,18 @@ class TagModel {
     const result = await pool.query("SELECT * FROM tb_tag WHERE active = true ORDER BY name ASC");
     return result.rows;
   }
+
+  async delete(id) {
+    const result = await pool.query(
+      `UPDATE tb_tag 
+      SET active = false 
+      WHERE id = $1 
+      RETURNING *`,
+      [id]
+    );
+
+    return result.rows[0];
+  }
 }
 
 export default new TagModel();
