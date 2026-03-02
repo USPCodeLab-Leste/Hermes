@@ -11,6 +11,7 @@ class ContentModel {
     data_inicio = null,
     data_fim = null,
     img_banner = null,
+    icon_name = null,
     autor_id,
     tags = [],
     type = "post"
@@ -25,8 +26,8 @@ class ContentModel {
 
       const query = `
         INSERT INTO tb_content  
-        (id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id, type)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        (id, title, body, local, data_inicio, data_fim, img_banner, icon_name, status, autor_id, type)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
         RETURNING *
       `;
 
@@ -38,6 +39,7 @@ class ContentModel {
         data_inicio,
         data_fim,
         img_banner,
+        icon_name,
         status,
         autor_id,
         type
@@ -248,6 +250,11 @@ class ContentModel {
     if (info.img_banner !== undefined) {
       updates.push(`img_banner = $${idx++}`);
       values.push(info.img_banner);
+    }
+
+    if (info.icon_name !== undefined) {
+      updates.push(`icon_name = $${idx++}`);
+      values.push(info.icon_name);
     }
 
     if (info.body !== undefined) {
