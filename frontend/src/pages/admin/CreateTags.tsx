@@ -47,10 +47,13 @@ export default function CreateTags() {
       <div className="w-full mt-6 p-4 flex flex-col gap-5">
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-2xl font-semibold">Gerenciar Tags</h1>
-          <GenericButton onClick={handleOpenCreateModal} className="flex flex-row items-center gap-2 bg-teal-mid hover:bg-teal-light">
+          {/* <GenericButton onClick={handleOpenCreateModal} className="flex flex-row items-center gap-2 bg-teal-mid hover:bg-teal-light">
             <PlusIcon className="text-paper" />
             <span className="text-paper">Criar uma nova Tag</span>
-          </GenericButton>
+          </GenericButton> */}
+          <button className="bg-teal-mid rounded-full flex items-center justify-center p-3 hover:bg-teal-light cursor-pointer transition-colors" onClick={handleOpenCreateModal}>
+            <PlusIcon className="text-paper"/>
+          </button>
         </div>
 
         <TagsSection
@@ -115,6 +118,9 @@ function TagsSection({
     setTagToDelete(null);
   }, [deleteTag, tagToDelete]);
 
+  const tagsCount = useMemo(() => Object.values(tagsByType ?? {}).flat().length, [tagsByType]);
+  const entries = useMemo(() => Object.entries(tagsByType ?? {}), [tagsByType]);
+
   return (
     <section className="flex flex-col">
       <ConfirmDeleteModal
@@ -131,7 +137,14 @@ function TagsSection({
         onClick={toggleOpen}
         className={`flex items-center justify-between gap-2 text-left p-4 border-2 cursor-pointer ${isOpen ? 'rounded-t-2xl' : 'rounded-2xl'}`}
       >
-        <h2 className="text-xl font-semibold">{title}</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold">{title}</h2>
+          {hasAnyTags && (
+            <div className="text-sm text-paper rounded-full bg-teal-mid flex items-center justify-center size-6">
+              <span>{tagsCount}</span>
+            </div>
+          )}
+        </div>
         <ArrowIcon className={`size-5 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
       </button>
 
@@ -146,12 +159,12 @@ function TagsSection({
             className="overflow-hidden p-4 border-2 border-t-0 rounded-b-2xl"
           >
             {isLoading ? (
-              <p className="text-sm text-gray-500">Carregando {title.toLowerCase()}...</p>
+              <p className="text-sm text-paper/75">Carregando {title.toLowerCase()}...</p>
             ) : !hasAnyTags ? (
-              <p className="text-sm text-gray-500">{emptyMessage}</p>
+              <p className="text-sm text-paper/75">{emptyMessage}</p>
             ) : (
               <div className="flex flex-col gap-3 mt-1">
-                {Object.entries(tagsByType ?? {}).map(([type, tags]) => (
+                {entries.map(([type, tags]) => (
                   <div key={`${keyPrefix}-${type}`}>
                     <h3 className="font-medium capitalize mb-2 text-ink/80 dark:text-paper/80">{type}</h3>
                     <DeleteTags tags={tags} onClick={handleClickTag} />

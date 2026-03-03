@@ -488,7 +488,7 @@ const CreateEventModalContent = ({
           <div className="flex flex-col gap-1">
             <Label id="tags" label="Tags" required={true} />
             {isLoadingTags ? (
-              <p className="text-sm text-gray-500">Carregando tags...</p>
+              <p className="text-sm text-paper/75">Carregando tags...</p>
             ) : (
               <SelectTags
                 tags={availableTags as GenericTag[]}

@@ -26,6 +26,7 @@ import type { Info } from "../../types/infos";
 // Icons
 import RightArrowIcon from "../../assets/icons/right-arrow.svg?react";
 import { ErrorMessage } from "../forms/ErrorMessage";
+import { Tooltip } from "../Tooltip";
 
 export function CreateInfoModal({
   isOpen,
@@ -315,9 +316,12 @@ const CreateInfoModalContent = ({
 
           {/* Tags */}
           <div className="flex flex-col gap-1">
-            <Label id="tags" label="Tags" required={true} />
+            <div className="flex flex-row items-center gap-2">
+              <Label id="tags" label="Tags" required={true} />
+              <Tooltip content="Caso não encontre a tag que deseja, vá na aba Tags e crie a sua"/>
+            </div>
             {isLoadingTags ? (
-              <p className="text-sm text-gray-500">Carregando tags...</p>
+              <p className="text-sm text-paper/75">Carregando tags...</p>
             ) : (
               <SelectTags
                 tags={availableTags as GenericTag[]}
