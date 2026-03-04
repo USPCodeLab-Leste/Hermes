@@ -6,7 +6,6 @@ import { MemoizedInputText as InputText } from "../forms/InputText";
 import { GenericButton } from "../GenericButton";
 
 import { useChangeName } from "../../hooks/auth/useChangeName";
-import { auth } from "../../services/auth";
 
 export function ChangeNameModal({
   isOpen,
@@ -53,6 +52,9 @@ export function ChangeNameModal({
     if (name.trim() === "") {
       setError({ hasError: true, message: "O nome é obrigatório." });
       return false;
+    } else if (name.trim().length < 3) {
+      setError({ hasError: true, message: "O nome deve conter ao menos 3 caracteres." });
+      return false;
     }
 
     setError({ hasError: false, message: "" });
@@ -66,7 +68,6 @@ export function ChangeNameModal({
     const result = await changeName({ name: name.trim() });
 
     if (result) {
-      await auth.refresh();
       toast.success("Nome atualizado com sucesso!");
       onClose();
     }
