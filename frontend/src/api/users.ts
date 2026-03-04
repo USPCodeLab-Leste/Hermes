@@ -31,3 +31,18 @@ export async function postChangePassword(data: {
     },
   })
 }
+
+export async function postUserTag(data: { tagId: string }) {
+  return apiRequest<BaseResponse>('/users/me/tags', {
+    method: 'POST',
+    body: {
+      tagId: data?.tagId,
+    },
+  })
+}
+
+export async function deleteUserTag(tagId: string) {
+  return apiRequest<BaseResponse>(`/users/me/tags/${tagId}`, {
+    method: 'DELETE',
+  })
+}
