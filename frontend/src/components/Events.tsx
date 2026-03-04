@@ -4,6 +4,8 @@ import { AnimatePresence, motion, stagger, type Variants } from "framer-motion"
 // Icons
 import PlusIcon from "../assets/icons/plus.svg?react"
 import CheckIcon from "../assets/icons/check.svg?react"
+import HeartFilledIcon from "../assets/icons/heart-filled.svg?react"
+import HeartOutlineIcon from "../assets/icons/heart-outline.svg?react"
 import XIcon from "../assets/icons/close.svg?react";
 import TrashIcon from "../assets/icons/trash.svg?react";
 
@@ -161,6 +163,32 @@ export function RemoveFilterTags({ tags, className, onClick }: RemoveFilterTagsP
   )
 }
 
+interface FollowTagsProps {
+  tags: GenericTag[];
+  className?: string;
+  activeTags: Map<string, GenericTag>;
+  onClick: (tag: GenericTag) => void;
+}
+
+// Tags para seguir (follow), com ícone de coração
+export function FollowTags({ tags, className, activeTags, onClick }: FollowTagsProps) {
+  return (
+    <motion.div
+      className={`flex flex-row gap-2 flex-wrap ${className}`}
+      variants={tagsVariants}
+    >
+      {tags.map((tag) => (
+        <FollowTag
+          key={`follow-tag-${tag.id}`}
+          tag={tag}
+          active={activeTags.has(tag.id)}
+          onClick={onClick}
+        />
+      ))}
+    </motion.div>
+  )
+}
+
 export function DeleteTags({ tags, className, onClick }: RemoveFilterTagsProps) {
   return (
     <motion.div 
@@ -219,6 +247,39 @@ export const SelectTag = memo(function Tag({ tag, onClick, active }: SelectTagPr
 
       ) : (
         <CheckIcon className="size-4 text-paper" />
+      )}
+      <span className="text-paper">{tag.name}</span>
+    </TagWrapper>
+  )
+}, (prevProps, nextProps) => {
+  return prevProps.active === nextProps.active && prevProps.tag.id === nextProps.tag.id;
+})
+
+interface FollowTagProps {
+  tag: GenericTag;
+  active?: boolean;
+  onClick: (tag: GenericTag) => void;
+}
+
+// Tag para seguir (follow), usando coração cheio/vazio conforme active
+export const FollowTag = memo(function FollowTag({ tag, onClick, active }: FollowTagProps) {
+  const handleClick = useCallback(() => {
+    onClick(tag)
+  }, [onClick, tag])
+
+  return (
+    <TagWrapper
+      canSelect={true}
+      className='bg-teal-light'
+      variants={tagVariants}
+      onClick={handleClick}
+      aria-pressed={active}
+      disabled={false}
+    >
+      {active ? (
+        <HeartFilledIcon className="size-4 text-paper" />
+      ) : (
+        <HeartOutlineIcon className="size-4 text-paper" />
       )}
       <span className="text-paper">{tag.name}</span>
     </TagWrapper>

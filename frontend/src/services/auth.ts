@@ -19,6 +19,7 @@ export interface AuthService {
   signOut: () => Promise<boolean>
   refresh: () => Promise<UserMe | null>
   onAuthStateChanged: (cb: AuthListener) => () => void
+  updateUser: (updater: (user: UserMe | null) => UserMe | null) => void
 }
 
 export function createAuthService(): AuthService {
@@ -92,6 +93,11 @@ export function createAuthService(): AuthService {
     }
   }
 
+  function updateUser(updater: (user: UserMe | null) => UserMe | null) {
+    currentUser = updater(currentUser)
+    notify()
+  }
+
   function onAuthStateChanged(cb: AuthListener) {
     listeners.push(cb)
 
@@ -112,6 +118,7 @@ export function createAuthService(): AuthService {
     signOut,
     refresh,
     onAuthStateChanged,
+    updateUser,
   }
 }
 

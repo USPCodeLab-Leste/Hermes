@@ -1,3 +1,5 @@
+import type { UserMe } from "./user"
+
 export interface BaseResponse {
   message: string
 }
@@ -7,13 +9,7 @@ export interface RegisterResponse extends BaseResponse {
 }
 
 export interface UserResponse {
-  user: {
-    id: string
-    name: string
-    email: string
-    role: 'USER' | 'ADMIN'
-    is_verified: boolean
-  }
+  user: UserMe
 }
 
 export interface UpdateUserResponse extends BaseResponse {

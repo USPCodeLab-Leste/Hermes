@@ -7,7 +7,7 @@ import { useShare } from "../hooks/useShare"
 import type { Event } from "../types/events"
 
 // Components
-import { Tags } from "./Events"
+import { FollowTags } from "./Events"
 import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
@@ -15,6 +15,9 @@ import { ConfirmDeleteModal } from "./modals/ConfirmDeleteModal"
 import { CreateEventModal } from "./modals/CreateEventModal"
 
 import { useDeleteEvent } from "../hooks/events/useDeleteEvent"
+import type { GenericTag } from "../types/tag"
+import { useFollowTag } from "../hooks/tags/useFollowTag"
+import { useAuth } from "../hooks/auth/useAuth"
 
 interface SelectedEventDetailsProps {
   event: Event | null;
@@ -28,6 +31,8 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [del, isDeleteLoading, errorDelete] = useDeleteEvent();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [followTag] = useFollowTag()
+  const { mapTags } = useAuth();
 
   // Handlers
   const handleShare = useCallback(() => {
@@ -65,6 +70,12 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
     setIsEditModalOpen(true);
   }, [])
 
+  const handleFollowTag = useCallback((tag: GenericTag) => {
+    const isFollowing = mapTags.has(tag.id);
+
+    followTag({ tagId: tag.id, isFollowing });
+  }, [followTag, mapTags])
+
   return (
     <div className="flex flex-col gap-4">
       <CreateEventModal
@@ -93,7 +104,12 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
         style={{ backgroundImage: `url('${event?.img_banner}')` }}
       />
       <div className="flex flex-col gap-1 overflow-y-auto max-h-[40dvh]">
-        <Tags tags={event?.tags ?? []} className="mb-2" />
+        <FollowTags
+          tags={event?.tags || []}
+          className="mb-4"
+          activeTags={mapTags}
+          onClick={handleFollowTag}
+        />
         <h2 className="text-2xl font-bold -mb-1">{event?.title}</h2>
         <div className="flex flex-row flex-wrap gap-x-2 gap-y-0 items-center mb-2">
           <span className="text-[18px] dark:text-paper/75 text-ink/75">{event?.local}</span>
