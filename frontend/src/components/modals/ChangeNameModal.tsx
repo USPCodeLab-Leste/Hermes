@@ -110,7 +110,7 @@ export function ChangeNameModal({
 
           <GenericButton type="submit" disabled={isLoading || name === initialName}>
             <span className="text-paper">
-              {isLoading ? "Salvando..." : "Salvar"}
+              {isLoading ? "Salvando..." : apiError ? "Tentar novamente" : "Salvar"}
             </span>
           </GenericButton>
         </form>

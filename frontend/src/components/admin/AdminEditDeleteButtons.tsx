@@ -33,7 +33,7 @@ const AdminActionButton = ({
   className?: string;
 }) => (
   <button
-    className={`px-3 py-1.5 rounded-md font-medium cursor-pointer flex justify-center items-center gap-1 text-sm
+    className={`p-3 rounded-md font-medium cursor-pointer flex justify-center items-center gap-1 text-sm
       hover:shadow-2xl hover:outline-paper focus:outline-paper
       outline-transparent transition-all ${className ?? "bg-red-500/70 hover:bg-red-500/80"}`}
     onClick={onClick}

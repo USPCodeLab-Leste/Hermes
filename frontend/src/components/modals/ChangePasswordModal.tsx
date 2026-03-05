@@ -172,7 +172,7 @@ export function ChangePasswordModal({
 
           <GenericButton type="submit" disabled={loading}>
             <span className="text-paper">
-              {loading ? "Salvando..." : "Salvar"}
+              {loading ? "Salvando..." : error ? "Tentar novamente" : "Salvar"}
             </span>
           </GenericButton>
         </form>

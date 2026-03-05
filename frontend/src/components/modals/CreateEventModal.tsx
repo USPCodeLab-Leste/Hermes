@@ -11,6 +11,8 @@ import { InputWrapper } from "../forms/InputWrapper";
 import { Label } from "../forms/Label";
 import { ModalWrapper } from "./Modal";
 import { SelectTags } from "../Events";
+import { ConfirmDeleteModal } from "./ConfirmModal";
+import { Tooltip } from "../Tooltip";
 
 // API
 import { useCreateEvent } from "../../hooks/events/useCreateEvent";
@@ -61,10 +63,7 @@ const CreateEventModalContent = ({
   const [createEvent, isCreateLoading, createError] = useCreateEvent();
   const [updateEvent, isUpdateLoading, updateError] = useUpdateEvent();
 
-  const [confirmed, setConfirmed] = useState({
-    clickCount: 0,
-    isConfirmed: false,
-  });
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
   const [bannerFile, setBannerFile] = useState<File | null>(null);
@@ -104,29 +103,23 @@ const CreateEventModalContent = ({
 
   const tagsArray = useMemo(() => Object.values(activeTags).map((tag) => tag.name), [activeTags]);
 
-  const resetConfirm = useCallback(() => {
-    setConfirmed({ clickCount: 0, isConfirmed: false });
-  }, []);
-
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
 
-    resetConfirm();
     setFormData((prev) => ({ ...prev, [id]: value }));
     setErrors((prev) => ({
       ...prev,
       [id]: { hasError: false, message: "" },
     }));
-  }, [resetConfirm]);
+  }, []);
 
   const handleBannerChange = useCallback((file: File | null) => {
-    resetConfirm();
     setBannerFile(file);
     setErrors((prev) => ({
       ...prev,
       img_banner: { hasError: false, message: "" },
     }));
-  }, [resetConfirm]);
+  }, []);
 
   const handleToggleTag = useCallback((tag: GenericTag) => {
     setActiveTags((prev) => {
@@ -289,23 +282,17 @@ const CreateEventModalContent = ({
   }, [createError, updateError, isEditMode]);
 
   // Valida os dados e simula/confirma a criação do evento
-  const handleCreate = useCallback(async (e: React.FormEvent) => {
+  const handleOpenConfirm = useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
     const isSaving = isEditMode ? isUpdateLoading : isCreateLoading;
 
     if (isSaving) return;
     if (!validate()) return;
+    setIsConfirmOpen(true);
+  }, [isCreateLoading, isUpdateLoading, validate, isEditMode]);
 
-    if (confirmed.clickCount === 0) {
-      setConfirmed((prev) => ({
-        ...prev,
-        clickCount: prev.clickCount + 1,
-        isConfirmed: false,
-      }));
-      return;
-    }
-
+  const handleConfirmCreateOrUpdate = useCallback(async () => {
     try {
       if (isEditMode && initialEvent) {
         await updateEvent({
@@ -337,25 +324,20 @@ const CreateEventModalContent = ({
 
       onCreated?.();
       onClose();
-      setConfirmed((prev) => ({ ...prev, isConfirmed: true }));
+      setIsConfirmOpen(false);
     } catch {
-      // O erro já será tratado via useEffect observando createError
+      // O erro já será tratado via useEffect observando createError/updateError
     }
-  },
-  [
+  }, [
     bannerFile,
-    confirmed.clickCount,
     createEvent,
     updateEvent,
     formData,
-    isCreateLoading,
-    isUpdateLoading,
     existingBannerUrl,
     initialEvent,
     onClose,
     onCreated,
     tagsArray,
-    validate,
     isEditMode,
   ]);
 
@@ -373,7 +355,7 @@ const CreateEventModalContent = ({
 
   return (
     <div className="flex flex-col gap-4">
-        <form onSubmit={handleCreate} className="flex flex-col gap-3">
+        <form onSubmit={handleOpenConfirm} className="flex flex-col gap-3">
           <div className="flex flex-col gap-3 overflow-y-auto max-h-[60dvh] pb-2">
           {/* Título */}
           <InputText
@@ -486,7 +468,10 @@ const CreateEventModalContent = ({
 
           {/* Tags */}
           <div className="flex flex-col gap-1">
-            <Label id="tags" label="Tags" required={true} />
+            <div className="flex flex-row items-center gap-2">
+              <Label id="tags" label="Tags" required={true} />
+              <Tooltip content="Caso não encontre a tag que deseja, vá na aba Tags e crie a sua"/>
+            </div>
             {isLoadingTags ? (
               <p className="text-sm text-paper/75">Carregando tags...</p>
             ) : (
@@ -508,14 +493,27 @@ const CreateEventModalContent = ({
           disabled={(isEditMode ? isUpdateLoading : isCreateLoading) || hasAnyError}
         >
           <span className="text-paper">
-            {confirmed.clickCount === 0
-              ? (isEditMode ? "Salvar alterações" : "Criar Evento")
-              : (isEditMode
-                  ? (isUpdateLoading ? "Salvando..." : "Confirmar alterações")
-                  : (isCreateLoading ? "Criando evento..." : "Confirmar Criação"))}
+            {(hasAnyError)  ? "Corrija os Erros" 
+              : isEditMode
+                ? (isUpdateLoading ? "Salvando..." : "Salvar alterações")
+                : (isCreateLoading ? "Criando evento..." : "Criar Evento")}
           </span>
         </GenericButton>
       </form>
+      <ConfirmDeleteModal
+        isOpen={isConfirmOpen}
+        title={isEditMode ? "Editar evento" : "Criar evento"}
+        description={isEditMode
+          ? "Tem certeza que deseja salvar as alterações deste evento?"
+          : "Tem certeza que deseja criar este evento?"}
+        confirmLabel={isEditMode ? "Confirmar alterações" : "Confirmar criação"}
+        confirmingLabel={isEditMode ? "Confirmando alterações..." : "Confirmando criação..."}
+        cancelLabel="Cancelar"
+        isLoading={isEditMode ? isUpdateLoading : isCreateLoading}
+        type="confirm"
+        onCancel={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirmCreateOrUpdate}
+      />
     </div>
   );
 };

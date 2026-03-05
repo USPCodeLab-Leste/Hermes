@@ -15,6 +15,7 @@ import {
 } from "./IconPickerModal";
 import { LazySvg } from "../LazySvg";
 import { SelectTags } from "../Events";
+import { ConfirmDeleteModal } from "./ConfirmModal";
 
 // API
 import { useInfoTags } from "../../hooks/tags/useInfoTags";
@@ -68,10 +69,7 @@ const CreateInfoModalContent = ({
   const [createInfo, isCreateLoading] = useCreateInfo();
   const [updateInfo, isUpdateLoading] = useUpdateInfo();
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
-  const [confirmed, setConfirmed] = useState({
-    clickCount: 0,
-    isConfirmed: false,
-  });
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
   const [iconInfo, setIconInfo] = useState(() => getDefaultIconOption());
@@ -107,20 +105,15 @@ const CreateInfoModalContent = ({
 
   const tagsArray = useMemo(() => Object.values(activeTags).map((tag) => tag.name), [activeTags]);
 
-  const resetConfirm = useCallback(() => {
-    setConfirmed({ clickCount: 0, isConfirmed: false });
-  }, []);
-
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
 
-    resetConfirm();
     setFormData((prev) => ({ ...prev, [id]: value }));
     setErrors((prev) => ({
       ...prev,
       [id]: { hasError: false, message: "" },
     }));
-  }, [resetConfirm]);
+  }, []);
 
   const handleToggleTag = useCallback((tag: GenericTag) => {
     setActiveTags((prev) => {
@@ -186,7 +179,7 @@ const CreateInfoModalContent = ({
     return !hasLocalError;
   }, [formData.body, formData.title, tagsArray.length]);
 
-  const handleCreate = useCallback(async (e?: React.FormEvent) => {
+  const handleOpenConfirm = useCallback((e?: React.FormEvent) => {
     e?.preventDefault();
 
     const isSaving = isEditMode ? isUpdateLoading : isCreateLoading;
@@ -195,15 +188,10 @@ const CreateInfoModalContent = ({
 
     if (!validate()) return;
 
-    if (confirmed.clickCount === 0) {
-      setConfirmed((prev) => ({
-        ...prev,
-        clickCount: prev.clickCount + 1,
-        isConfirmed: false,
-      }));
-      return;
-    }
+    setIsConfirmOpen(true);
+  }, [isCreateLoading, isUpdateLoading, isEditMode, validate]);
 
+  const handleConfirmCreateOrUpdate = useCallback(async () => {
     try {
       if (isEditMode && initialInfo) {
         await updateInfo({
@@ -226,24 +214,20 @@ const CreateInfoModalContent = ({
 
       onCreated?.();
       onClose();
-      setConfirmed((prev) => ({ ...prev, isConfirmed: true }));
+      setIsConfirmOpen(false);
     } catch (error) {
       toast.error("Erro ao salvar informação");
     }
   }, [
-    confirmed.clickCount,
     createInfo,
     updateInfo,
     formData.body,
     formData.title,
     initialInfo,
-    isCreateLoading,
-    isUpdateLoading,
     isEditMode,
     onClose,
     onCreated,
     tagsArray,
-    validate,
   ]);
 
   const hasAnyError = useMemo(() => errors.title.hasError || errors.body.hasError || errors.tags.hasError, [errors]);
@@ -255,12 +239,11 @@ const CreateInfoModalContent = ({
         onClose={() => setIsIconPickerOpen(false)}
         selectedIconName={iconInfo?.name}
         onSelect={(option) => {
-          resetConfirm();
           setIconInfo(option);
         }}
       />
 
-      <form onSubmit={handleCreate} className="flex flex-col gap-3">
+      <form onSubmit={handleOpenConfirm} className="flex flex-col gap-3">
         <div className="flex flex-col gap-3 overflow-y-auto max-h-[60dvh] pb-2">
           <InputText
             id="title"
@@ -341,14 +324,28 @@ const CreateInfoModalContent = ({
           disabled={(isEditMode ? isUpdateLoading : isCreateLoading) || hasAnyError}
         >
           <span className="text-paper">
-            {confirmed.clickCount === 0
-              ? (isEditMode ? "Salvar alterações" : "Criar Informação")
-              : (isEditMode
-                  ? (isUpdateLoading ? "Salvando..." : "Confirmar alterações")
-                  : (isCreateLoading ? "Criando informação..." : "Confirmar Criação"))}
+            {(hasAnyError)  ? "Corrija os Erros"
+              : isEditMode
+                ? (isUpdateLoading ? "Salvando..." : "Salvar alterações")
+                : (isCreateLoading ? "Criando informação..." : "Criar Informação")}
           </span>
         </GenericButton>
       </form>
+
+      <ConfirmDeleteModal
+        isOpen={isConfirmOpen}
+        title={isEditMode ? "Editar informação" : "Criar informação"}
+        description={isEditMode
+          ? "Tem certeza que deseja salvar as alterações desta informação?"
+          : "Tem certeza que deseja criar esta informação?"}
+        confirmLabel={isEditMode ? "Confirmar alterações" : "Confirmar criação"}
+        confirmingLabel={isEditMode ? "Confirmando alterações..." : "Confirmando criação..."}
+        cancelLabel="Cancelar"
+        isLoading={isEditMode ? isUpdateLoading : isCreateLoading}
+        type="confirm"
+        onCancel={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirmCreateOrUpdate}
+      />
     </div>
   );
 };

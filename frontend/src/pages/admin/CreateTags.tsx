@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // Components
 import { GenericButton } from "../../components/GenericButton";
 import { CreateTagModal } from "../../components/modals/CreateTagModal";
-import { ConfirmDeleteModal } from "../../components/modals/ConfirmDeleteModal";
+import { ConfirmDeleteModal } from "../../components/modals/ConfirmModal";
 import { DeleteTags } from "../../components/Events";
 
 // Hooks

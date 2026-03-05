@@ -11,7 +11,7 @@ import { FollowTags } from "./Events"
 import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
-import { ConfirmDeleteModal } from "./modals/ConfirmDeleteModal"
+import { ConfirmDeleteModal } from "./modals/ConfirmModal"
 import { CreateEventModal } from "./modals/CreateEventModal"
 
 import { useDeleteEvent } from "../hooks/events/useDeleteEvent"
