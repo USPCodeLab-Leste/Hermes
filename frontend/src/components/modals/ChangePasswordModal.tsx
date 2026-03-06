@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+// Components
 import { ModalWrapper } from "./Modal";
 import { GenericButton } from "../GenericButton";
 import { MemoizedInputPassword as InputPassword } from "../forms/InputPassword";
 
+// Hooks
 import { useChangePassword } from "../../hooks/auth/useChangePassword";
 
 const defaultErrors = {
@@ -26,16 +28,8 @@ export function ChangePasswordModal({
     newPassword: "",
   });
 
-  const [errors, setErrors] = useState(structuredClone(defaultErrors));
+  const [errors, setErrors] = useState(() => structuredClone(defaultErrors));
   const [isNewPasswordValid, setIsNewPasswordValid] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      setFormData({ oldPassword: "", newPassword: "" });
-      setErrors(structuredClone(defaultErrors));
-      setIsNewPasswordValid(false);
-    }
-  }, [isOpen]);
 
   useEffect(() => {
     if (!error) return;
@@ -136,10 +130,7 @@ export function ChangePasswordModal({
 
         <form
           className="flex flex-col gap-4"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSave();
-          }}
+          action={handleSave}
         >
           <InputPassword
             id="oldPassword"

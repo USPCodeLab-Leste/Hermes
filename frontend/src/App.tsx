@@ -36,7 +36,6 @@ import Home from './pages/Home'
 import Error from './pages/Error'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
-import VerifyEmail from './pages/auth/VerifyEmail'
 import ResetPassword from './pages/auth/ResetPassword'
 import Estudos from './pages/info/Estudos';
 import Campus from './pages/info/Campus';
@@ -104,7 +103,6 @@ export const router = createHashRouter(
         <Route index element={<Navigate to="login" replace />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-        <Route path="verify-email" element={<VerifyEmail />} />
         <Route path="reset-password" element={<ResetPassword />} />
       </Route>
 

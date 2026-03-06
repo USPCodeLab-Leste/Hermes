@@ -47,7 +47,7 @@ function CreateTagModalContent({
   const [eventType, setEventType] = useState<EventTagType>(eventTypes[0]);
   const [infoType, setInfoType] = useState<InfoTagType>(infoTypes[0]);
   const [name, setName] = useState("");
-  const [errors, setErrors] = useState(structuredClone(defaultErrors));
+  const [errors, setErrors] = useState(() => structuredClone(defaultErrors));
 
   const handleToggleScope = useCallback((scope: "event" | "info") => {
     setIsEventTag(scope === "event");
@@ -77,10 +77,8 @@ function CreateTagModalContent({
     }));
   }, []);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (isCreating) return;
+  const handleSubmit = useCallback(async () => {
+     if (isCreating) return;
 
     const trimmedName = name.trim();
     const selectedType: TagType = isEventTag ? eventType : infoType;
@@ -133,7 +131,7 @@ function CreateTagModalContent({
   const currentType = isEventTag ? eventType : infoType;
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+    <form action={handleSubmit} className="flex flex-col gap-3">
       {/* Escopo: evento ou informação */}
       <div className="flex flex-col gap-2">
         <Label label="Escopo" id="tag-scope" />

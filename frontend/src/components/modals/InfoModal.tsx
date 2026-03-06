@@ -6,6 +6,7 @@ import MarkdownRenderer from "../MarkdownRenderer";
 import { GenericButton } from "../GenericButton";
 import { AdminEditDeleteButtons } from "../admin/AdminEditDeleteButtons";
 import { ConfirmDeleteModal } from "./ConfirmModal";
+import { CreateInfoModal } from "./CreateInfoModal";
 
 // Types
 import type { Info } from "../../types/infos";
@@ -13,7 +14,6 @@ import type { Info } from "../../types/infos";
 // Hooks
 import { useShare } from "../../hooks/useShare";
 import { useDeleteInfo } from "../../hooks/infos/useDeleteInfo";
-import { CreateInfoModal } from "./CreateInfoModal";
 
 interface InfoModalProps {
   modalOpen: boolean;

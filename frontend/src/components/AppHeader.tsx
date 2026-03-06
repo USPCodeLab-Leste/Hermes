@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import useMeasure from "react-use-measure";
 import { useLayoutEffect, useState } from "react";
-import NotificationButton from "./NotificationButton";
 import LogoHermes from "../assets/LOGO 150x150.svg";
 
 export default function AppHeader({ children }: { children?: React.ReactNode }) {

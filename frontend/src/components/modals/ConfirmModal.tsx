@@ -1,8 +1,9 @@
 import { useCallback, useEffect } from "react";
+import { toast } from "react-toastify";
 
+// Components
 import { ModalWrapper } from "./Modal";
 import { GenericButton } from "../GenericButton";
-import { toast } from "react-toastify";
 
 // Icons
 import ExclamationIcon from "../../assets/icons/alert-triangle.svg?react";

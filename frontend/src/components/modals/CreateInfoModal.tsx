@@ -17,10 +17,12 @@ import { LazySvg } from "../LazySvg";
 import { SelectTags } from "../Events";
 import { ConfirmDeleteModal } from "./ConfirmModal";
 
-// API
+// Hooks
 import { useInfoTags } from "../../hooks/tags/useInfoTags";
 import { useCreateInfo } from "../../hooks/infos/useCreateInfo";
 import { useUpdateInfo } from "../../hooks/infos/useUpdateInfo";
+
+// Types
 import type { ActiveTags, GenericTag } from "../../types/tag";
 import type { Info } from "../../types/infos";
 
@@ -71,7 +73,7 @@ const CreateInfoModalContent = ({
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
+  const [errors, setErrors] = useState(() => structuredClone(defaultFormErrors));
   const [iconInfo, setIconInfo] = useState(() => getDefaultIconOption());
   const [formData, setFormData] = useState({
     title: "",
@@ -179,9 +181,7 @@ const CreateInfoModalContent = ({
     return !hasLocalError;
   }, [formData.body, formData.title, tagsArray.length]);
 
-  const handleOpenConfirm = useCallback((e?: React.FormEvent) => {
-    e?.preventDefault();
-
+  const handleOpenConfirm = useCallback(() => {
     const isSaving = isEditMode ? isUpdateLoading : isCreateLoading;
 
     if (isSaving) return;
@@ -243,7 +243,7 @@ const CreateInfoModalContent = ({
         }}
       />
 
-      <form onSubmit={handleOpenConfirm} className="flex flex-col gap-3">
+      <form action={handleOpenConfirm} className="flex flex-col gap-3">
         <div className="flex flex-col gap-3 overflow-y-auto max-h-[60dvh] pb-2">
           <InputText
             id="title"

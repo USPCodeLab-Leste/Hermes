@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 // Componentes
@@ -14,12 +15,13 @@ import { SelectTags } from "../Events";
 import { ConfirmDeleteModal } from "./ConfirmModal";
 import { Tooltip } from "../Tooltip";
 
-// API
+// Hooks
 import { useCreateEvent } from "../../hooks/events/useCreateEvent";
 import { useUpdateEvent } from "../../hooks/events/useUpdateEvent";
-import { useNavigate } from "react-router-dom";
-import type { Event } from "../../types/events";
 import { useEventTags } from "../../hooks/tags/useEventTags";
+
+// Types
+import type { Event } from "../../types/events";
 import type { ActiveTags, GenericTag } from "../../types/tag";
 
 export function CreateEventModal({
@@ -65,7 +67,7 @@ const CreateEventModalContent = ({
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
+  const [errors, setErrors] = useState(() => structuredClone(defaultFormErrors));
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [existingBannerUrl, setExistingBannerUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -282,9 +284,7 @@ const CreateEventModalContent = ({
   }, [createError, updateError, isEditMode]);
 
   // Valida os dados e simula/confirma a criação do evento
-  const handleOpenConfirm = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleOpenConfirm = useCallback(() => {
     const isSaving = isEditMode ? isUpdateLoading : isCreateLoading;
 
     if (isSaving) return;
@@ -355,7 +355,7 @@ const CreateEventModalContent = ({
 
   return (
     <div className="flex flex-col gap-4">
-        <form onSubmit={handleOpenConfirm} className="flex flex-col gap-3">
+        <form action={handleOpenConfirm} className="flex flex-col gap-3">
           <div className="flex flex-col gap-3 overflow-y-auto max-h-[60dvh] pb-2">
           {/* Título */}
           <InputText

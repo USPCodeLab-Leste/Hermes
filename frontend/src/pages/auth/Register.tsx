@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 // import { motion, AnimatePresence } from "motion/react";
+import { toast } from "react-toastify/unstyled";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-// components
+// Components
 import { MemoizedInputText as InputText } from "../../components/forms/InputText";
 import { MemoizedInputPassword as InputPassword } from "../../components/forms/InputPassword";
 import { SubmitButton } from "../../components/forms/SubmitButton";
 
-// hooks
-import { auth } from "../../services/auth";
+// Hooks
 import { useRegister } from "../../hooks/auth/useRegister";
-import { toast } from "react-toastify/unstyled";
+import { auth } from "../../services/auth";
 
 const defaultFormErrors = {
   email: {
@@ -37,7 +37,7 @@ export default function Register() {
 
   // Hooks de autenticação
   const [register, regLoading, regError] = useRegister(auth);
-  const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
+  const [errors, setErrors] = useState(() => structuredClone(defaultFormErrors));
 
   const [isPasswordValid, setIsPasswordValid] = useState(false);
 

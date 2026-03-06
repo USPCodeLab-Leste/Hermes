@@ -2,7 +2,6 @@ import { useMemo, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Components
-import { GenericButton } from "../../components/GenericButton";
 import { CreateTagModal } from "../../components/modals/CreateTagModal";
 import { ConfirmDeleteModal } from "../../components/modals/ConfirmModal";
 import { DeleteTags } from "../../components/Events";
@@ -10,6 +9,7 @@ import { DeleteTags } from "../../components/Events";
 // Hooks
 import { useEventTags } from "../../hooks/tags/useEventTags";
 import { useInfoTags } from "../../hooks/tags/useInfoTags";
+import { useDeleteTag } from "../../hooks/tags/useDeleteTag";
 
 // Utils
 import { groupByType } from "../../utils/tags";
@@ -18,7 +18,6 @@ import { groupByType } from "../../utils/tags";
 import ArrowIcon from "../../assets/icons/right-arrow.svg?react";
 import PlusIcon from "../../assets/icons/plus.svg?react";
 import type { GenericTag } from "../../types/tag";
-import { useDeleteTag } from "../../hooks/tags/useDeleteTag";
 
 export default function CreateTags() {
   const { data: eventTags, isLoading: isLoadingEvents } = useEventTags(true);
@@ -47,10 +46,6 @@ export default function CreateTags() {
       <div className="w-full mt-6 p-4 flex flex-col gap-5">
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-2xl font-semibold">Gerenciar Tags</h1>
-          {/* <GenericButton onClick={handleOpenCreateModal} className="flex flex-row items-center gap-2 bg-teal-mid hover:bg-teal-light">
-            <PlusIcon className="text-paper" />
-            <span className="text-paper">Criar uma nova Tag</span>
-          </GenericButton> */}
           <button className="bg-teal-mid rounded-full flex items-center justify-center p-3 hover:bg-teal-light cursor-pointer transition-colors" onClick={handleOpenCreateModal}>
             <PlusIcon className="text-paper"/>
           </button>

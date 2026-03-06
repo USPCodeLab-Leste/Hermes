@@ -8,8 +8,8 @@ import { useEventTags } from "../../hooks/tags/useEventTags"
 import { ModalWrapper } from "./Modal"
 import { SelectTags } from "../Events"
 import { GenericButton as Button } from "../GenericButton"
-import { type GenericTag, type ActiveTags } from "../../types/tag"
 import { FilterTagSkeleton } from "../skeletons/FilterTagSkeleton"
+import { type GenericTag, type ActiveTags } from "../../types/tag"
 import { groupByType } from "../../utils/tags"
 
 const filterVariants: Variants = {

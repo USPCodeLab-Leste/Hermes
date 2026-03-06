@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+// Componentes
 import { ModalWrapper } from "./Modal";
 import { MemoizedInputText as InputText } from "../forms/InputText";
 import { GenericButton } from "../GenericButton";
 
+// Hooks
 import { useChangeName } from "../../hooks/auth/useChangeName";
 
 export function ChangeNameModal({
@@ -18,16 +20,8 @@ export function ChangeNameModal({
 }) {
   const [changeName, isLoading, apiError] = useChangeName();
 
-  const initialName = useMemo(() => currentName ?? "", [currentName]);
-  const [name, setName] = useState(initialName);
+  const [name, setName] = useState(() => currentName ?? "");
   const [error, setError] = useState({ hasError: false, message: "" });
-
-  useEffect(() => {
-    if (isOpen) {
-      setName(initialName);
-      setError({ hasError: false, message: "" });
-    }
-  }, [initialName, isOpen]);
 
   useEffect(() => {
     if (!apiError) return;
@@ -74,7 +68,7 @@ export function ChangeNameModal({
   }, [changeName, isLoading, name, onClose, validate]);
 
   return (
-    <ModalWrapper isOpen={isOpen} onClose={onClose}>
+    <ModalWrapper isOpen={isOpen} onClose={() => isLoading ? undefined : onClose()}>
       <div className="flex flex-col gap-4">
         <header className="flex flex-col gap-1">
           <h2 className="text-xl font-semibold text-ink dark:text-paper">
@@ -87,10 +81,7 @@ export function ChangeNameModal({
 
         <form
           className="flex flex-col gap-4"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSave();
-          }}
+          action={handleSave}
         >
           <InputText
             id="name"
@@ -108,7 +99,7 @@ export function ChangeNameModal({
             required={true}
           />
 
-          <GenericButton type="submit" disabled={isLoading || name === initialName}>
+          <GenericButton type="submit" disabled={isLoading || name === currentName}>
             <span className="text-paper">
               {isLoading ? "Salvando..." : apiError ? "Tentar novamente" : "Salvar"}
             </span>

@@ -4,8 +4,8 @@ import { AnimatePresence, motion, stagger, type Variants } from "framer-motion"
 // Icons
 import PlusIcon from "../assets/icons/plus.svg?react"
 import CheckIcon from "../assets/icons/check.svg?react"
-import HeartFilledIcon from "../assets/icons/heart-filled.svg?react"
-import HeartOutlineIcon from "../assets/icons/heart-outline.svg?react"
+// import HeartFilledIcon from "../assets/icons/heart-filled.svg?react"
+// import HeartOutlineIcon from "../assets/icons/heart-outline.svg?react"
 import XIcon from "../assets/icons/close.svg?react";
 import TrashIcon from "../assets/icons/trash.svg?react";
 
@@ -15,6 +15,8 @@ import type { ActiveTags, GenericTag } from "../types/tag"
 
 // Components
 import { DateWrapper } from "./Date"
+
+// Hooks
 import { useUserMotionPreference } from "../hooks/useUserMotionPreference";
 
 interface EventsProps {
@@ -108,7 +110,7 @@ export function Tags({ tags, className }: TagsProps) {
       variants={tagsVariants}
     >
       {tags.map((tag) => (
-        <Tag key={tag.id} tag={tag} />
+        <Tag key={`tag-${tag.id}`} tag={tag} />
       ))}
     </motion.div>
   )

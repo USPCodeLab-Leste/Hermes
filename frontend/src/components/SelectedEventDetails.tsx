@@ -2,9 +2,13 @@ import { useCallback, useState } from "react"
 
 // Hooks
 import { useShare } from "../hooks/useShare"
+import { useDeleteEvent } from "../hooks/events/useDeleteEvent"
+import { useFollowTag } from "../hooks/tags/useFollowTag"
+import { useAuth } from "../hooks/auth/useAuth"
 
 // Types
 import type { Event } from "../types/events"
+import type { GenericTag } from "../types/tag"
 
 // Components
 import { FollowTags } from "./Events"
@@ -14,10 +18,6 @@ import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
 import { ConfirmDeleteModal } from "./modals/ConfirmModal"
 import { CreateEventModal } from "./modals/CreateEventModal"
 
-import { useDeleteEvent } from "../hooks/events/useDeleteEvent"
-import type { GenericTag } from "../types/tag"
-import { useFollowTag } from "../hooks/tags/useFollowTag"
-import { useAuth } from "../hooks/auth/useAuth"
 
 interface SelectedEventDetailsProps {
   event: Event | null;
