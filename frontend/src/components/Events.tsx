@@ -261,6 +261,32 @@ interface FollowTagProps {
   onClick: (tag: GenericTag) => void;
 }
 
+export const heartVariants: Variants = {
+  initial: {
+    scale: 1,
+    rotate: 0,
+    fill: "transparent"
+  },
+  liked: {
+    scale: [1, 1.3, 0.95, 1],
+    rotate: [0, -20, 20, 0],
+    fill: "currentColor",
+    transition: {
+      scale: {
+        duration: 0.35,
+        ease: "easeOut"
+      },
+      rotate: {
+        duration: 0.35,
+        ease: "easeOut"
+      },
+      fill: {
+        duration: 0.2
+      }
+    }
+  }
+}
+
 // Tag para seguir (follow), usando coração cheio/vazio conforme active
 export const FollowTag = memo(function FollowTag({ tag, onClick, active }: FollowTagProps) {
   const handleClick = useCallback(() => {
@@ -276,11 +302,20 @@ export const FollowTag = memo(function FollowTag({ tag, onClick, active }: Follo
       aria-pressed={active}
       disabled={false}
     >
-      {active ? (
-        <HeartFilledIcon className="size-4 text-paper" />
-      ) : (
-        <HeartOutlineIcon className="size-4 text-paper" />
-      )}
+      <motion.svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth="2"
+        initial="initial"
+        animate={active ? "liked" : "initial"}
+        variants={heartVariants}
+      >
+        <motion.path
+          d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"
+        />
+      </motion.svg>
       <span className="text-paper">{tag.name}</span>
     </TagWrapper>
   )
