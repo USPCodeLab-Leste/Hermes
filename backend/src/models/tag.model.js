@@ -57,6 +57,20 @@ class TagModel {
 
     return result.rows[0];
   }
+
+async reactivate(id) {
+  const query = "UPDATE tb_tag SET active = true WHERE id = $1 RETURNING *";
+  const values = [id];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows[0]; // retorna a tag atualizada
+  } catch (error) {
+    console.log("Erro no model ao reativar tag:", error);
+    throw error;
+  }
+}
+
 }
 
 export default new TagModel();
