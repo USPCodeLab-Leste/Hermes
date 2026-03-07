@@ -41,8 +41,8 @@ class TagModel {
   
   // para buscar todas as tags ativas
   async findAll() {
-    // ORDER BY name ASC para ficar organizado alfabeticamente
-    const result = await pool.query("SELECT * FROM tb_tag WHERE active = true ORDER BY name ASC");
+    // const result = await pool.query("SELECT * FROM tb_tag WHERE active = true ORDER BY name ASC");
+    const result = await pool.query("SELECT * FROM tb_tag");
     return result.rows;
   }
 
