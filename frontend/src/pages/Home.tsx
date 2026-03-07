@@ -19,11 +19,11 @@ import SearchBar from "../components/SearchBar"
 import { FilterTagsModal } from "../components/modals/FilterTagsModal"
 import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton"
 import { LoadMoreTrigger } from "../components/LoadMoreTrigger"
+import { EventModal } from "../components/modals/EventModal"
 
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
 import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
-import { EventModal } from "../components/modals/EventModal"
 
 
 export default function Home() {

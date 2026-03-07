@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { postChangeName } from "../../api/users";
+import { auth } from "../../services/auth";
 
 export interface ChangeNamePayload {
   name: string;
@@ -22,6 +23,10 @@ export function useChangeName() {
 
     try {
       const result = await postChangeName(data);
+
+      // atualiza usuário para atualizar novo nome
+      await auth.refresh();
+
       setLoading(false);
       return result;
     } catch (err: any) {

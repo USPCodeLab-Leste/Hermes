@@ -1,8 +1,5 @@
 import type { EventTagType, InfoTagType, Tag } from "../types/tag";
 
-export const eventTypes = ['entidade', 'curso', 'esporte', 'outro'] as const;
-export const infoTypes = ['estudos', 'campus', 'apoios', 'carreira'] as const;
-
 // ==========================
 // == Event Tags Mock
 // ==========================
@@ -43,7 +40,7 @@ export const mockEventTags = [
   { name: 'Workshop', type: 'outro' },
   { name: 'Hackathon', type: 'outro' },
 
-].map((tag, index) => ({ ...tag, id: 'event-tag-' + String(index) })) as Tag<EventTagType>[];
+].map((tag, index) => ({ ...tag, id: 'event-tag-' + String(index), active: true })) as Tag<EventTagType>[];
 
 // ==========================
 // == Info Tags Mock
@@ -71,7 +68,7 @@ export const mockInfoTags = [
   { name: 'Estágios', type: 'carreira' },
   { name: 'Empregos', type: 'carreira' },
   { name: 'Mentorias', type: 'carreira' },
-].map((tag, index) => ({ ...tag, id: 'info-tag-' + String(index) })) as Tag<InfoTagType>[];
+].map((tag, index) => ({ ...tag, id: 'info-tag-' + String(index), active: true })) as Tag<InfoTagType>[];
 
 // ==========================
 // == Funções auxiliares
@@ -79,10 +76,10 @@ export const mockInfoTags = [
 
 // Retorna uma tag de evento pelo nome
 export const getEventTagByName = (name: string): Tag<EventTagType> => {
-  return mockEventTags.find(tag => tag.name === name) || { name, type: 'outro', id: 'event-tag-outro-' + name } as Tag<EventTagType>;
+  return mockEventTags.find(tag => tag.name === name) || { name, type: 'outro', id: 'event-tag-outro-' + name, active: true } as Tag<EventTagType>;
 }
 
 // Retorna uma tag de informação pelo nome
 export const getInfoTagByName = (name: string): Tag<InfoTagType> => {
-  return mockInfoTags.find(tag => tag.name === name) || { name, type: 'carreira', id: 'info-tag-carreira-' + name } as Tag<InfoTagType>;
+  return mockInfoTags.find(tag => tag.name === name) || { name, type: 'carreira', id: 'info-tag-carreira-' + name, active: true } as Tag<InfoTagType>;
 }

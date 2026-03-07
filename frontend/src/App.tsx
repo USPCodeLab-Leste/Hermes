@@ -20,7 +20,12 @@ import { useTheme } from './hooks/useTheme';
 import AuthLayout from './layouts/AuthLayout'
 import AppLayout from './layouts/AppLayout'
 import InfoLayout from './layouts/InfoLayout'
+
+// Lazy
 const AdminLayout = lazy(() => import('./layouts/AdminLayout'))
+const CreateEvent = lazy(() => import('./pages/admin/CreateEvent'))
+const CreateInfo = lazy(() => import('./pages/admin/CreateInfo'))
+const CreateTags = lazy(() => import('./pages/admin/CreateTags'))
 
 // Contexts
 import { AuthProvider } from './contexts/AuthContext'
@@ -31,15 +36,12 @@ import Home from './pages/Home'
 import Error from './pages/Error'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
-import VerifyEmail from './pages/auth/VerifyEmail'
 import ResetPassword from './pages/auth/ResetPassword'
 import Estudos from './pages/info/Estudos';
 import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
 import Info from './pages/info/InfoTag'
-const CreateEvent = lazy(() => import('./pages/admin/CreateEvent'))
-const CreateInfo = lazy(() => import('./pages/admin/CreateInfo'))
 
 // Components
 import Loading from './components/Loading'
@@ -101,7 +103,6 @@ export const router = createHashRouter(
         <Route index element={<Navigate to="login" replace />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-        <Route path="verify-email" element={<VerifyEmail />} />
         <Route path="reset-password" element={<ResetPassword />} />
       </Route>
 
@@ -157,6 +158,14 @@ export const router = createHashRouter(
               element={
                 <LazyRoute>
                   <CreateInfo />
+                </LazyRoute>
+              } 
+            />
+            <Route 
+              path="create_tags" 
+              element={
+                <LazyRoute>
+                  <CreateTags />
                 </LazyRoute>
               } 
             />

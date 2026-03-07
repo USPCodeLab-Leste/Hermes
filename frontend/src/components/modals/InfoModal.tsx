@@ -5,7 +5,8 @@ import { ModalWrapper } from "./Modal";
 import MarkdownRenderer from "../MarkdownRenderer";
 import { GenericButton } from "../GenericButton";
 import { AdminEditDeleteButtons } from "../admin/AdminEditDeleteButtons";
-import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
+import { ConfirmDeleteModal } from "./ConfirmModal";
+import { CreateInfoModal } from "./CreateInfoModal";
 
 // Types
 import type { Info } from "../../types/infos";
@@ -25,6 +26,7 @@ export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin =
   const share = useShare();
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [del, isDeleteLoading, errorDelete] = useDeleteInfo();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Handlers
 
@@ -63,6 +65,12 @@ export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin =
   return (
     <ModalWrapper isOpen={modalOpen} onClose={handleModalClose}>
       <>
+        <CreateInfoModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onCreated={handleModalClose}
+          initialInfo={selectedInfo}
+        />
         <ConfirmDeleteModal
           isOpen={isConfirmDeleteOpen}
           onCancel={handleCloseConfirmDelete}
@@ -80,11 +88,11 @@ export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin =
         {selectedInfo ? (
           <section className="flex flex-col gap-4">
             <div className="max-h-[60dvh] overflow-auto">
-              <h2 className="text-2xl font-bold mb-4 before:content-['#_'] before:text-paper/75">{selectedInfo?.title}</h2>
+              <h2 className="text-2xl font-bold mb-4 before:content-['#_'] dark:before:text-paper/75 before:text-ink/75">{selectedInfo?.title}</h2>
               <MarkdownRenderer>{selectedInfo.body}</MarkdownRenderer>
             </div>
             {isAdmin ? (
-              <AdminEditDeleteButtons onEdit={() => {}} onDelete={handleOpenConfirmDelete} />
+              <AdminEditDeleteButtons onEdit={() => setIsEditModalOpen(true)} onDelete={handleOpenConfirmDelete} />
             ) : (
               <GenericButton onClick={() => handleShareArticle(selectedInfo)}>
                 <span className="text-paper">Compartilhar Artigo</span>

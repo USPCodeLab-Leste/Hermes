@@ -4,7 +4,10 @@ import { AnimatePresence, motion, stagger, type Variants } from "framer-motion"
 // Icons
 import PlusIcon from "../assets/icons/plus.svg?react"
 import CheckIcon from "../assets/icons/check.svg?react"
+// import HeartFilledIcon from "../assets/icons/heart-filled.svg?react"
+// import HeartOutlineIcon from "../assets/icons/heart-outline.svg?react"
 import XIcon from "../assets/icons/close.svg?react";
+import TrashIcon from "../assets/icons/trash.svg?react";
 
 // Types
 import type { Event } from "../types/events"
@@ -12,6 +15,8 @@ import type { ActiveTags, GenericTag } from "../types/tag"
 
 // Components
 import { DateWrapper } from "./Date"
+
+// Hooks
 import { useUserMotionPreference } from "../hooks/useUserMotionPreference";
 
 interface EventsProps {
@@ -105,7 +110,7 @@ export function Tags({ tags, className }: TagsProps) {
       variants={tagsVariants}
     >
       {tags.map((tag) => (
-        <Tag key={tag.id} tag={tag} />
+        <Tag key={`tag-${tag.id}`} tag={tag} />
       ))}
     </motion.div>
   )
@@ -160,6 +165,51 @@ export function RemoveFilterTags({ tags, className, onClick }: RemoveFilterTagsP
   )
 }
 
+interface FollowTagsProps {
+  tags: GenericTag[];
+  className?: string;
+  activeTags: Map<string, GenericTag>;
+  onClick: (tag: GenericTag) => void;
+}
+
+// Tags para seguir (follow), com ícone de coração
+export function FollowTags({ tags, className, activeTags, onClick }: FollowTagsProps) {
+  return (
+    <motion.div
+      className={`flex flex-row gap-2 flex-wrap ${className}`}
+      variants={tagsVariants}
+    >
+      {tags.map((tag) => (
+        <FollowTag
+          key={`follow-tag-${tag.id}`}
+          tag={tag}
+          active={activeTags.has(tag.id)}
+          onClick={onClick}
+        />
+      ))}
+    </motion.div>
+  )
+}
+
+export function DeleteTags({ tags, className, onClick }: RemoveFilterTagsProps) {
+  return (
+    <motion.div 
+      className={`flex flex-row gap-2 flex-wrap ${className}`}
+      variants={tagsVariants}
+      initial="hidden"
+      animate={tags.length > 0 ? 'visible' : 'hidden'}
+      exit="hidden"
+      layout
+    >
+      <AnimatePresence mode="popLayout">
+        {tags.map(tag => (
+          <DeleteTag key={`remove-filter-tag-${tag.id}`} tag={tag} onClick={onClick}  />
+        ))}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
 // Tag para exibição simples, sem interação
 export const Tag = ({ tag }: { tag: GenericTag }) => {
   return (
@@ -207,6 +257,74 @@ export const SelectTag = memo(function Tag({ tag, onClick, active }: SelectTagPr
   return prevProps.active === nextProps.active && prevProps.tag.id === nextProps.tag.id;
 })
 
+interface FollowTagProps {
+  tag: GenericTag;
+  active?: boolean;
+  onClick: (tag: GenericTag) => void;
+}
+
+export const heartVariants: Variants = {
+  initial: {
+    scale: 1,
+    rotate: 0,
+    fill: "transparent"
+  },
+  liked: {
+    scale: [1, 1.3, 0.95, 1],
+    rotate: [0, -20, 20, 0],
+    fill: "currentColor",
+    transition: {
+      scale: {
+        duration: 0.35,
+        ease: "easeOut"
+      },
+      rotate: {
+        duration: 0.35,
+        ease: "easeOut"
+      },
+      fill: {
+        duration: 0.2
+      }
+    }
+  }
+}
+
+// Tag para seguir (follow), usando coração cheio/vazio conforme active
+export const FollowTag = memo(function FollowTag({ tag, onClick, active }: FollowTagProps) {
+  const handleClick = useCallback(() => {
+    onClick(tag)
+  }, [onClick, tag])
+
+  return (
+    <TagWrapper
+      canSelect={true}
+      className='bg-teal-light'
+      variants={tagVariants}
+      onClick={handleClick}
+      aria-pressed={active}
+      disabled={false}
+    >
+      <motion.svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth="2"
+        initial="initial"
+        animate={active ? "liked" : "initial"}
+        variants={heartVariants}
+      >
+        <motion.path
+          d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"
+        />
+      </motion.svg>
+      <span className="text-paper">{tag.name}</span>
+    </TagWrapper>
+  )
+}, (prevProps, nextProps) => {
+  return prevProps.active === nextProps.active && prevProps.tag.id === nextProps.tag.id;
+})
+
 export const RemoveFilterTag = ({ tag, onClick }: { tag: GenericTag; onClick: (tag: GenericTag) => void }) => {
   const handleClick = useCallback(() => {
     onClick(tag)
@@ -220,6 +338,24 @@ export const RemoveFilterTag = ({ tag, onClick }: { tag: GenericTag; onClick: (t
       onClick={handleClick}
     >
       <XIcon className="size-4 text-paper shrink-0" />
+      <span className="text-paper">{tag.name}</span>
+    </TagWrapper>
+  )
+}
+
+export const DeleteTag = ({ tag, onClick }: { tag: GenericTag; onClick: (tag: GenericTag) => void }) => {
+  const handleClick = useCallback(() => {
+    onClick(tag)
+  }, [onClick, tag])
+
+  return (
+    <TagWrapper 
+      canSelect={true}
+      className="hover:bg-red-500/50"
+      variants={tagVariants}
+      onClick={handleClick}
+    >
+      <TrashIcon className="size-4 text-paper shrink-0" />
       <span className="text-paper">{tag.name}</span>
     </TagWrapper>
   )
@@ -244,6 +380,7 @@ const TagWrapper = ({ children, canSelect, className, variants, onClick, disable
       layout
       variants={variants} 
       onClick={onClick}
+      type={canSelect ? 'button' : undefined}
       disabled={disabled}
       {...props}
     >

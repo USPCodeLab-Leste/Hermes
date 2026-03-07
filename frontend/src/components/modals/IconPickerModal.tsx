@@ -1,7 +1,9 @@
 import { useCallback, useMemo } from "react";
+import { toast } from "react-toastify";
+
+// Components
 import { LazySvg } from "../LazySvg";
 import { ModalWrapper } from "./Modal";
-import { toast } from "react-toastify";
 
 export type IconOption = {
   name: string;

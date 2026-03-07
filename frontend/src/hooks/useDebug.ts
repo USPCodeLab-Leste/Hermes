@@ -57,7 +57,7 @@ export function useDebug<TSnapshot extends DebugSnapshot>(
   snapshot: TSnapshot,
   options: UseDebugOptions = {}
 ) {
-  const enabled = options.enabled ?? import.meta.env.DEV
+  const enabled = options.enabled ?? import.meta.env.VITE_DEV
   const logger = options.logger ?? defaultLogger
 
   const renderCountRef = useRef(0)

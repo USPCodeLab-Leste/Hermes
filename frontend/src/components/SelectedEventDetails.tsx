@@ -2,18 +2,22 @@ import { useCallback, useState } from "react"
 
 // Hooks
 import { useShare } from "../hooks/useShare"
+import { useDeleteEvent } from "../hooks/events/useDeleteEvent"
+import { useFollowTag } from "../hooks/tags/useFollowTag"
+import { useAuth } from "../hooks/auth/useAuth"
 
 // Types
 import type { Event } from "../types/events"
+import type { GenericTag } from "../types/tag"
 
 // Components
-import { Tags } from "./Events"
+import { FollowTags } from "./Events"
 import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
-import { ConfirmDeleteModal } from "./modals/ConfirmDeleteModal"
+import { ConfirmDeleteModal } from "./modals/ConfirmModal"
+import { CreateEventModal } from "./modals/CreateEventModal"
 
-import { useDeleteEvent } from "../hooks/events/useDeleteEvent"
 
 interface SelectedEventDetailsProps {
   event: Event | null;
@@ -26,12 +30,18 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
   const share = useShare();
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [del, isDeleteLoading, errorDelete] = useDeleteEvent();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [followTag] = useFollowTag()
+  const { mapTags } = useAuth();
 
   // Handlers
   const handleShare = useCallback(() => {
     if (!event) return;
 
-    const url = window.location.href;
+    const urlObj = new URL(window.location.href);
+    urlObj.searchParams.set("q", event.title);
+    const url = urlObj.toString();
+
     share({ url, title: event.title, text: `Confira o evento ${event.title} no Hermes!` });
   }, [event, search, share]);
 
@@ -56,8 +66,25 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
     }
   }, [del, event, onDeleted]);
 
+  const handleOpenEdit = useCallback(() => {
+    setIsEditModalOpen(true);
+  }, [])
+
+  const handleFollowTag = useCallback((tag: GenericTag) => {
+    const isFollowing = mapTags.has(tag.id);
+
+    followTag({ tagId: tag.id, isFollowing });
+  }, [followTag, mapTags])
+
   return (
     <div className="flex flex-col gap-4">
+      <CreateEventModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onCreated={onDeleted}
+        initialEvent={event}
+      />
+
       <ConfirmDeleteModal
         isOpen={isConfirmDeleteOpen}
         onCancel={handleCloseConfirmDelete}
@@ -77,7 +104,12 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
         style={{ backgroundImage: `url('${event?.img_banner}')` }}
       />
       <div className="flex flex-col gap-1 overflow-y-auto max-h-[40dvh]">
-        <Tags tags={event?.tags ?? []} className="mb-2" />
+        <FollowTags
+          tags={event?.tags || []}
+          className="mb-4"
+          activeTags={mapTags}
+          onClick={handleFollowTag}
+        />
         <h2 className="text-2xl font-bold -mb-1">{event?.title}</h2>
         <div className="flex flex-row flex-wrap gap-x-2 gap-y-0 items-center mb-2">
           <span className="text-[18px] dark:text-paper/75 text-ink/75">{event?.local}</span>
@@ -88,7 +120,7 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
       </div>
       {isAdmin ? (
         <AdminEditDeleteButtons
-          onEdit={() => {}}
+          onEdit={handleOpenEdit}
           onDelete={handleOpenConfirmDelete}
         />
       ) : (

@@ -22,8 +22,8 @@ export default function AuthLayout() {
       <section className="w-full flex flex-5 flex-col justify-center items-center p-6 py-14 md:p-4">
         <img src={LogoHermes} alt="Logo do Hermes" className="w-48 md:w-64 max-w-xs object-contain" />
 
-        <p className="text-base md:text-center max-w-md pb-1 pt-6 text-paper">
-          <span style={{ fontSize: 36 }}>Bem-vindo ao Hermes: a voz do campus.</span>
+        <p className="text-base md:text-center max-w-sm pb-1 pt-6 text-paper">
+          <span className="font-bold text-2xl">Bem-vindo ao Hermes: a voz do campus.</span>
         </p>
       </section>
 
