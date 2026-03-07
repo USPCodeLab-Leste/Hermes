@@ -1,11 +1,11 @@
 import { lazy, Suspense, type JSX } from 'react'
 import {
-  createHashRouter,
   createRoutesFromElements,
   Route,
   Navigate,
   RouterProvider,
-  useLocation
+  useLocation,
+  createBrowserRouter
 } from 'react-router-dom'
 
 import { ToastContainer } from 'react-toastify';
@@ -96,7 +96,7 @@ function LazyRoute({children}: {children: JSX.Element}) {
    Router
 ========================= */
 
-export const router = createHashRouter(
+export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/auth" element={<AuthLayout />}>
