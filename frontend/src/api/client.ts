@@ -1,4 +1,5 @@
 import type { HttpError } from "../types/error"
+import ReactGA from "react-ga4";
 
 export async function fakeRequest<T>(data: T, delay = 200): Promise<T> {
   await new Promise(resolve => setTimeout(resolve, delay))
@@ -36,6 +37,23 @@ type ApiRequestOptions = Omit<RequestInit, 'body'> & {
 }
 
 let refreshPromise: Promise<void> | null = null
+
+function getAnalyticsCategory(path: string): string {
+  if (path.startsWith("/auth")) return "Auth";
+  if (path.startsWith("/events")) return "Events";
+  if (path.startsWith("/infos")) return "Infos";
+  if (path.startsWith("/tags")) return "Tags";
+  if (path.startsWith("/users")) return "Users";
+  return "API";
+}
+
+function trackApiEvent(path: string, method: string, fullUrl: string) {
+  ReactGA.event({
+    category: getAnalyticsCategory(path),
+    action: `${method} ${path}`,
+    label: fullUrl,
+  });
+}
 
 function getErrorMessage(statusText: string, isJson: boolean, data: unknown) {
   return (
@@ -79,6 +97,11 @@ async function refreshAccessToken(baseUrl: string) {
 export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   const baseUrl = getApiBaseUrl()
   const url = `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`
+
+  const method = (options.method ?? 'GET').toUpperCase()
+
+  // Dispara evento de analytics para chamadas de API
+  trackApiEvent(path, method, url)
 
   const headers = new Headers(options.headers)
   if (options.body !== undefined && !headers.has('Content-Type')) {

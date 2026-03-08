@@ -1,4 +1,4 @@
-import { lazy, Suspense, type JSX } from 'react'
+import { lazy, Suspense, useEffect, type JSX } from 'react'
 import {
   createRoutesFromElements,
   Route,
@@ -7,6 +7,7 @@ import {
   useLocation,
   createBrowserRouter
 } from 'react-router-dom'
+import ReactGA from "react-ga4";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -181,6 +182,13 @@ export const router = createBrowserRouter(
 
 export default function App() {
   const { theme } = useTheme()
+  
+  useEffect(() => {
+    ReactGA.initialize("G-0QVNHKVBX7");
+
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname, title: "App.tsx" });
+  }, [])
+
   return (
     <AuthProvider>
       <ToastContainer
