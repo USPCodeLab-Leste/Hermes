@@ -26,5 +26,6 @@ export interface InfosResponse {
 export interface CreateInfoPayload {
   title: string
   body: string
+  icon_name: string
   tags: string[]
 }

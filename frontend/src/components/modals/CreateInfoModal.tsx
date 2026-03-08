@@ -198,6 +198,7 @@ const CreateInfoModalContent = ({
           id: initialInfo.id,
           title: formData.title.trim(),
           body: formData.body.trim(),
+          icon_name: iconInfo.name,
           tags: tagsArray,
         });
 
@@ -206,6 +207,7 @@ const CreateInfoModalContent = ({
         await createInfo({
           title: formData.title.trim(),
           body: formData.body.trim(),
+          icon_name: iconInfo.name,
           tags: tagsArray,
         });
 
@@ -223,6 +225,7 @@ const CreateInfoModalContent = ({
     updateInfo,
     formData.body,
     formData.title,
+    iconInfo,
     initialInfo,
     isEditMode,
     onClose,

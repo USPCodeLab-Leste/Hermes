@@ -13,6 +13,7 @@ export function useCreateInfo() {
       const payload: CreateInfoPayload = {
         title: input.title.trim(),
         body: input.body.trim(),
+        icon_name: input.icon_name,
         tags: input.tags,
       };
 
@@ -24,10 +25,7 @@ export function useCreateInfo() {
     },
   });
 
-  const create = useCallback(
-    (input: CreateInfoPayload) => mutation.mutateAsync(input),
-    [mutation],
-  );
+  const create = useCallback((input: CreateInfoPayload) => mutation.mutateAsync(input), [mutation]);
 
   return [
     create,

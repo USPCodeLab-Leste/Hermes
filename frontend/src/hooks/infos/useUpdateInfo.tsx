@@ -14,11 +14,12 @@ export function useUpdateInfo() {
 
   const mutation = useMutation({
     mutationFn: async (input: UpdateInfoInput) => {
-      const { id, title, body, tags } = input;
+      const { id, title, body, tags, icon_name } = input;
 
       return patchInfo(id, {
         title: title.trim(),
         body: body.trim(),
+        icon_name,
         tags,
       });
     },

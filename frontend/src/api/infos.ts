@@ -54,11 +54,7 @@ export async function getInfoByType(type: string, title?: string): Promise<Infos
 export function postInfo(data: CreateInfoPayload) {
   return apiRequest<{ message: string }>('/infos/', {
     method: 'POST',
-    body: {
-      title: data.title,
-      body: data.body,
-      tags: data.tags,
-    },
+    body: data,
   })
 }
 
