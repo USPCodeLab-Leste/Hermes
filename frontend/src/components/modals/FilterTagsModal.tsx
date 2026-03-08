@@ -75,7 +75,7 @@ export function FilterTagsModal({ isOpen, onClose, activeTags, onFilter, onClean
     >
       <section className="flex flex-col gap-4">
         <h2 className="font-bold text-xl text-center">Filtros de Busca</h2>
-        <div className="max-h-70 overflow-y-auto flex flex-col gap-6">
+        <div className="max-h-70 overflow-y-auto flex flex-col gap-6 pb-2">
           {isTagsLoading ? (
             <FilterTagSkeleton />
           ) : (

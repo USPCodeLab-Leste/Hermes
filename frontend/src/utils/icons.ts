@@ -9,7 +9,14 @@ const infoTagToIconName: Record<string, string> = {
 	transporte: "bus",
 	biblioteca: "books",
 	saude: "health-kit",
-	estagios: "briefcase",
+	auxilios: "pig-money",
+	moradia: "home",
+	acessibilidade: "acessible",
+	apoio_psicologico: 'brain',
+	pesquisa: "microscope",
+	monitoria: "chalkboard-teacher",
+	estagio: 'briefcase',
+	curriculo: 'file-description',
 	bolsas: "info",
 };
 

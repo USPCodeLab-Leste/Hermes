@@ -117,7 +117,7 @@ const InfoCards = ({ isLoading, infos, type }: InfoTypeProps) => {
           className="grid grid-cols-2 lg:grid-cols-3 gap-6"
           key="info-cards-skeleton"
         >
-          {Array.from({ length: 6 }).map((_, index) => (
+          {Array.from({ length: 4 }).map((_, index) => (
             <InfoCardSkeleton key={`info-card-skeleton-${index}`} />
           ))}
         </motion.div>
