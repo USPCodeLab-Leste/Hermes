@@ -33,9 +33,11 @@ export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin =
   const handleShareArticle = useCallback((info: Info) => {
     if (!info) return;
 
+    const urlObj = new URL(window.location.href);
+    urlObj.searchParams.set("q", info.title);
+    urlObj.searchParams.set("article", info.id);
     const tag = info.tags[0]
-    const link = `/info/${tag.type}/${tag.name}?q=${info.title}&article=${info.id}`
-    const url = window.location.href.split('/info/')[0]+link;
+    const url = window.location.origin + `/info/${tag.type}/${tag.name}?` + urlObj.searchParams.toString();
 
     share({ url, title: info.title, text: `Confira o artigo ${info.title} no Hermes!` });
   }, [share]);
@@ -63,49 +65,49 @@ export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin =
   }, [del, handleModalClose, selectedInfo]);
     
   return (
-    <ModalWrapper isOpen={modalOpen} onClose={handleModalClose}>
-      <>
-        <CreateInfoModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onCreated={handleModalClose}
-          initialInfo={selectedInfo}
-        />
-        <ConfirmDeleteModal
-          isOpen={isConfirmDeleteOpen}
-          onCancel={handleCloseConfirmDelete}
-          onConfirm={handleConfirmDelete}
-          isLoading={isDeleteLoading}
-          error={errorDelete}
-          title="Excluir artigo"
-          description={
-            selectedInfo
-              ? `Tem certeza que deseja excluir a informação "${selectedInfo.title}"? Essa ação não pode ser desfeita.`
-              : "Tem certeza que deseja excluir? Essa ação não pode ser desfeita."
-          }
-        />
+    <>
+      <CreateInfoModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onCreated={handleModalClose}
+        initialInfo={selectedInfo}
+      />
+      <ModalWrapper isOpen={modalOpen} onClose={handleModalClose}>
+          <ConfirmDeleteModal
+            isOpen={isConfirmDeleteOpen}
+            onCancel={handleCloseConfirmDelete}
+            onConfirm={handleConfirmDelete}
+            isLoading={isDeleteLoading}
+            error={errorDelete}
+            title="Excluir artigo"
+            description={
+              selectedInfo
+                ? `Tem certeza que deseja excluir a informação "${selectedInfo.title}"? Essa ação não pode ser desfeita.`
+                : "Tem certeza que deseja excluir? Essa ação não pode ser desfeita."
+            }
+          />
 
-        {selectedInfo ? (
-          <section className="flex flex-col gap-4">
-            <div className="max-h-[60dvh] overflow-auto">
-              <h2 className="text-2xl font-bold mb-4 before:content-['#_'] dark:before:text-paper/75 before:text-ink/75">{selectedInfo?.title}</h2>
-              <MarkdownRenderer>{selectedInfo.body}</MarkdownRenderer>
-            </div>
-            {isAdmin ? (
-              <AdminEditDeleteButtons onEdit={() => setIsEditModalOpen(true)} onDelete={handleOpenConfirmDelete} />
-            ) : (
-              <GenericButton onClick={() => handleShareArticle(selectedInfo)}>
-                <span className="text-paper">Compartilhar Artigo</span>
-              </GenericButton>
-            )}
-          </section>
-        ) : (
-          <section className="min-h-70">
-            <InfoModalSkeleton />
-          </section>
-        )}
-      </>
-    </ModalWrapper>
+          {selectedInfo ? (
+            <section className="flex flex-col gap-4">
+              <div className="max-h-[60dvh] overflow-auto">
+                <h2 className="text-2xl font-bold mb-4 before:content-['#_'] dark:before:text-paper/75 before:text-ink/75">{selectedInfo?.title}</h2>
+                <MarkdownRenderer>{selectedInfo.body}</MarkdownRenderer>
+              </div>
+              {isAdmin ? (
+                <AdminEditDeleteButtons onEdit={() => setIsEditModalOpen(true)} onDelete={handleOpenConfirmDelete} />
+              ) : (
+                <GenericButton onClick={() => handleShareArticle(selectedInfo)}>
+                  <span className="text-paper">Compartilhar Artigo</span>
+                </GenericButton>
+              )}
+            </section>
+          ) : (
+            <section className="min-h-70">
+              <InfoModalSkeleton />
+            </section>
+          )}
+      </ModalWrapper>
+    </>
   );
 }
 
