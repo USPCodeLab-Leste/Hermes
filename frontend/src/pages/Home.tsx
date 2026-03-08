@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, useEffect, memo } from "react"
+import { useCallback, useMemo, useState, memo } from "react"
 import { useSearchParams } from "react-router-dom"
 import { toast } from "react-toastify"
 
@@ -35,9 +35,9 @@ export default function Home() {
   const {events, hasNextPage, isLoading: isLoadingEvents, isFetching: isEventsFetching, fetchNextPage} = useEvents({eventTitle: searchQuery, tags: activeTagsNames})
 
   // Modal States
-  const [isCardModalOpen, setIsCardModalOpen] = useState(false)
+  const [isCardModalOpen, setIsCardModalOpen] = useState(() => Boolean(eventId))
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(() => eventId)
 
   // ===================
   // == Handlers
@@ -49,6 +49,9 @@ export default function Home() {
       prev.set("event", id);
       return prev;
     }, { replace: true });
+
+    setSelectedEventId(id);
+    setIsCardModalOpen(true);
   }, [setParams])
 
   // Fecha modal do evento
@@ -99,32 +102,6 @@ export default function Home() {
 
   const countActiveFilters = useMemo(() => Object.values(activeTags).length, [activeTags])
   const selectedEventData = useMemo(() => events?.find((e) => e.id === selectedEventId) ?? null, [events, selectedEventId])
-
-  // useDebug("Home", {
-  //   eventId,
-  //   searchQuery,
-  //   activeTagsKeys: Object.keys(activeTags ?? {}).join(","),
-  //   activeTagsNamesLen: activeTagsNames.length,
-  //   activeTagsValuesLen: activeTagsValues.length,
-  //   eventsLen: events.length,
-  //   isLoadingEvents,
-  //   isEventsFetching,
-  //   countActiveFilters,
-  //   selectedEventId,
-  //   selectedEventDataId: selectedEventData?.id ?? null,
-  //   paramsString: params.toString(),
-  // })
-
-  // ===================
-  // == Effects
-  // ===================
-
-  useEffect(() => {
-    if (!eventId) return;
-
-    setSelectedEventId(eventId);
-    setIsCardModalOpen(true);
-  }, [eventId])
 
   return (
     <>

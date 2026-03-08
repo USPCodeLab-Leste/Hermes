@@ -52,6 +52,25 @@ const defaultFormErrors = {
   tags: { hasError: false, message: "" },
 };
 
+const getInitialFormData = (event: Event | null) => ({
+  title: event?.title ?? "",
+  body: event?.body ?? "",
+  local: event?.local ?? "",
+  data_inicio: event?.data_inicio ?? "",
+  data_fim: event?.data_fim ?? "",
+});
+
+const getInitialActiveTags = (event: Event | null): ActiveTags => {
+  if (!event?.tags) return {} as ActiveTags;
+
+  const initialActiveTags: ActiveTags = {} as ActiveTags;
+  event.tags.forEach((tag) => {
+    initialActiveTags[tag.id] = tag as GenericTag;
+  });
+
+  return initialActiveTags;
+};
+
 const CreateEventModalContent = ({
   onClose,
   onCreated,
@@ -61,6 +80,7 @@ const CreateEventModalContent = ({
   onCreated?: () => void;
   initialEvent: Event | null;
 }) => {
+
   const navigate = useNavigate();
   const [createEvent, isCreateLoading, createError] = useCreateEvent();
   const [updateEvent, isUpdateLoading, updateError] = useUpdateEvent();
@@ -69,42 +89,28 @@ const CreateEventModalContent = ({
 
   const [errors, setErrors] = useState(() => structuredClone(defaultFormErrors));
   const [bannerFile, setBannerFile] = useState<File | null>(null);
-  const [existingBannerUrl, setExistingBannerUrl] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    title: "",
-    body: "",
-    local: "",
-    data_inicio: "", // datetime-local
-    data_fim: "", // datetime-local
-  });
+  const [existingBannerUrl] = useState<string | null>(() => initialEvent?.img_banner ?? null);
+  const [formData, setFormData] = useState(() => getInitialFormData(initialEvent));
 
   const { data: availableTags = [], isLoading: isLoadingTags } = useEventTags(true);
-  const [activeTags, setActiveTags] = useState<ActiveTags>({} as ActiveTags);
+  const [activeTags, setActiveTags] = useState<ActiveTags>(() => getInitialActiveTags(initialEvent));
 
   const isEditMode = Boolean(initialEvent);
 
-  useEffect(() => {
-    if (!initialEvent) return;
-
-    setFormData({
-      title: initialEvent.title ?? "",
-      body: initialEvent.body ?? "",
-      local: initialEvent.local ?? "",
-      data_inicio: initialEvent.data_inicio ? initialEvent.data_inicio.slice(0, 16) : "",
-      data_fim: initialEvent.data_fim ? initialEvent.data_fim.slice(0, 16) : "",
-    });
-
-    const initialActiveTags: ActiveTags = {};
-    (initialEvent.tags ?? []).forEach((tag) => {
-      initialActiveTags[tag.id] = tag as GenericTag;
-    });
-    setActiveTags(initialActiveTags);
-
-    setExistingBannerUrl(initialEvent.img_banner ?? null);
-  }, [initialEvent]);
-
+  // Memos
   const tagsArray = useMemo(() => Object.values(activeTags).map((tag) => tag.name), [activeTags]);
 
+  const hasAnyError = useMemo(() =>
+    errors.title.hasError ||
+    errors.body.hasError ||
+    errors.local.hasError ||
+    errors.data_inicio.hasError ||
+    errors.data_fim.hasError ||
+    errors.img_banner.hasError ||
+    errors.tags.hasError,
+  [errors]);
+
+  // Handlers
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
 
@@ -340,18 +346,6 @@ const CreateEventModalContent = ({
     tagsArray,
     isEditMode,
   ]);
-
-  const hasAnyError = useMemo(
-    () =>
-      errors.title.hasError ||
-      errors.body.hasError ||
-      errors.local.hasError ||
-      errors.data_inicio.hasError ||
-      errors.data_fim.hasError ||
-      errors.img_banner.hasError ||
-      errors.tags.hasError,
-    [errors],
-  );
 
   return (
     <div className="flex flex-col gap-4">

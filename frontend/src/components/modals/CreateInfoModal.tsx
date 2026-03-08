@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 // Components
@@ -59,6 +59,29 @@ const defaultFormErrors = {
   tags: { hasError: false, message: "" },
 };
 
+const getInitialFormData = (info: Info | null) => ({
+  title: info?.title ?? "",
+  body: info?.body ?? "",
+});
+
+const getInitialActiveTags = (info: Info | null): ActiveTags => {
+  if (!info?.tags) return {} as ActiveTags;
+
+  const initialActiveTags: ActiveTags = {} as ActiveTags;
+  info.tags.forEach((tag) => {
+    initialActiveTags[tag.id] = tag as GenericTag;
+  });
+
+  return initialActiveTags;
+};
+
+const getInitialIconInfo = (info: Info | null) => {
+  if (!info?.icon_name) return getDefaultIconOption();
+
+  const existingIcon = getIconOptionByName(info.icon_name);
+  return existingIcon ?? getDefaultIconOption();
+};
+
 const CreateInfoModalContent = ({
   onClose,
   onCreated,
@@ -68,42 +91,20 @@ const CreateInfoModalContent = ({
   onCreated?: () => void;
   initialInfo: Info | null;
 }) => {
+
   const [createInfo, isCreateLoading] = useCreateInfo();
   const [updateInfo, isUpdateLoading] = useUpdateInfo();
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const [errors, setErrors] = useState(() => structuredClone(defaultFormErrors));
-  const [iconInfo, setIconInfo] = useState(() => getDefaultIconOption());
-  const [formData, setFormData] = useState({
-    title: "",
-    body: "",
-  });
+  const [iconInfo, setIconInfo] = useState(() => getInitialIconInfo(initialInfo));
+  const [formData, setFormData] = useState(() => getInitialFormData(initialInfo));
 
   const { data: availableTags = [], isLoading: isLoadingTags } = useInfoTags(true);
-  const [activeTags, setActiveTags] = useState<ActiveTags>({} as ActiveTags);
+  const [activeTags, setActiveTags] = useState<ActiveTags>(() => getInitialActiveTags(initialInfo));
 
   const isEditMode = Boolean(initialInfo);
-
-  useEffect(() => {
-    if (!initialInfo) return;
-
-    setFormData({
-      title: initialInfo.title ?? "",
-      body: initialInfo.body ?? "",
-    });
-
-    const initialActiveTags: ActiveTags = {};
-    (initialInfo.tags ?? []).forEach((tag) => {
-      initialActiveTags[tag.id] = tag as GenericTag;
-    });
-    setActiveTags(initialActiveTags);
-
-    if (initialInfo.icon_name) {
-      const existingIcon = getIconOptionByName(initialInfo.icon_name);
-      setIconInfo(existingIcon ?? getDefaultIconOption());
-    }
-  }, [initialInfo]);
 
   const tagsArray = useMemo(() => Object.values(activeTags).map((tag) => tag.name), [activeTags]);
 
