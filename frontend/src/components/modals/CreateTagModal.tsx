@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 // Components
@@ -43,11 +43,27 @@ function CreateTagModalContent({
 }) {
   const [createTag, isCreating] = useCreateTag();
 
-  const [isEventTag, setIsEventTag] = useState(true);
-  const [eventType, setEventType] = useState<EventTagType>(eventTypes[0]);
-  const [infoType, setInfoType] = useState<InfoTagType>(infoTypes[0]);
+  const [isEventTag, setIsEventTag] = useState(sessionStorage.getItem("isEventTag") ? JSON.parse(sessionStorage.getItem("isEventTag") as string) : true);
+  const [eventType, setEventType] = useState<EventTagType>(sessionStorage.getItem("eventType") ? sessionStorage.getItem("eventType") as EventTagType : eventTypes[0]);
+  const [infoType, setInfoType] = useState<InfoTagType>(sessionStorage.getItem("infoType") ? sessionStorage.getItem("infoType") as InfoTagType : infoTypes[0]);
   const [name, setName] = useState("");
   const [errors, setErrors] = useState(() => structuredClone(defaultErrors));
+  const [continueCreating, setContinueCreating] = useState(false);
+
+  useEffect(() => {
+    const storageKey = "isEventTag";
+    sessionStorage.setItem(storageKey, JSON.stringify(isEventTag));
+  }, [isEventTag]);
+
+  useEffect(() => {
+    const storageKey = "eventType"
+    sessionStorage.setItem(storageKey, eventType);
+  }, [eventType]);
+
+  useEffect(() => {
+    const storageKey = "infoType"
+    sessionStorage.setItem(storageKey, infoType);
+  }, [infoType]);
 
   const handleToggleScope = useCallback((scope: "event" | "info") => {
     setIsEventTag(scope === "event");
@@ -77,7 +93,9 @@ function CreateTagModalContent({
     }));
   }, []);
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
      if (isCreating) return;
 
     const trimmedName = name.trim();
@@ -115,23 +133,25 @@ function CreateTagModalContent({
 
       toast.success("Tag criada com sucesso!");
       onCreated?.();
-      onClose();
+      if (!continueCreating) {
+        onClose();
+      }
 
       setName("");
-      setIsEventTag(true);
-      setEventType(eventTypes[0]);
-      setInfoType(infoTypes[0]);
+      // setIsEventTag(true);
+      // setEventType(eventTypes[0]);
+      // setInfoType(infoTypes[0]);
       setErrors(structuredClone(defaultErrors));
     } catch (error) {
       toast.error("Erro ao criar tag");
     }
-  }, [createTag, eventType, infoType, isCreating, isEventTag, name, onClose, onCreated]);
+  }, [continueCreating, createTag, eventType, infoType, isCreating, isEventTag, name, onClose, onCreated]);
 
   const availableTypes = isEventTag ? eventTypes : infoTypes;
   const currentType = isEventTag ? eventType : infoType;
 
   return (
-    <form action={handleSubmit} className="flex flex-col gap-3">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       {/* Escopo: evento ou informação */}
       <div className="flex flex-col gap-2">
         <Label label="Escopo" id="tag-scope" />
@@ -200,6 +220,20 @@ function CreateTagModalContent({
         disabled={isCreating}
         required={true}
       />
+
+      <div className="flex items-center gap-2">
+        <input
+          id="continue-creating"
+          type="checkbox"
+          className="h-4 w-4 accent-teal-light"
+          checked={continueCreating}
+          onChange={(e) => setContinueCreating(e.target.checked)}
+          disabled={isCreating}
+        />
+        <label htmlFor="continue-creating" className="text-sm">
+          Continuar criando
+        </label>
+      </div>
 
       <GenericButton type="submit" disabled={isCreating}>
         <span className="text-paper">
