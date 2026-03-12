@@ -18,6 +18,7 @@ import { groupByType } from "../../utils/tags";
 import ArrowIcon from "../../assets/icons/right-arrow.svg?react";
 import PlusIcon from "../../assets/icons/plus.svg?react";
 import type { GenericTag } from "../../types/tag";
+import { TagsSkeleton } from "../../components/skeletons/TagsSkeleton";
 
 export default function CreateTags() {
   const { data: eventTags, isLoading: isLoadingEvents } = useEventTags(true);
@@ -154,7 +155,7 @@ function TagsSection({
             className="overflow-hidden p-4 border-2 border-t-0 rounded-b-2xl"
           >
             {isLoading ? (
-              <p className="text-sm text-paper/75">Carregando {title.toLowerCase()}...</p>
+              <TagsSkeleton />
             ) : !hasAnyTags ? (
               <p className="text-sm text-paper/75">{emptyMessage}</p>
             ) : (

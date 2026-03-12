@@ -14,6 +14,7 @@ import { ModalWrapper } from "./Modal";
 import { SelectTags } from "../Events";
 import { ConfirmDeleteModal } from "./ConfirmModal";
 import { Tooltip } from "../Tooltip";
+import { TagSkeleton } from "../skeletons/TagsSkeleton";
 
 // Hooks
 import { useCreateEvent } from "../../hooks/events/useCreateEvent";
@@ -467,7 +468,7 @@ const CreateEventModalContent = ({
               <Tooltip content="Caso não encontre a tag que deseja, vá na aba Tags e crie a sua"/>
             </div>
             {isLoadingTags ? (
-              <p className="text-sm text-paper/75">Carregando tags...</p>
+              <TagSkeleton hasType={false} />
             ) : (
               <SelectTags
                 tags={availableTags as GenericTag[]}

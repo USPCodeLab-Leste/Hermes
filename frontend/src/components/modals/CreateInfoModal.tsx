@@ -16,6 +16,7 @@ import {
 import { LazySvg } from "../LazySvg";
 import { SelectTags } from "../Events";
 import { ConfirmDeleteModal } from "./ConfirmModal";
+import { TagSkeleton } from "../skeletons/TagsSkeleton";
 
 // Hooks
 import { useInfoTags } from "../../hooks/tags/useInfoTags";
@@ -308,7 +309,7 @@ const CreateInfoModalContent = ({
               <Tooltip content="Caso não encontre a tag que deseja, vá na aba Tags e crie a sua"/>
             </div>
             {isLoadingTags ? (
-              <p className="text-sm text-paper/75">Carregando tags...</p>
+              <TagSkeleton hasType={false} />
             ) : (
               <SelectTags
                 tags={availableTags as GenericTag[]}

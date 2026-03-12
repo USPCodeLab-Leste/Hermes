@@ -8,7 +8,7 @@ import { useEventTags } from "../../hooks/tags/useEventTags"
 import { ModalWrapper } from "./Modal"
 import { SelectTags } from "../Events"
 import { GenericButton as Button } from "../GenericButton"
-import { FilterTagSkeleton } from "../skeletons/FilterTagSkeleton"
+import { TagsSkeleton } from "../skeletons/TagsSkeleton"
 import { type GenericTag, type ActiveTags } from "../../types/tag"
 import { groupByType } from "../../utils/tags"
 
@@ -77,7 +77,7 @@ export function FilterTagsModal({ isOpen, onClose, activeTags, onFilter, onClean
         <h2 className="font-bold text-xl text-center">Filtros de Busca</h2>
         <div className="max-h-70 overflow-y-auto flex flex-col gap-6 pb-2">
           {isTagsLoading ? (
-            <FilterTagSkeleton />
+            <TagsSkeleton />
           ) : (
             <>
               {tagsEntries.map(([type, tags]) => (
