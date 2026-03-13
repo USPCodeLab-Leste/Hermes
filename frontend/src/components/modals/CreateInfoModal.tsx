@@ -83,6 +83,8 @@ const getInitialIconInfo = (info: Info | null) => {
   return existingIcon ?? getDefaultIconOption();
 };
 
+const INFO_MAX_CONTENT_LENGTH = 1000;
+
 const CreateInfoModalContent = ({
   onClose,
   onCreated,
@@ -160,8 +162,8 @@ const CreateInfoModalContent = ({
     } else if (formData.body.trim().length < 10) {
       newErrors.body = { hasError: true, message: "O conteúdo deve ter ao menos 10 caracteres." };
       hasLocalError = true;
-    } else if (formData.body.trim().length > 1000) {
-      newErrors.body = { hasError: true, message: "O conteúdo deve ter no máximo 1000 caracteres." };
+    } else if (formData.body.trim().length > INFO_MAX_CONTENT_LENGTH) {
+      newErrors.body = { hasError: true, message: `O conteúdo deve ter no máximo ${INFO_MAX_CONTENT_LENGTH} caracteres.` };
       hasLocalError = true;
     }
 
@@ -273,6 +275,7 @@ const CreateInfoModalContent = ({
             required={true}
             hasError={errors.body.hasError}
             errorMessage={errors.body.message}
+            maxLength={INFO_MAX_CONTENT_LENGTH}
           />
 
           {/* Icon */}

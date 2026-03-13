@@ -20,6 +20,7 @@ interface MarkdownWritePreviewProps {
   placeholder?: string;
   hasError?: boolean;
   errorMessage?: string;
+  maxLength?: number;
 }
 
 export function MarkdownWritePreview({
@@ -32,6 +33,7 @@ export function MarkdownWritePreview({
   placeholder,
   hasError,
   errorMessage,
+  maxLength = 1000,
 }: MarkdownWritePreviewProps) {
   const [isPreview, setIsPreview] = useState(false);
 
@@ -113,6 +115,8 @@ export function MarkdownWritePreview({
     }
   }, [disabled, emitValue, insertAtSelection, makeTokenId]);
 
+  const hasRealError = (hasError && errorMessage) || value.length > maxLength;
+
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-2">
@@ -128,11 +132,11 @@ export function MarkdownWritePreview({
       </div>
 
       <div
-        className={`
-          border-3 rounded-2xl p-2 bg-transparent transition-colors duration-300
-          ${hasError ? "border-red-300 text-red-200" : "dark:border-paper border-ink dark:text-paper text-ink focus-within:border-teal-light"}
-        `}
+        className={`border-3 rounded-2xl p-2 bg-transparent transition-colors duration-300 relative ${hasRealError ? "border-red-300 text-red-200" : "dark:border-paper border-ink dark:text-paper text-ink focus-within:border-teal-light"}`}
       >
+        <div className={`absolute right-0 bottom-0 p-2  text-xs pointer-events-none select-none ${value.length > maxLength ? "text-red-300" : value.length + 50 > maxLength ? "*:text-orange-400" : "dark:text-paper/75 text-ink/75"}`}>
+          <span>{value.length}</span><span>/</span><span>{maxLength}</span>
+        </div>
         {isPreview ? (
           <div className="h-40 overflow-auto">
             <MarkdownRenderer>
