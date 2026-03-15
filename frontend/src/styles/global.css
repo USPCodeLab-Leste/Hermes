@@ -38,8 +38,16 @@ html, body {
   line-height: 1.2;
 }
 
-html, body {
+#root {
   @apply bg-aux-3 dark:bg-violet-mid;
+}
+
+body, html {
+  @apply bg-aux-3 dark:bg-violet-dark;
+}
+
+body:has(.main-app), html:has(.main-app) {
+  @apply bg-violet-dark;
 }
 
 body {
