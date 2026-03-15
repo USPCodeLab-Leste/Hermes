@@ -28,8 +28,8 @@ export function useCreateEvent() {
         title: title.trim(),
         body: body.trim(),
         local: local.trim(),
-        data_inicio: data_inicio + ":00Z",
-        data_fim: data_fim + ":00Z",
+        data_inicio: new Date(data_inicio).toISOString(),
+        data_fim: new Date(data_fim).toISOString(),
         img_banner,
         tags,
       };

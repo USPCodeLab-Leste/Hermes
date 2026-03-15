@@ -25,6 +25,9 @@ import { useEventTags } from "../../hooks/tags/useEventTags";
 import type { Event } from "../../types/events";
 import type { ActiveTags, GenericTag } from "../../types/tag";
 
+// Utils
+import { formatDateTimeForInput } from "../../utils/dates";
+
 export function CreateEventModal({
   isOpen,
   onClose,
@@ -53,12 +56,13 @@ const defaultFormErrors = {
   tags: { hasError: false, message: "" },
 };
 
+
 const getInitialFormData = (event: Event | null) => ({
   title: event?.title ?? "",
   body: event?.body ?? "",
   local: event?.local ?? "",
-  data_inicio: event?.data_inicio ?? "",
-  data_fim: event?.data_fim ?? "",
+  data_inicio: formatDateTimeForInput(event?.data_inicio ?? ""),
+  data_fim: formatDateTimeForInput(event?.data_fim ?? ""),
 });
 
 const getInitialActiveTags = (event: Event | null): ActiveTags => {

@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react"
+import { toast } from "react-toastify"
 
 // Hooks
 import { useShare } from "../hooks/useShare"
@@ -17,6 +18,14 @@ import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
 import { ConfirmDeleteModal } from "./modals/ConfirmModal"
 import { CreateEventModal } from "./modals/CreateEventModal"
+
+// Icons
+
+import CalendarIcon from "../assets/icons/calendar-plus.svg?react"
+
+// Utils
+import { createGoogleCalendarLink, downloadICS } from "../utils/dates"
+import { isMobile } from "../utils/so"
 
 
 interface SelectedEventDetailsProps {
@@ -76,6 +85,27 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
     followTag({ tagId: tag.id, isFollowing });
   }, [followTag, mapTags])
 
+  const handleAddToCalendar = useCallback(() => {
+    if (!event) return
+
+    const calendarEvent = {
+      title: event.title || "",
+      description: event.body || "",
+      location: event.local || "",
+      start: new Date(event.data_inicio || ""),
+      end: new Date(event.data_fim || ""),
+    }
+
+    if (isMobile()) {
+      downloadICS(calendarEvent)
+    } else {
+      const url = createGoogleCalendarLink(calendarEvent)
+      window.open(url, "_blank")
+    }
+
+    toast.success("Evento salvo! Abra o arquivo .ics nos downloads para adicioná-lo ao seu calendário.")
+  }, [event])
+
   return (
     <div className="flex flex-col gap-4">
       <CreateEventModal
@@ -110,7 +140,16 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
           activeTags={mapTags}
           onClick={handleFollowTag}
         />
-        <h2 className="text-2xl font-bold -mb-1">{event?.title}</h2>
+        <div className="flex flex-row justify-between items-center gap-4">
+          <h2 className="text-2xl font-bold -mb-1 overflow-hidden text-ellipsis whitespace-nowrap">{event?.title}</h2>
+          <button 
+            className="cursor-pointer p-2 rounded-xl bg-teal-light shadow-md hover:bg-teal-light/90 transition-colors"
+            onClick={handleAddToCalendar}
+            aria-label={`Adicionar o evento "${event?.title}" ao calendário`}
+          >
+            <CalendarIcon className="size-5 text-paper" />
+          </button>
+        </div>
         <div className="flex flex-row flex-wrap gap-x-2 gap-y-0 items-center mb-2">
           <span className="text-[18px] dark:text-paper/75 text-ink/75">{event?.local}</span>
           <span>-</span>
