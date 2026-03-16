@@ -98,12 +98,13 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
 
     if (isMobile()) {
       downloadICS(calendarEvent)
+      toast.success("Evento salvo! Abra o .ics para adicionar ao seu calendário.")
     } else {
       const url = createGoogleCalendarLink(calendarEvent)
       window.open(url, "_blank")
+      toast.success("Evento aberto no Google Agenda. Confira e salve por lá.")
     }
 
-    toast.success("Evento salvo! Abra o arquivo .ics nos downloads para adicioná-lo ao seu calendário.")
   }, [event])
 
   return (
