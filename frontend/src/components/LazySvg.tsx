@@ -57,7 +57,7 @@ const useLazySvgImport = (name: string) => {
 export const LazySvg = ({ name, className, ...props }: LazySvgProps) => {
   const { loading, error, Svg } = useLazySvgImport(name);
 
-  if (error) {
+  if (error || !Svg) {
     return <UnkownIcon className={className} {...props} />;
   }
 
@@ -67,10 +67,6 @@ export const LazySvg = ({ name, className, ...props }: LazySvgProps) => {
         <div aria-hidden="true" className='loader size-full'></div>
       </div>
     );
-  }
-
-  if (!Svg) {
-    return null;
   }
 
   return <Svg className={className} {...props} />;
