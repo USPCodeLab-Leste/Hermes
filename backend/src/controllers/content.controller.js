@@ -182,7 +182,6 @@ class BaseContentController {
   async getById(req, res) {
     try {
       const id = req.params.id;
-      const userId = req.user.id;
 
       if (!id) {
         return res.status(400).json({ error: "ID não informado" });
@@ -192,10 +191,6 @@ class BaseContentController {
 
       if (!response) {
         return res.status(404).json({ error: `${this.type} não encontrado` });
-      }
-
-      if (!response.autor_id != userId) {
-        return res.status(403).json({ error: "acesso negado: Você não é o autor deste conteúdo"});
       }
 
       const cleanedData = this.removeUnwantedFields(
