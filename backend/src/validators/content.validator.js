@@ -9,7 +9,7 @@ const baseContentSchema = {
   body: z
     .string()
     .min(10, "Descrição precisa ter pelo menos 10 caracteres")
-    .max(1000),
+    .max(3000),
 
   tags: z
     .array(
