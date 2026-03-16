@@ -150,7 +150,7 @@ router.get(
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Acesso restrito a administradores e/ou E-mail não verificado
+ *         description: Acesso restrito
  */
 router.patch(
   "/infos/:id",
@@ -193,7 +193,7 @@ router.patch(
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Acesso restrito a administradores e/ou E-mail não verificado
+ *         description: Acesso restrito
  */
 router.delete(
   "/infos/:id",
