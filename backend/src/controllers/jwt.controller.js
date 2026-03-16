@@ -34,9 +34,10 @@ class JwtController {
             { expiresIn: "1h" }
           );
 
+          const cookieSite = process.env.COOKIE_SAMESITE;
           res.cookie("access_token", newAccessToken, {
             httpOnly: true,
-            sameSite: "lax",
+            sameSite: cookieSite,
             secure: isProduction
           });
 
