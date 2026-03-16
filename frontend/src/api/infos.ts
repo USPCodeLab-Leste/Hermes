@@ -16,11 +16,11 @@ function requestInfos(params: { title?: string; tags?: string[] } = {}) {
 
   if (params.tags && params.tags.length > 0) {
     for (const tag of params.tags) {
-      searchParams.append('tags', tag)
+      searchParams.append('tag', tag)
     }
   }
 
-  return apiRequest<InfosResponse>(`/infos/?${searchParams.toString()}`)
+  return apiRequest<InfosResponse>(`/infos?${searchParams.toString()}`)
 }
 
 // Retorna as informações filtradas por título
@@ -52,7 +52,7 @@ export async function getInfoByType(type: string, title?: string): Promise<Infos
 
 // Faz o post de uma nova informação
 export function postInfo(data: CreateInfoPayload) {
-  return apiRequest<{ message: string }>('/infos/', {
+  return apiRequest<{ message: string }>('/infos', {
     method: 'POST',
     body: data,
   })
