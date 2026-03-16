@@ -130,6 +130,16 @@ class BaseContentController {
         return res.status(400).json({ error: "ID não informado" });
       }
 
+      const contentCheck = await ContentModel.findById(id);
+
+      if (!contentCheck) {
+        return res.status(404).json({ error: `${this.type} não encontrado` });
+      }
+
+      if (contentCheck.autor_id !== userId) {
+        return res.status(403).json({ error: "acesso negado: Você não é o autor deste conteúdo."});
+      }
+
       const body = this.schema.update
         ? this.schema.update.parse(req.body)
         : req.body;
@@ -180,9 +190,7 @@ class BaseContentController {
       const response = await ContentModel.findById(id);
 
       if (!response) {
-        return res.status(404).json({
-          error: `${this.type} não encontrado`
-        });
+        return res.status(404).json({ error: `${this.type} não encontrado` });
       }
 
       const cleanedData = this.removeUnwantedFields(
@@ -207,8 +215,18 @@ class BaseContentController {
       if (!id) {
         return res.status(400).json({ error: "ID não informado" });
       }
+      
+      const contentCheck = await ContentModel.findById(id);
 
-      const response = await ContentModel.delete(id, userId);
+      if (!contentCheck) {
+        return res.status(404).json({ error: `${this.type} não encontrado`});
+      }
+
+      if (contentCheck.autor_id !== userId) {
+        return res.status(403).json({ error: "acesso negado: Você não é o autor deste conteúdo"});
+      }
+      
+      const response = await ContentModel.delete(id);
 
       if (!response) {
         return res.status(400).json({

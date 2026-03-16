@@ -173,7 +173,7 @@ router.post("/events", authMiddleware, emailVerifiedMiddleware, adminMiddleware,
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Acesso restrito a administradores e/ou E-mail não verificado
+ *         description: Acesso restrito
  */
 router.patch(
   "/events/:id",
@@ -217,7 +217,7 @@ router.patch(
  *       401:
  *         description: Não autenticado
  *       403:
- *         description: Acesso restrito a administradores e/ou E-mail não verificado
+ *         description: Acesso restrito
  */
 router.delete(
   "/events/:id",
