@@ -50,4 +50,3 @@ CREATE TABLE IF NOT EXISTS tb_user_tag (
     PRIMARY KEY (user_id, tag_id)
 );
 
---INSERT INTO tb_user (id, name, email, password, role) VALUES (gen_random_uuid(),'HermesADM', 'hermesadmin@usp.br', crypt('12345678', gen_salt('bf')), 'ADMIN');
