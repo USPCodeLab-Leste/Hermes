@@ -1,24 +1,48 @@
-import { fakeRequest } from './client'
-import { authUsers } from '../mocks/auth.mock'
+import { apiRequest } from './client'
 import type { UserMe } from '../types/user'
+import type { BaseResponse, UpdateUserResponse, UserResponse } from '../types/responses'
 
 export async function getMe(): Promise<UserMe> {
-  const uuid = localStorage.getItem('fake-cookie')
-  
-  if (!uuid) {
-    throw new Error('Usuário não autenticado')
-  }
+  const response = await apiRequest<UserResponse>('/users/me', {
+    method: 'GET',
+  })
 
-  const authUser = authUsers.find(u => u.uuid === uuid)
+  return response.user
+}
 
-  if (!authUser) {
-    throw new Error('Usuário não encontrado')
-  }
+export async function postChangeName(data: { name: string }) {
+  return apiRequest<UpdateUserResponse>('/users/me', {
+    method: 'PATCH',
+    body: {
+      name: data?.name,
+    },
+  })
+}
 
-  return fakeRequest({
-    id: authUser.uuid,
-    name: authUser.name,
-    email: authUser.email,
-    role: authUser.role,
+export async function postChangePassword(data: {
+  oldPassword: string
+  newPassword: string
+}) {
+  return apiRequest<BaseResponse>('/auth/change-password', {
+    method: 'PATCH',
+    body: {
+      oldPassword: data?.oldPassword,
+      newPassword: data?.newPassword,
+    },
+  })
+}
+
+export async function postUserTag(data: { tagId: string }) {
+  return apiRequest<BaseResponse>('/users/me/tags', {
+    method: 'POST',
+    body: {
+      tagId: data?.tagId,
+    },
+  })
+}
+
+export async function deleteUserTag(tagId: string) {
+  return apiRequest<BaseResponse>(`/users/me/tags/${tagId}`, {
+    method: 'DELETE',
   })
 }

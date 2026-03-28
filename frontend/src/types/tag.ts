@@ -1,4 +1,5 @@
-import { eventTypes, infoTypes } from "../mocks/tags.mock";
+export const eventTypes = ['entidade', 'curso', 'esporte', 'outro'] as const;
+export const infoTypes = ['estudos', 'campus', 'apoios', 'carreira'] as const;
 
 export type EventTagType = typeof eventTypes[number];
 export type InfoTagType = typeof infoTypes[number];
@@ -7,6 +8,7 @@ export interface Tag<T> {
   id: string;
   name: string;
   type: T;
+  active: boolean;
 }
 
 type TagId = string;

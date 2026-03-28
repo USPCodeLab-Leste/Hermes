@@ -1,0 +1,128 @@
+import { useCallback, useState } from "react";
+
+// Componentes
+import { ModalWrapper } from "./Modal";
+import MarkdownRenderer from "../MarkdownRenderer";
+import { GenericButton } from "../GenericButton";
+import { AdminEditDeleteButtons } from "../admin/AdminEditDeleteButtons";
+import { ConfirmDeleteModal } from "./ConfirmModal";
+import { CreateInfoModal } from "./CreateInfoModal";
+
+// Types
+import type { Info } from "../../types/infos";
+
+// Hooks
+import { useShare } from "../../hooks/useShare";
+import { useDeleteInfo } from "../../hooks/infos/useDeleteInfo";
+
+interface InfoModalProps {
+  modalOpen: boolean;
+  handleModalClose: () => void;
+  selectedInfo: Info | undefined;
+  isAdmin?: boolean;
+}
+
+export function InfoModal({ modalOpen, handleModalClose, selectedInfo, isAdmin = false }: InfoModalProps) {
+  const share = useShare();
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [del, isDeleteLoading, errorDelete] = useDeleteInfo();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // Handlers
+
+  const handleShareArticle = useCallback((info: Info) => {
+    if (!info) return;
+
+    const urlObj = new URL(window.location.href);
+    urlObj.searchParams.set("q", info.title);
+    urlObj.searchParams.set("article", info.id);
+    const tag = info.tags[0]
+    const url = window.location.origin + `/info/${tag.type}/${tag.name}?` + urlObj.searchParams.toString();
+
+    share({ url, title: info.title, text: `Confira o artigo ${info.title} no Hermes!` });
+  }, [share]);
+
+  const handleOpenConfirmDelete = useCallback(() => {
+    setIsConfirmDeleteOpen(true);
+  }, []);
+
+  const handleCloseConfirmDelete = useCallback(() => {
+    if (isDeleteLoading) return;
+    
+    setIsConfirmDeleteOpen(false);
+  }, [isDeleteLoading]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!selectedInfo) return;
+
+    try {
+      await del(selectedInfo.id);
+      setIsConfirmDeleteOpen(false);
+      handleModalClose();
+    } catch {
+      // erro é exposto via errorDelete
+    }
+  }, [del, handleModalClose, selectedInfo]);
+    
+  return (
+    <>
+      <CreateInfoModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onCreated={handleModalClose}
+        initialInfo={selectedInfo}
+      />
+      <ModalWrapper isOpen={modalOpen} onClose={handleModalClose}>
+          <ConfirmDeleteModal
+            isOpen={isConfirmDeleteOpen}
+            onCancel={handleCloseConfirmDelete}
+            onConfirm={handleConfirmDelete}
+            isLoading={isDeleteLoading}
+            error={errorDelete}
+            title="Excluir artigo"
+            description={
+              selectedInfo
+                ? `Tem certeza que deseja excluir a informação "${selectedInfo.title}"? Essa ação não pode ser desfeita.`
+                : "Tem certeza que deseja excluir? Essa ação não pode ser desfeita."
+            }
+          />
+
+          {selectedInfo ? (
+            <section className="flex flex-col gap-4">
+              <div className="max-h-[60dvh] overflow-auto">
+                <h2 className="text-2xl font-bold mb-4 before:content-['#_'] dark:before:text-paper/75 before:text-ink/75">{selectedInfo?.title}</h2>
+                <MarkdownRenderer>{selectedInfo.body}</MarkdownRenderer>
+              </div>
+              {isAdmin ? (
+                <AdminEditDeleteButtons onEdit={() => setIsEditModalOpen(true)} onDelete={handleOpenConfirmDelete} />
+              ) : (
+                <GenericButton onClick={() => handleShareArticle(selectedInfo)}>
+                  <span className="text-paper">Compartilhar Artigo</span>
+                </GenericButton>
+              )}
+            </section>
+          ) : (
+            <section className="min-h-70">
+              <InfoModalSkeleton />
+            </section>
+          )}
+      </ModalWrapper>
+    </>
+  );
+}
+
+const InfoModalSkeleton = () => {
+  return (
+    <div aria-hidden="true">
+      <h2 className="text-2xl font-bold mb-4 shimmer text-transparent rounded-2xl w-fit">título grandao</h2>
+      <div className="markdown-body">
+        <h1 className="shimmer text-transparent rounded-2xl border-none!">Cabeçalho 1</h1>
+        <p className="shimmer text-transparent rounded-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p className="shimmer text-transparent rounded-2xl">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p className="shimmer text-transparent rounded-2xl">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p className="shimmer text-transparent rounded-2xl">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        <p className="shimmer text-transparent rounded-2xl">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </div>
+    </div>
+  );
+}

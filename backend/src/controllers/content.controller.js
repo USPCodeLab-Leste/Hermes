@@ -46,13 +46,20 @@ class BaseContentController {
         ? (Array.isArray(tag) ? tag : [tag])
         : undefined;
 
-      const content = await ContentModel.findAll({
+      // Monta objeto base
+      const queryOptions = {
         title,
         type: this.type,
         tags: normalizedTags,
-        limit,
-        offset
-      });
+      };
+
+      // Só aplica paginação se NÃO for info
+      if (this.type !== "info") {
+        queryOptions.limit = limit;
+        queryOptions.offset = offset;
+      }
+
+      const content = await ContentModel.findAll(queryOptions);
 
       // Remove campos null de cada item
       const cleanedData = content.data.map(item =>
@@ -61,10 +68,15 @@ class BaseContentController {
         )
       );
 
-      return res.status(200).json({
-        data: cleanedData,
-        hasMore: content.hasMore
-      });
+      const response = {
+        data: cleanedData
+      };
+
+      if (this.type !== "info") {
+        response.hasMore = content.hasMore;
+      }
+
+      return res.status(200).json(response);
 
     } catch (err) {
       console.error(err);

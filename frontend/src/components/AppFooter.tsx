@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import IconHome from "../assets/icons/home.svg?react";
 import IconBook from "../assets/icons/book.svg?react";
 import IconUser from "../assets/icons/user.svg?react";
-import Ondinha from "../assets/icons/ondinha.svg?react";
+import Ondinha from "../assets/ondinha.svg?react";
 
 export default function AppFooter() {
   return (

@@ -47,6 +47,13 @@ export const infoSchemas = {
         example: "43573bd9-62d8-4f33-af55-7c7dfbg652fd4"
       },
 
+      icon_name: {
+        type: "string",
+        minLength: 3,
+        maxLength: 20,
+        example: "study"
+      },
+
       created_at: {
         type: "string",
         format: "date-time",
@@ -56,10 +63,8 @@ export const infoSchemas = {
       tags: {
         type: "array",
         items: {
-          type: "string",
-          minLength: 1
-        },
-        example: ["Aviso", "Manutenção"]
+          $ref: "#/components/schemas/TagBase"
+        }
       }
     },
 
@@ -100,6 +105,13 @@ export const infoSchemas = {
         minLength: 3,
         maxLength: 100,
         example: "Bloco A"
+      },
+
+      icon_name: {
+        type: "string",
+        minLength: 3,
+        maxLength: 20,
+        example: "study"
       },
 
       tags: {

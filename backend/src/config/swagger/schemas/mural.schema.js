@@ -19,7 +19,12 @@ export const muralSchemas = {
             autor_id: { type: "string", format: "uuid", example: "05af4352-6833-45f3-a9c8-4f4b8c1fec32" },
             created_at: { type: "string", format: "date-time", example: "2026-02-13T01:17:40.274Z" },
             autor_nome: { type: "string", example: "Hermes" },
-            tags: { type: "array", items: { type: "string" }, example: ["event", "Hermes", "node"] }
+            tags: { 
+              type: "array",
+              items: {
+                $ref: "#/components/schemas/TagBase"
+              }
+            }
           },
           required: ["id", "title", "local", "data_inicio", "data_fim", "autor_nome", "tags"]
         }

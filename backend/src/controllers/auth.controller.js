@@ -97,15 +97,16 @@ class AuthController {
       );
 
       // Cookies
+      const cookieSite = process.env.COOKIE_SAMESITE;
       res.cookie("access_token", accessToken, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: cookieSite,
         secure: isProduction
       });
 
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: cookieSite,
         secure: isProduction
       });
 
@@ -120,16 +121,17 @@ class AuthController {
   async logout(req, res) {
 
     try {
-      
+
+      const cookieSite = process.env.COOKIE_SAMESITE;
       await res.clearCookie("access_token", {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: cookieSite,
         secure: isProduction
       });
 
       await res.clearCookie("refresh_token", {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: cookieSite,
         secure: isProduction
       });
 
@@ -156,7 +158,7 @@ class AuthController {
         return res.status(400).json({ error: "Usuário não encontrado"} );
       }
     
-      return res.status(200).json({ message: "Email verificado com sucesso" });
+      return res.redirect("https://portalhermes.app/auth/login?verified=true");
     
     } catch (err) {
       if (err.name === "TokenExpiredError") {

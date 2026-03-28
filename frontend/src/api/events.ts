@@ -1,48 +1,104 @@
-import { fakeRequest } from './client'
-import { mockEvents as events } from '../mocks/events.mock'
-import { getEventTagByName, mockEventTags } from '../mocks/tags.mock';
-import type { EventTagType, Tag } from '../types/tag';
+import { apiRequest } from './client'
+import type { Event, EventsResponse } from '../types/events';
 
-export function getEvents(eventTitle?: string, tags?: string[]) {
-  return fakeRequest(events.filter(e => {
-    const matchesTitle = eventTitle ? e.title.toLowerCase().includes(eventTitle.toLowerCase()) : true;
-    const matchesTags = tags && tags.length > 0 ? tags.every(tag => e.tags.some(eventTag => eventTag.name === tag)) : true;
-
-    return matchesTitle && matchesTags;
-  }));
+interface GetEventsParams {
+  offset: number
+  limit: number
+  title?: string
+  tags?: string[]
 }
 
-export function getMyEvents(eventTitle?: string) {
-  return fakeRequest(events.filter(e => {
-    return eventTitle ? e.title.toLowerCase().includes(eventTitle.toLowerCase()) : true;
-  }));
-}
+// Retorna os eventos com base em um título e/ou tags da API /events
+export function getEvents({ offset, limit, title, tags }: GetEventsParams) {
+  const params = new URLSearchParams()
 
-export function getEventById(id: string) {
-  return fakeRequest(events.find(e => e.id === id))
-}
+  params.set('offset', String(offset))
+  params.set('limit', String(limit))
 
-export function postEvent(data: any) {
-  events.unshift({
-    ...data,
-    tags: data.tags.map((tag: string) => getEventTagByName(tag)) as Tag<EventTagType>[],
-    autor_id: 'fake-user-id-123',
-    created_at: new Date().toISOString(),
-    id: 'event-' + crypto.randomUUID(),
-    status: 'published',
-  })
+  if (title) {
+    params.set('title', title)
+  }
 
-  for (const tagName of data.tags) {
-    if (!mockEventTags.some(tag => tag.name === tagName)) {
-      mockEventTags.push({
-        id: 'event-tag-outro-' + tagName,
-        name: tagName,
-        type: "outro",
-      });
+  if (tags && tags.length > 0) {
+    for (const tag of tags) {
+      params.append('tag', tag)
     }
   }
 
-  return fakeRequest({
-    message: "Evento criado com sucesso",
+  return apiRequest<EventsResponse>(`/events?${params.toString()}`)
+}
+
+interface GetFeedParams {
+  offset: number
+  limit: number
+}
+
+interface MuralResponse {
+  mural: Event[]
+  hasMore: boolean
+}
+
+// Retorna o mural personalizado do usuário a partir da rota /mural
+export async function getFeed({
+  offset,
+  limit,
+}: GetFeedParams): Promise<EventsResponse> {
+  const params = new URLSearchParams()
+  params.set('offset', String(offset))
+  params.set('limit', String(limit))
+
+  const response = await apiRequest<MuralResponse>(`/mural?${params.toString()}`)
+
+  return {
+    data: response.mural,
+    hasMore: response.hasMore,
+  }
+}
+
+// Retorna os eventos criados pelo usuário
+interface GetMyEventsParams {
+  offset: number
+  limit: number
+  title?: string
+}
+
+// Retorna os eventos criados pelo usuário, com filtro opcional por título
+export function getMyEvents(params: GetMyEventsParams) {
+  const { offset, limit, title } = params
+
+  // Por enquanto, reutiliza a mesma lógica de getEvents
+  return getEvents({
+    offset,
+    limit,
+    title,
+    tags: undefined,
+  })
+}
+
+// Retorna um evento específico pelo ID
+export function getEventById(id: string) {
+  return apiRequest<Event>(`/events/${id}`)
+}
+
+// Faz o post de um evento
+export function postEvent(data: any) {
+  return apiRequest<{ message: string }>("/events", {
+    method: "POST",
+    body: data,
+  });
+}
+
+// Atualiza parcialmente um evento
+export function patchEvent(id: string, data: any) {
+  return apiRequest<{ message: string }>(`/events/${id}`, {
+    method: "PATCH",
+    body: data,
+  });
+}
+
+// Deleta um evento pelo id
+export function deleteEvent(eventId: string) {
+  return apiRequest<{ message: string }>(`/events/${eventId}`, {
+    method: "DELETE",
   });
 }

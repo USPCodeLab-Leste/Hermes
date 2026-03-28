@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS tb_content (
     data_inicio TIMESTAMP,        -- opcional
     data_fim TIMESTAMP,           -- opcional
     img_banner TEXT,              -- opcional
+    icon_name VARCHAR(20),        -- opcional
     status VARCHAR(20) DEFAULT 'published',
     autor_id UUID NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

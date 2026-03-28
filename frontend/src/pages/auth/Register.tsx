@@ -1,15 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 // import { motion, AnimatePresence } from "motion/react";
+import { toast } from "react-toastify/unstyled";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-// components
+// Components
 import { MemoizedInputText as InputText } from "../../components/forms/InputText";
 import { MemoizedInputPassword as InputPassword } from "../../components/forms/InputPassword";
 import { SubmitButton } from "../../components/forms/SubmitButton";
 
-// hooks
-import { auth } from "../../services/auth";
+// Hooks
 import { useRegister } from "../../hooks/auth/useRegister";
+import { auth } from "../../services/auth";
 
 const defaultFormErrors = {
   email: {
@@ -36,7 +37,7 @@ export default function Register() {
 
   // Hooks de autenticação
   const [register, regLoading, regError] = useRegister(auth);
-  const [errors, setErrors] = useState(structuredClone(defaultFormErrors));
+  const [errors, setErrors] = useState(() => structuredClone(defaultFormErrors));
 
   const [isPasswordValid, setIsPasswordValid] = useState(false);
 
@@ -88,6 +89,10 @@ export default function Register() {
       newErrors.name.hasError = true;
       newErrors.name.message = "O campo nome é obrigatório!";
       hasLocalError = true;
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name.hasError = true;
+      newErrors.name.message = "O nome deve conter pelo menos 3 caracteres.";
+      hasLocalError = true;
     }
 
     if (hasLocalError) {
@@ -112,12 +117,37 @@ export default function Register() {
   }, [handleRegister]);
 
   useEffect(() => {
-    if (regError) {
-      // TODO: tratar erros vindos do backend de acordo com difrentes status codes
+    if (!regError) return
+
+    const status = regError.status
+
+    if (status === 400) {
+      toast.error('Dados inválidos')
+      return
     }
+
+    if (status === 409) {
+      toast.error('Email já está em uso')
+      setErrors({
+        ...defaultFormErrors,
+        email: {
+          hasError: true,
+          message: 'Este e-mail já está em uso. Por favor, utilize outro e-mail ou faça login.'
+        }
+      })
+      return
+    }
+
+    if (status === 500) {
+      toast.error('Falha ao criar usuario')
+      return
+    }
+
+    toast.error(regError.message || 'Ocorreu um erro ao criar usuário')
   }, [regError]);
 
   const isLoading = regLoading;
+  const hasError = useMemo(() => errors.email.hasError || errors.name.hasError || errors.password.hasError || errors.confirmPassword.hasError || !isPasswordValid, [errors, isPasswordValid]);
 
   return (
     <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
@@ -131,7 +161,7 @@ export default function Register() {
           value={formData.email}
           onChange={handleChange}
           disabled={isLoading}
-          placeholder="E-mail USP"
+          placeholder="hermes@usp.br"
           hasError={errors.email.hasError}
           errorMessage={errors.email.message}
           required={true}
@@ -146,7 +176,7 @@ export default function Register() {
             value={formData.name}
             onChange={handleChange}
             disabled={isLoading}
-            placeholder="Usuário"
+            placeholder="Hermes"
             autocomplete="username"
             hasError={errors.name.hasError}
             errorMessage={errors.name.message}
@@ -158,7 +188,7 @@ export default function Register() {
             value={formData.password}
             onChange={handleChange}
             disabled={isLoading}
-            placeholder="Senha"
+            placeholder="********"
             validation={true}
             autocomplete="new-password"
             onValidationChange={setIsPasswordValid}
@@ -171,7 +201,7 @@ export default function Register() {
             value={formData.confirmPassword}
             onChange={handleChange}
             disabled={isLoading}
-            placeholder="Confirme a senha"
+            placeholder="********"
             validation={false}
             autocomplete="new-password"
             hasError={errors.confirmPassword.hasError}
@@ -180,9 +210,9 @@ export default function Register() {
         </div>
       </div>
 
-      <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Cria Conta"} />
+      <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Cria Conta"} className="dark:bg-teal-light bg-teal-mid" disabled={hasError}/>
 
-      <p className="text-paper text-center">
+      <p className="text-center">
         ou faça <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Login</Link>
       </p>
 

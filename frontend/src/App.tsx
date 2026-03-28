@@ -1,12 +1,13 @@
-import type { JSX } from 'react'
+import { lazy, Suspense, useEffect, type JSX } from 'react'
 import {
-  createHashRouter,
   createRoutesFromElements,
   Route,
   Navigate,
   RouterProvider,
-  useLocation
+  useLocation,
+  createBrowserRouter
 } from 'react-router-dom'
+import ReactGA from "react-ga4";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,11 +15,18 @@ import 'react-toastify/dist/ReactToastify.css';
 // Hooks
 import { useAuth } from './hooks/auth/useAuth'
 import { useTheme } from './hooks/useTheme';
+// import { useDebug } from './hooks/useDebug'
 
 // Layouts
 import AuthLayout from './layouts/AuthLayout'
 import AppLayout from './layouts/AppLayout'
 import InfoLayout from './layouts/InfoLayout'
+
+// Lazy
+const AdminLayout = lazy(() => import('./layouts/AdminLayout'))
+const CreateEvent = lazy(() => import('./pages/admin/CreateEvent'))
+const CreateInfo = lazy(() => import('./pages/admin/CreateInfo'))
+const CreateTags = lazy(() => import('./pages/admin/CreateTags'))
 
 // Contexts
 import { AuthProvider } from './contexts/AuthContext'
@@ -29,20 +37,18 @@ import Home from './pages/Home'
 import Error from './pages/Error'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
-import VerifyEmail from './pages/auth/VerifyEmail'
 import ResetPassword from './pages/auth/ResetPassword'
 import Estudos from './pages/info/Estudos';
 import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
 import Info from './pages/info/InfoTag'
-import Admin from './pages/Admin'
 
 // Components
 import Loading from './components/Loading'
 
 /* =========================
-   Guards de Autenticação
+   Gerais
 ========================= */
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
@@ -79,18 +85,25 @@ function InfoIndexRedirect({ pathname }: { pathname: string }) {
   return <Navigate to={{ pathname, search }} replace />;
 }
 
+function LazyRoute({children}: {children: JSX.Element}) {
+  return (
+    <Suspense fallback={<Loading />}>
+      {children}
+    </Suspense>
+  );
+}
+
 /* =========================
    Router
 ========================= */
 
-export const router = createHashRouter(
+export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/auth" element={<AuthLayout />}>
         <Route index element={<Navigate to="login" replace />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-        <Route path="verify-email" element={<VerifyEmail />} />
         <Route path="reset-password" element={<ResetPassword />} />
       </Route>
 
@@ -126,10 +139,38 @@ export const router = createHashRouter(
             path="admin" 
             element={
               <RequireAdmin>
-                <Admin />
+                <LazyRoute>
+                  <AdminLayout />
+                </LazyRoute>
               </RequireAdmin>
             } 
-          />
+          >
+            <Route index element={<InfoIndexRedirect pathname="/perfil/admin/create_events" />} />
+            <Route 
+              path="create_events" 
+              element={
+                <LazyRoute>
+                  <CreateEvent />
+                </LazyRoute>
+              } 
+            />
+            <Route 
+              path="create_infos" 
+              element={
+                <LazyRoute>
+                  <CreateInfo />
+                </LazyRoute>
+              } 
+            />
+            <Route 
+              path="create_tags" 
+              element={
+                <LazyRoute>
+                  <CreateTags />
+                </LazyRoute>
+              } 
+            />
+          </Route>
         </Route>
       </Route>
 
@@ -141,6 +182,13 @@ export const router = createHashRouter(
 
 export default function App() {
   const { theme } = useTheme()
+  
+  useEffect(() => {
+    ReactGA.initialize("G-0QVNHKVBX7");
+
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname, title: "App.tsx" });
+  }, [])
+
   return (
     <AuthProvider>
       <ToastContainer

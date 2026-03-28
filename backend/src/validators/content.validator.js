@@ -9,7 +9,7 @@ const baseContentSchema = {
   body: z
     .string()
     .min(10, "Descrição precisa ter pelo menos 10 caracteres")
-    .max(1000),
+    .max(3000),
 
   tags: z
     .array(
@@ -26,6 +26,12 @@ export const createInfoSchema = z.object({
     .min(3, "Local precisa ter pelo menos 3 caracteres")
     .max(100)
     .optional(),
+
+  icon_name: z
+    .string()
+    .min(3)
+    .max(20)
+    .optional()
 
 }).strict();
 

@@ -74,10 +74,8 @@ export const eventSchemas = {
       tags: {
         type: "array",
         items: {
-          type: "string",
-          minLength: 1
-        },
-        example: ["Node", "Backend"]
+          $ref: "#/components/schemas/TagBase"
+        }
       },
 
       

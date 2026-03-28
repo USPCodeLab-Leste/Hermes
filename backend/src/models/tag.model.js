@@ -3,14 +3,26 @@ import crypto from "crypto";
 
 class TagModel {
   
-  // pra buscar tag pelo nome
+  async findById(id) {
+    const query = `
+      SELECT *
+      FROM tb_tag
+      WHERE id = $1
+      LIMIT 1
+    `;
+
+    const result = await pool.query(query, [id]);
+    return result.rows[0];
+  }
+
   async findByName(name) {
     const query = `
-      SELECT * 
-      FROM tb_tag 
+      SELECT *
+      FROM tb_tag
       WHERE LOWER(name) = LOWER($1)
       LIMIT 1
     `;
+
     const result = await pool.query(query, [name]);
     return result.rows[0];
   }
@@ -32,6 +44,18 @@ class TagModel {
     // ORDER BY name ASC para ficar organizado alfabeticamente
     const result = await pool.query("SELECT * FROM tb_tag WHERE active = true ORDER BY name ASC");
     return result.rows;
+  }
+
+  async delete(id) {
+    const result = await pool.query(
+      `UPDATE tb_tag 
+      SET active = false 
+      WHERE id = $1 
+      RETURNING *`,
+      [id]
+    );
+
+    return result.rows[0];
   }
 }
 

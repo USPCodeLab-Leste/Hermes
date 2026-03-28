@@ -13,10 +13,11 @@ import type { Info, InfoCard as InfoCardType } from "../../types/infos";
 // Icons
 import SearchIcon from "../../assets/icons/search.svg?react";
 import { useCallback, useMemo, useState } from "react";
-import { MarkdownModal } from "../../components/modals/MarkdownModal";
+import { InfoModal } from "../../components/modals/InfoModal";
+import { getInfoIconName } from "../../utils/icons";
 
 // Hooks
-import { useInfosByTitle } from "../../hooks/infos/useInfos";
+import { useInfos } from "../../hooks/infos/useInfos";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useSharedSearch } from "../../hooks/useSharedSearch";
 
@@ -99,7 +100,7 @@ const InfoCards = ({ isLoading, infos, type }: InfoTypeProps) => {
         } else {
           map.set(tag.name, {
             cardName: tag.name,
-            icon: tag.name.toLocaleLowerCase(),
+            icon: getInfoIconName(tag.name),
             count: 1
           })
         }
@@ -116,7 +117,7 @@ const InfoCards = ({ isLoading, infos, type }: InfoTypeProps) => {
           className="grid grid-cols-2 lg:grid-cols-3 gap-6"
           key="info-cards-skeleton"
         >
-          {Array.from({ length: 6 }).map((_, index) => (
+          {Array.from({ length: 4 }).map((_, index) => (
             <InfoCardSkeleton key={`info-card-skeleton-${index}`} />
           ))}
         </motion.div>
@@ -150,7 +151,7 @@ interface InfoSearchResultsProps {
 
 const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
   const debounceSearch = useDebounce(search);
-  const { data: infos, isLoading, isFetching } = useInfosByTitle(debounceSearch);
+  const { data: infos, isLoading, isFetching } = useInfos(debounceSearch);
 
   const isTyping = search !== debounceSearch || isFetching;
 
@@ -189,7 +190,7 @@ const InfoSearchResultCards = ({ infos, search }: { infos: Info[]; search: strin
 
   return (
     <>
-      <MarkdownModal
+      <InfoModal
         modalOpen={modalOpen}
         handleModalClose={() => setModalOpen(false)}
         selectedInfo={selectedInfo}

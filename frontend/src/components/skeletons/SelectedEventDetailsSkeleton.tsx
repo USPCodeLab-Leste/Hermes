@@ -4,7 +4,7 @@ export const SelectedEventDetailsSkeleton = () => {
       aria-disabled={true}
       className="flex flex-col gap-4"
     >
-      <div className="aspect-5/3 w-auto rounded-xl -mx-6 -mt-12 mb-4 shimmer"/>
+      <div className="aspect-video w-auto rounded-xl -mx-6 -mt-12 mb-4 shimmer"/>
       <div className="flex flex-col gap-1 overflow-y-auto max-h-[30dvh]">
         <h2 className="text-2xl font-bold -mb-1 text-transparent shimmer rounded-2xl w-fit">título legal</h2>
         <div className="flex flex-row flex-wrap gap-x-2 gap-y-0 items-center mb-2">

@@ -39,21 +39,22 @@ router.get("/tags", authMiddleware, emailVerifiedMiddleware, tagController.getTa
 
 /**
  * @openapi
- * /tags/{name}:
+ * /tags/{id}:
  *   get:
- *     summary: Buscar tag pelo nome
- *     description: Retorna uma tag específica pelo nome (case insensitive)
+ *     summary: Buscar tag pelo id
+ *     description: Retorna uma tag específica pelo id
  *     tags:
  *       - Tags
  *     security:
  *       - cookieAuth: []
  *     parameters:
  *       - in: path
- *         name: name
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Nome da tag
+ *           format: uuid
+ *         description: ID da tag
  *     responses:
  *       200:
  *         description: Tag encontrada
@@ -73,7 +74,12 @@ router.get("/tags", authMiddleware, emailVerifiedMiddleware, tagController.getTa
  *       500:
  *         description: Erro interno
  */
-router.get("/tags/:name", authMiddleware, emailVerifiedMiddleware, tagController.getTagByName);
+router.get(
+  "/tags/:id",
+  authMiddleware,
+  emailVerifiedMiddleware,
+  tagController.getTagById
+);
 
 /**
  * @openapi
@@ -123,4 +129,41 @@ router.post(
   tagController.createTag
 );
 
+/**
+ * @openapi
+ * /tags/{id}:
+ *   delete:
+ *     summary: Desativar uma tag
+ *     description: Desativa uma tag existente (soft delete - define active como false). Apenas administradores podem executar essa ação.
+ *     tags:
+ *       - Tags
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID da tag
+ *     responses:
+ *       200:
+ *         description: Tag desativada com sucesso
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: Acesso restrito a administradores e/ou E-mail não verificado
+ *       404:
+ *         description: Tag não encontrada
+ *       500:
+ *         description: Erro interno
+ */
+router.delete(
+  "/tags/:id",
+  authMiddleware,
+  emailVerifiedMiddleware,
+  adminMiddleware,
+  tagController.desativaTag
+);
 export default router;

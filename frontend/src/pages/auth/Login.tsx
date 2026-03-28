@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { toast } from 'react-toastify';
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router";
 
@@ -11,6 +11,11 @@ import { SubmitButton } from "../../components/forms/SubmitButton";
 import { auth } from "../../services/auth"
 import { useSignIn } from '../../hooks/auth/useSignIn';
 
+const defaultErrors = {
+  email: false,
+  password: false,
+}
+
 export default function Login() {
   const [searchParams] = useSearchParams()
   const location = useLocation()
@@ -19,10 +24,7 @@ export default function Login() {
   // Hooks de autenticação
   const [signIn, user, signInLoading, signInError] = useSignIn(auth)
 
-  const [errors, setErrors] = useState({
-    email: false,
-    password: false,
-  });
+  const [errors, setErrors] = useState(defaultErrors);
 
   const [formData, setFormData] = useState({
     email: searchParams.get("email") || "",
@@ -35,14 +37,11 @@ export default function Login() {
     setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }))
 
     // Limpa erro ao digitar
-    setErrors(prev => ({
-      ...prev,
-      [e.target.id]: false
-    }))
+    setErrors(defaultErrors)
   }, [])
 
   const handleLogin = useCallback(async () => {
-    const newErrors = { email: false, password: false };
+    const newErrors = { ...defaultErrors };
     let hasLocalError = false;
 
     //Validação email
@@ -67,7 +66,7 @@ export default function Login() {
     };
 
     // Chamada ao hook de login
-    setErrors({ email: false, password: false });
+    setErrors(defaultErrors);
     await signIn({ email: formData.email, password: formData.password });
 
   }, [formData, signIn])
@@ -79,13 +78,22 @@ export default function Login() {
 
   const isLoading = signInLoading;
   const passwordShort = formData.password.length < 8 && formData.password.length >= 0;
+  const hasError = useMemo(() => errors.email || errors.password, [errors])
 
   useEffect(() => {
-    if (signInError) {
-      console.error(signInError);
-      toast.error("Credenciais inválidas!"); // Ou use error.message se vier do back
-      setErrors({ email: true, password: true });
+    if (!signInError) return
+
+    const status = signInError.status
+
+    if (status === 401) {
+      toast.error('Credenciais inválidas')
+    } else if (status === 400) {
+      toast.error('Dados inválidos ou falha no login')
+    } else {
+      toast.error(signInError.message || 'Ocorreu um erro ao fazer login')
     }
+
+    setErrors({ email: true, password: true })
   }, [signInError]);
 
   useEffect(() => {
@@ -113,7 +121,7 @@ export default function Login() {
           value={formData.email}
           onChange={handleChange}
           disabled={isLoading}
-          placeholder="E-mail USP"
+          placeholder="hermes@usp.br"
           hasError={errors.email}
           required={true}
         />
@@ -127,20 +135,20 @@ export default function Login() {
             value={formData.password}
             onChange={handleChange}
             disabled={isLoading}
-            placeholder="Senha"
+            placeholder="********"
             validation={false}
             autocomplete="current-password"
             hasError={errors.password}
             required={true}
           />
-          <Link to={{ pathname: "/auth/reset-password", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="text-sm text-paper text-right mb-2 hover:underline">Esqueci minha senha</Link>
+          <Link to={{ pathname: "/auth/reset-password", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="self-end text-sm mb-2 hover:underline w-fit">Esqueci minha senha</Link>
         </div>
       </div>
 
-      <SubmitButton waiting={isLoading || passwordShort} text={isLoading ? "Carregando..." : "Entrar"} />
+      <SubmitButton waiting={isLoading || passwordShort || hasError} text={isLoading ? "Carregando..." : "Entrar"} className="dark:bg-teal-light bg-teal-mid" disabled={isLoading || passwordShort || hasError} />
 
-      <p className="text-paper text-center">
-        ou <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Registre-se</Link>
+      <p className="text-center">
+        ou <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="dark:text-teal-light text-teal-mid hover:text-teal-mid font-bold transition-colors">Registre-se</Link>
       </p>
 
     </form>

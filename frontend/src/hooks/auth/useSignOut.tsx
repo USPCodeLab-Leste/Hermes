@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { AuthService } from '../services/auth'
+import type { AuthService } from '../../services/auth'
 
 export function useSignOut(auth: AuthService) {
   const [loading, setLoading] = useState(false)

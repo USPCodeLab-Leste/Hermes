@@ -23,7 +23,7 @@ export function Input({type, id, value, onChange, disabled, placeholder, autocom
       readOnly={readonly}
       autoComplete={autocomplete}
       accept={accept}
-      className="flex-1 bg-transparent outline-none w-full"
+      className="flex-1 bg-transparent outline-none w-full cursor-pointer"
     />
   )
 }

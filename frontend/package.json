@@ -17,6 +17,7 @@
     "framer-motion": "^12.28.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-ga4": "^2.1.0",
     "react-highlight-words": "^0.21.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.11.0",

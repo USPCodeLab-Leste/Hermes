@@ -11,6 +11,7 @@ class ContentModel {
     data_inicio = null,
     data_fim = null,
     img_banner = null,
+    icon_name = null,
     autor_id,
     tags = [],
     type = "post"
@@ -25,8 +26,8 @@ class ContentModel {
 
       const query = `
         INSERT INTO tb_content  
-        (id, title, body, local, data_inicio, data_fim, img_banner, status, autor_id, type)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        (id, title, body, local, data_inicio, data_fim, img_banner, icon_name, status, autor_id, type)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
         RETURNING *
       `;
 
@@ -38,6 +39,7 @@ class ContentModel {
         data_inicio,
         data_fim,
         img_banner,
+        icon_name,
         status,
         autor_id,
         type
@@ -84,15 +86,20 @@ class ContentModel {
   }
 
   // pra buscar todos (Feed) com filtros opcionais
-  async findAll({ title, tags, type, excludeIds, limit = 10, offset = 0 } = {}) {
+  async findAll({ title, tags, type, excludeIds, limit, offset } = {}) {
     let query = `
       SELECT 
         p.*,
         u.name AS autor_nome,
         COALESCE(
-          ARRAY_AGG(DISTINCT t.name) 
-          FILTER (WHERE t.name IS NOT NULL),
-          '{}'
+          JSON_AGG(
+            DISTINCT JSONB_BUILD_OBJECT(
+              'id', t.id,
+              'name', t.name,
+              'type', t.type
+            )
+          ) FILTER (WHERE t.id IS NOT NULL),
+          '[]'
         ) AS tags
       FROM tb_content p
       JOIN tb_user u ON p.autor_id = u.id
@@ -147,11 +154,16 @@ class ContentModel {
     query += `
       GROUP BY p.id, u.name
       ORDER BY p.data_inicio ASC NULLS LAST
-      LIMIT $${index}
-      OFFSET $${index + 1}
     `;
 
-    values.push(limit + 1, offset);
+    if (limit !== undefined && offset !== undefined) {
+      query += `
+        LIMIT $${index}
+        OFFSET $${index + 1}
+      `;
+
+      values.push(limit + 1, offset);
+    }
 
     const result = await pool.query(query, values);
     const hasMore = result.rows.length > limit;
@@ -168,119 +180,124 @@ class ContentModel {
 
   // pra buscar um content pelo id
   async findById(id) {
-    const query = `SELECT * FROM tb_content WHERE id = $1`;
+    const query = `
+      SELECT 
+        p.*,
+        u.name AS autor_nome,
+        COALESCE(
+          JSON_AGG(
+            DISTINCT JSONB_BUILD_OBJECT(
+              'id', t.id,
+              'name', t.name,
+              'type', t.type
+            )
+          ) FILTER (WHERE t.id IS NOT NULL),
+          '[]'
+        ) AS tags
+      FROM tb_content p
+      JOIN tb_user u ON p.autor_id = u.id
+      LEFT JOIN tb_content_tag pt ON p.id = pt.content_id
+      LEFT JOIN tb_tag t ON pt.tag_id = t.id
+      WHERE p.id = $1
+      GROUP BY p.id, u.name
+    `;
+
     const result = await pool.query(query, [id]);
     return result.rows[0];
   }
 
   async update(id, info) {
 
-    // Pesquisa do criador daquele content
-    const querySearchContent = `SELECT autor_id FROM tb_content WHERE id = $1;`;
-    let searchContentAutorId = await pool.query(querySearchContent, [id]);
+    const querySearchContent = `
+      SELECT autor_id FROM tb_content WHERE id = $1;
+    `;
+    const searchContentAutorId = await pool.query(querySearchContent, [id]);
 
     if (!searchContentAutorId.rows[0]) return null;
 
-    // Verifica se o usuário é o criador
-    if (info.autor_id !== searchContentAutorId.rows[0].autor_id)
-      return null;
+    if (info.autor_id !== searchContentAutorId.rows[0].autor_id) return null;
 
-    // Monta query dinâmica
-    let queryUpdateTbContent = `
-    UPDATE tb_content
-    SET id=$1`;
+    let query = `UPDATE tb_content SET `;
+    const values = [];
+    let idx = 1;
+    const updates = [];
 
-    const values = [id];
-    let idx = 2;
-
-    if (info.title) {
-      queryUpdateTbContent += `, title = $${idx}`;
+    if (info.title !== undefined) {
+      updates.push(`title = $${idx++}`);
       values.push(info.title);
-      idx++;
     }
 
-    if (info.data_inicio) {
-      queryUpdateTbContent += `, data_inicio = $${idx}`;
+    if (info.data_inicio !== undefined) {
+      updates.push(`data_inicio = $${idx++}`);
       values.push(info.data_inicio);
-      idx++;
     }
 
-    if (info.data_fim) {
-      queryUpdateTbContent += `, data_fim = $${idx}`;
+    if (info.data_fim !== undefined) {
+      updates.push(`data_fim = $${idx++}`);
       values.push(info.data_fim);
-      idx++;
     }
 
-    if (info.status) {
-      queryUpdateTbContent += `, status = $${idx}`;
+    if (info.status !== undefined) {
+      updates.push(`status = $${idx++}`);
       values.push(info.status);
-      idx++;
     }
 
-    if (info.img_banner) {
-      queryUpdateTbContent += `, img_banner = $${idx}`;
+    if (info.local !== undefined) {
+      updates.push(`local = $${idx++}`);
+      values.push(info.local);
+    }
+
+    if (info.img_banner !== undefined) {
+      updates.push(`img_banner = $${idx++}`);
       values.push(info.img_banner);
-      idx++;
     }
 
-    if (info.body) {
-      queryUpdateTbContent += `, body = $${idx}`;
+    if (info.icon_name !== undefined) {
+      updates.push(`icon_name = $${idx++}`);
+      values.push(info.icon_name);
+    }
+
+    if (info.body !== undefined) {
+      updates.push(`body = $${idx++}`);
       values.push(info.body);
-      idx++;
     }
 
-    queryUpdateTbContent += `
-    WHERE id = $1
-    RETURNING *`;
+    if (updates.length === 0 && !info.tags) {
+      return null; // nada para atualizar
+    }
 
-    // Atualiza tags
-    if (info.tags) {
+    if (updates.length > 0) {
+      query += updates.join(", ");
+      query += ` WHERE id = $${idx} RETURNING *`;
+      values.push(id);
+    }
 
-      const queryDeleteTags = `DELETE FROM tb_content_tag WHERE content_id = $1;`;
+    const result = updates.length > 0
+      ? await pool.query(query, values).then(res => res.rows[0])
+      : null;
 
-      await pool.query(queryDeleteTags, [id])
-        .catch(err => {
-          console.error("ERROR TO DELETE OLDS TAGS", err);
-          return null;
-        });
+    // Atualização de tags
+    if (info.tags !== undefined) {
+      await pool.query(`DELETE FROM tb_content_tag WHERE content_id = $1`, [id]);
 
       for (const tag of info.tags) {
+        const resultTag = await pool.query(`
+          INSERT INTO tb_tag (id, name, type, active)
+          VALUES ($1,$2,$3,$4)
+          ON CONFLICT (name)
+          DO UPDATE SET name = EXCLUDED.name
+          RETURNING id;
+        `, [crypto.randomUUID(), tag, "general", true]);
 
-        const queryInsertTbTag = `
-        INSERT INTO tb_tag (id, name, type, active)
-        VALUES ($1,$2,$3,$4)
-        ON CONFLICT (name)
-        DO UPDATE SET name = EXCLUDED.name
-        RETURNING id;`;
+        const idTag = resultTag.rows[0].id;
 
-        const valuesTag = [crypto.randomUUID(), tag, "general", true];
-
-        const resultInsertTbTag = await pool.query(queryInsertTbTag, valuesTag)
-          .catch(err => {
-            console.error("ERROR TO INSERT TAG", err);
-            return null;
-          });
-
-        if (!resultInsertTbTag) continue;
-
-        const idTag = resultInsertTbTag.rows[0].id;
-
-        await pool.query(
-          `INSERT INTO tb_content_tag (content_id, tag_id)
+        await pool.query(`
+          INSERT INTO tb_content_tag (content_id, tag_id)
           VALUES ($1, $2)
-          ON CONFLICT DO NOTHING`,
-          [id, idTag]
-        );
+          ON CONFLICT DO NOTHING
+        `, [id, idTag]);
       }
     }
-
-    const result = await pool
-      .query(queryUpdateTbContent, values)
-      .then(res => res.rows[0])
-      .catch(err => {
-        console.error("ERROR PATCH CONTENT: ", err);
-        return null;
-      });
 
     return result;
   }

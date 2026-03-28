@@ -1,26 +1,35 @@
 export const tagSchemas = {
 
-  TagResponse: {
+  TagBase: {
     type: "object",
     properties: {
       id: {
         type: "string",
-        format: "uuid",
-        example: "550e8400-e29b-41d4-a716-446655440000"
+        format: "uuid"
       },
       name: {
-        type: "string",
-        example: "Poker"
+        type: "string"
       },
       type: {
-        type: "string",
-        example: "Esportes"
-      },
-      active: {
-        type: "boolean",
-        example: true
+        type: "string"
       }
-    }
+    },
+    required: ["id", "name", "type"]
+  },
+
+  TagResponse: {
+    allOf: [
+      { $ref: "#/components/schemas/TagBase" },
+      {
+        type: "object",
+        properties: {
+          active: {
+            type: "boolean",
+            example: true
+          }
+        }
+      }
+    ]
   },
 
   CreateTagRequest: {

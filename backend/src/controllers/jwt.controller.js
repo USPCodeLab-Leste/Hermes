@@ -27,15 +27,17 @@ class JwtController {
           const newAccessToken = jwt.sign(
             {
               id: payload.id,
-              role: payload.role || "USER"
+              role: payload.role || "USER",
+              is_verified: payload.is_verified || false
             },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "1h" }
           );
 
+          const cookieSite = process.env.COOKIE_SAMESITE;
           res.cookie("access_token", newAccessToken, {
             httpOnly: true,
-            sameSite: "lax",
+            sameSite: cookieSite,
             secure: isProduction
           });
 

@@ -23,18 +23,32 @@ export function fileToBase64(file: File): Promise<string> {
 }
 
 export async function uploadBase64ToImgbb(base64Image: string): Promise<string> {
-  // TODO: trocar por ENV
-  const API_KEY = "d6e6acae5217b5d7c4daa4b9c7f115f0";
+  const API_KEY = import.meta.env.VITE_IMG_API_KEY as string | undefined;
+
+  if (!API_KEY) {
+    console.error("Chave de API para imgbb não encontrada. Verifique as variáveis de ambiente.");
+    throw new Error("Chave de API para imgbb não configurada");
+  }
 
   const formData = new FormData();
   formData.append("image", base64Image);
 
+  const isDebug = import.meta.env.VITE_DEBUG === "true";
+
+  const params = new URLSearchParams({
+    key: API_KEY,
+  });
+
+  if (isDebug) {
+    params.set("expiration", "600");
+  }
+
   const response = await fetch(
-    `https://api.imgbb.com/1/upload?expiration=600&key=${API_KEY}`,
+    `https://api.imgbb.com/1/upload?${params.toString()}`,
     {
       method: "POST",
-      body: formData
-    }
+      body: formData,
+    },
   );
 
   if (!response.ok) {
@@ -44,4 +58,11 @@ export async function uploadBase64ToImgbb(base64Image: string): Promise<string> 
   const data = await response.json();
 
   return data.data.display_url as string;
+}
+
+export async function uploadBannerAndGetUrl(file: File) {
+  const base64 = await fileToBase64(file);
+  const imageUrl = await uploadBase64ToImgbb(base64);
+
+  return imageUrl;
 }

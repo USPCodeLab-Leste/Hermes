@@ -51,7 +51,7 @@ function Modal({ children, onClose, ref }: ModalProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      onClick={handleClose}
+      onPointerDown={handleClose}
       ref={ref}
     >
       <FocusTrap
@@ -66,7 +66,7 @@ function Modal({ children, onClose, ref }: ModalProps) {
           ref={scope}
           className='p-6 pt-2 bg-paper dark:bg-violet-mid rounded-t-2xl md:rounded-2xl modal-card absolute 
                      md:relative bottom-0 w-full md:w-9/10 md:max-w-120 origin-bottom md:origin-center max-h-[95dvh] overflow-auto shadow-lg shadow-black/30'
-          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 - Math.abs(dragOffset) / 1000 }}
           exit={{ scale: 0.8, opacity: 0 }}
@@ -97,13 +97,16 @@ function Modal({ children, onClose, ref }: ModalProps) {
   )
 }
 
+const modalRoot = document.getElementById('modal-root')
+
 export function ModalWrapper({ isOpen, onClose, children }: ModalProps) {
-  const modalRoot = document.getElementById('modal-root')
   const modalRef = useRef<HTMLDivElement | null>(null)
 
   if (!modalRoot) return null
 
   useEffect(() => {
+    if (!isOpen) return
+
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose()
@@ -114,7 +117,7 @@ export function ModalWrapper({ isOpen, onClose, children }: ModalProps) {
     return () => {
       window.removeEventListener('keydown', handleEsc)
     }
-  }, [onClose])
+  }, [isOpen, onClose])
 
   return createPortal(
     <AnimatePresence>

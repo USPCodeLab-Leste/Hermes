@@ -1,5 +1,5 @@
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { motion, stagger, type Variants } from "framer-motion";
 
 // Hooks
@@ -9,7 +9,7 @@ import { useSharedSearch } from "../../hooks/useSharedSearch";
 // Components
 import PerfilButton from "../../components/PerfilButton";
 import { LazySvg } from "../../components/LazySvg";
-import { MarkdownModal } from "../../components/modals/MarkdownModal";
+import { InfoModal } from "../../components/modals/InfoModal";
 import { PerfilButtonSkeleton } from "../../components/skeletons/PerfilButtonSkeleton";
 
 const variants: Variants = {
@@ -39,41 +39,35 @@ export default function Info() {
   const { tagName } = useParams()
   const { value: search } = useSharedSearch();
   const [params, setParams] = useSearchParams()
-  const { data: infos, isLoading: isLoadingInfos, isTyping } = useInfosByTag(tagName!, search);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [articleId, setArticleId] = useState<string | null>(null);
+  const articleId = params.get("article")
+
+  const { data: infos, isLoading: isLoadingInfos, isFetching } = useInfosByTag(tagName!, search);
+  const [modalOpen, setModalOpen] = useState(() => Boolean(articleId));
+  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(() => articleId);
 
   // Memos
-  const selectedInfo = useMemo(() => infos?.find(info => info.id === articleId), [articleId, infos]);
+  const selectedInfo = useMemo(() => infos?.find(info => info.id === selectedArticleId), [selectedArticleId, infos]);
 
   // Handlers
   const handleClick = useCallback((id: string) => {
-    // setArticleId(id);
-    // setModalOpen(true);
     setParams(prev => {
       prev.set("article", id);
       return prev;
     }, { replace: true });
+
+    setSelectedArticleId(id);
+    setModalOpen(true);
   }, [setParams]);
 
   const handleModalClose = useCallback(() => {
-    setModalOpen(false);
-    setArticleId(null);
     setParams(prev => {
       prev.delete("article");
       return prev;
     }, { replace: true });
+
+    setModalOpen(false);
+    setSelectedArticleId(null);
   }, [setParams]);
-
-  // Effects
-  useEffect(() => {
-    const articleId = params.get("article");
-
-    if (articleId) {
-      setArticleId(articleId);
-      setModalOpen(true);
-    }
-  }, [params])
   
   if (!isLoadingInfos && infos?.length === 0 && !search) {
     return (
@@ -86,7 +80,7 @@ export default function Info() {
   
   return (
     <>
-      <MarkdownModal 
+      <InfoModal 
         modalOpen={modalOpen} 
         handleModalClose={handleModalClose} 
         selectedInfo={selectedInfo} 
@@ -104,8 +98,8 @@ export default function Info() {
         <section 
           className="justify-start w-full"
           style={{
-            opacity: isTyping ? 0.5 : 1,
-            pointerEvents: isTyping ? "none" : "auto"
+            opacity: isFetching ? 0.5 : 1,
+            pointerEvents: isFetching ? "none" : "auto"
           }}
         >
           {isLoadingInfos ? (

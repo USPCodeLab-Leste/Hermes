@@ -19,12 +19,12 @@ class tagController {
     }
   }
 
-  // GET /tags/:name
-  async getTagByName(req, res) {
+  // GET /tags/:id
+  async getTagById(req, res) {
     try {
-      const { name } = req.params;
+      const { id } = req.params;
 
-      const tag = await TagModel.findByName(name);
+      const tag = await TagModel.findById(id);
 
       if (!tag) {
         return res.status(404).json({ error: "Tag não encontrada" });
@@ -33,7 +33,7 @@ class tagController {
       return res.status(200).json({ tag });
 
     } catch (err) {
-      console.error("ERROR GET TAG BY NAME:", err);
+      console.error("ERROR GET TAG BY ID:", err);
       return res.status(500).json({ error: "Falha ao buscar tag" });
     }
   }
@@ -63,6 +63,26 @@ class tagController {
     } catch (err) {
       console.error("ERROR CREATE TAG:", err);
       return res.status(500).json({ error: "Falha ao criar tag" });
+    }
+  }
+
+  async desativaTag(req, res) {
+    try {
+      const { id } = req.params;
+
+      const deleted = await TagModel.delete(id);
+
+      if (!deleted) {
+        return res.status(404).json({ error: "Tag não encontrada" });
+      }
+
+      return res.status(200).json({
+        message: "Tag desativada com sucesso"
+      });
+
+    } catch (err) {
+      console.error("ERROR DELETE TAG:", err);
+      return res.status(500).json({ error: "Falha ao desativar tag" });
     }
   }
 }
