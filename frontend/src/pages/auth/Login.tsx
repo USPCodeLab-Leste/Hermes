@@ -49,10 +49,10 @@ export default function Login() {
       toast.error("O campo e-mail é obrigatório!")
       newErrors.email = true;
       hasLocalError = true;
-    } else if (!formData.email.endsWith("@usp.br")) {
-      toast.error("Por favor, utilize seu e-mail institucional (@usp.br).");
-      newErrors.email = true;
-      hasLocalError = true;
+    // } else if (!formData.email.endsWith("@usp.br")) {
+    //   toast.error("Por favor, utilize seu e-mail institucional (@usp.br).");
+    //   newErrors.email = true;
+    //   hasLocalError = true;
     } else if (formData.password.length < 8) {
       toast.error("Credenciais inválidas!")
       newErrors.email = true;
