@@ -83,7 +83,7 @@ const getInitialIconInfo = (info: Info | null) => {
   return existingIcon ?? getDefaultIconOption();
 };
 
-const INFO_MAX_CONTENT_LENGTH = 1000;
+const INFO_MAX_CONTENT_LENGTH = 3000;
 
 const CreateInfoModalContent = ({
   onClose,

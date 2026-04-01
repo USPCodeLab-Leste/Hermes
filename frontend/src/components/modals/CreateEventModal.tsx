@@ -28,6 +28,8 @@ import type { ActiveTags, GenericTag } from "../../types/tag";
 // Utils
 import { formatDateTimeForInput } from "../../utils/dates";
 
+const EVENT_MAX_CONTENT_LENGTH = 3000;
+
 export function CreateEventModal({
   isOpen,
   onClose,
@@ -180,10 +182,10 @@ const CreateEventModalContent = ({
         message: "A descrição deve conter ao menos 10 caracteres.",
       };
       hasLocalError = true;
-    } else if (formData.body.trim().length > 1000) {
+    } else if (formData.body.trim().length > EVENT_MAX_CONTENT_LENGTH) {
       newErrors.body = {
         hasError: true,
-        message: "A descrição deve conter no máximo 1000 caracteres.",
+        message: `A descrição deve conter no máximo ${EVENT_MAX_CONTENT_LENGTH} caracteres.`,
       };
       hasLocalError = true;
     }
