@@ -11,13 +11,14 @@ const infoTagToIconName: Record<string, string> = {
 	saude: "health-kit",
 	auxilios: "pig-money",
 	moradia: "home",
-	acessibilidade: "acessible",
-	apoio_psicologico: 'brain',
+	acessibilidade: "accessible",
 	pesquisa: "microscope",
 	monitoria: "chalkboard-teacher",
 	estagio: 'briefcase',
 	curriculo: 'file-description',
 	bolsas: "info",
+	sistema: "settings",
+	variados: "category"
 };
 
 export function getInfoIconName(tagName: string): string {
