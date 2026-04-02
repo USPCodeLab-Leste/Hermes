@@ -2,9 +2,8 @@ import { Navigate, Outlet } from "react-router-dom"
 import { useAuth } from "../hooks/auth/useAuth"
 // import { motion, AnimatePresence } from "motion/react"
 
-import YoutubeIcon from '../assets/icons/brand-youtube.svg?react'
-import DiscordIcon from '../assets/icons/brand-discord.svg?react'
 import InstagramIcon from '../assets/icons/brand-instagram.svg?react'
+import GitHubIcon from '../assets/icons/brand-github.svg?react'
 import LogoHermes from '../assets/LOGO 240x240.svg'
 
 export default function AuthLayout() {
@@ -40,9 +39,18 @@ const FooterSocials = () => (
   <footer className="flex flex-col items-center gap-2 mb-2">
     <p className="text-sm font-bold">Criado por CodeLab Leste</p>
     <div className="flex justify-center gap-8">
-      <YoutubeIcon className="size-6 opacity-80 hover:opacity-100 cursor-pointer" />
-      <DiscordIcon className="size-6 opacity-80 hover:opacity-100 cursor-pointer" />
-      <InstagramIcon className="size-6 opacity-80 hover:opacity-100 cursor-pointer" />
+      <SocialLink href="https://www.instagram.com/uspcodelableste/">
+        <InstagramIcon className="size-6 opacity-80 hover:opacity-100 cursor-pointer" />
+      </SocialLink>
+      <SocialLink href="https://github.com/USPCodeLab-Leste">
+        <GitHubIcon className="size-6 opacity-80 hover:opacity-100 cursor-pointer" />
+      </SocialLink>
     </div>
   </footer>
+)
+
+const SocialLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 cursor-pointer">
+    {children}
+  </a>
 )
