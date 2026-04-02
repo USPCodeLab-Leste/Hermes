@@ -56,9 +56,7 @@ const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
         duration: 0.5,
         delayChildren: 0.2,
       }}
-      className={`aspect-video w-full max-w-120 overflow-hidden bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat 
-                bg-center justify-between cursor-pointer shadow-lg hover:shadow-2xl 
-                outline-2 hover:dark:outline-paper focus:outline-paper outline-transparent ${isReady && !isReducedMotion ? 'transition-all' : ''}`}
+      className={`aspect-video w-full max-w-120 bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat bg-center justify-between cursor-pointer shadow-lg hover:shadow-2xl outline-2 hover:dark:outline-paper focus:outline-paper outline-transparent ${isReady && !isReducedMotion ? 'transition-all' : ''}`}
       style={{ backgroundImage: `url('${event.img_banner}')` }}
       whileHover={{y: -8}}
       onClick={() => selectEvent(event.id)}
@@ -66,7 +64,7 @@ const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
       aria-label={`Selecionar evento ${event.title}`}
     >
       <Tags tags={event.tags} className="p-4" />
-      <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b">
+      <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b rounded-b-xl">
         <h2 className="w-full font-bold text-[18px] md:text-xl text-paper text-left whitespace-nowrap text-ellipsis overflow-hidden">{event.title}</h2>
         <DateWrapper start={event.data_inicio} end={event.data_fim} textClass="text-paper/75" />
       </div>
