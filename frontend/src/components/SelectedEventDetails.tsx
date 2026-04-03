@@ -24,7 +24,7 @@ import { CreateEventModal } from "./modals/CreateEventModal"
 import CalendarIcon from "../assets/icons/calendar-plus.svg?react"
 
 // Utils
-import { createGoogleCalendarLink, downloadICS } from "../utils/dates"
+import { createGoogleCalendarLink, downloadICS, formatIcs } from "../utils/dates"
 import { isMobile } from "../utils/so"
 
 
@@ -97,7 +97,13 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
     }
 
     if (isMobile()) {
-      downloadICS(calendarEvent)
+      if ((window as any).ReactNativeWebView) {
+        (window as any).ReactNativeWebView?.postMessage(
+          JSON.stringify({ type: "download-ics", ics: formatIcs(calendarEvent) })
+        );
+      } else {
+        downloadICS(calendarEvent)
+      }
       toast.success("Evento salvo! Abra o .ics para adicionar ao seu calendário.")
     } else {
       const url = createGoogleCalendarLink(calendarEvent)

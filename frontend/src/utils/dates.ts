@@ -13,11 +13,11 @@ type CalendarEvent = {
   end: Date
 }
 
-export function downloadICS(event: CalendarEvent) {
+export function formatIcs(event: CalendarEvent) {
   const start = formatDate(event.start)
   const end = formatDate(event.end)
 
-  const ics = `BEGIN:VCALENDAR
+  return `BEGIN:VCALENDAR
 VERSION:2.0
 BEGIN:VEVENT
 SUMMARY:${event.title}
@@ -28,7 +28,10 @@ DTEND:${end}
 END:VEVENT
 END:VCALENDAR
 `.trim()
+}
 
+export function downloadICS(event: CalendarEvent) {
+  const ics = formatIcs(event)
   const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" })
   const url = window.URL.createObjectURL(blob)
 

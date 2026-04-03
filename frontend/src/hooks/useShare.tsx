@@ -22,9 +22,15 @@ export function useShare() {
       url,
     };
 
-    if (navigator.share && isMobile()) {
+    if (isMobile()) {
       try {
-        await navigator.share(shareData);
+        if (navigator.share) {
+          await navigator.share(shareData);
+        } else {
+          (window as any).ReactNativeWebView?.postMessage(
+            JSON.stringify({ type: 'share', url })
+          );
+        }
         onSuccess?.();
         return;
       } catch (error) {
