@@ -192,7 +192,7 @@ export default function App() {
   return (
     <AuthProvider>
       <ToastContainer
-        className="absolute"
+        // className="fixed"
         toastClassName="dark:bg-violet-dark! bg-violet-light! text-paper! rounded-lg shadow-lg"
         position="top-right"     // Posição na tela
         autoClose={3000}         // 3 segundos
