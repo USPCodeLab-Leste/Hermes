@@ -88,6 +88,8 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
   const handleAddToCalendar = useCallback(() => {
     if (!event) return
 
+    let message = '';
+
     const calendarEvent = {
       title: event.title || "",
       description: event.body || "",
@@ -101,10 +103,12 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
         (window as any).ReactNativeWebView?.postMessage(
           JSON.stringify({ type: "download-ics", ics: formatIcs(calendarEvent) })
         );
+        message = "Evento criado! Aguarde enquanto tentamos abrir seu aplicativo de calendário."
       } else {
         downloadICS(calendarEvent)
+        message = "Evento criado! Abra o arquivo do evento baixado para adicionar ao seu calendário."
       }
-      toast.success("Evento salvo! Abra o .ics para adicionar ao seu calendário.")
+      toast.success(message)
     } else {
       const url = createGoogleCalendarLink(calendarEvent)
       window.open(url, "_blank")

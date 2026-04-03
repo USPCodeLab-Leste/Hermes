@@ -81,7 +81,9 @@ img {
 
 /* react-toastify */
 .Toastify {
-  position: absolute;
+  position: fixed;
+  top: 0;
+  z-index: 9999;
 }
 
 /* Reset Scrollbar */
