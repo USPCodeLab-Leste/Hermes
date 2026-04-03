@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from 'react';
-import { BackHandler, Share, StyleSheet } from 'react-native';
+import { BackHandler, Share, StyleSheet, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { WebView } from 'react-native-webview';
-import type { WebView as WebViewType } from 'react-native-webview';
+import { type WebView as WebViewType, WebView } from 'react-native-webview';
 
+import * as IntentLauncher from 'expo-intent-launcher';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 
@@ -21,15 +21,33 @@ export default function App() {
       });
       
     } else if (data.type === 'download-ics') {
-      const ics = data.ics;
-      const fileUri = FileSystem.cacheDirectory + 'event.ics';
+      try {
+        const ics = data.ics;
 
-      await FileSystem.writeAsStringAsync(fileUri, ics, {
-        encoding: FileSystem.EncodingType.UTF8,
-      });
+        const fileUri = FileSystem.cacheDirectory + `event-${Date.now()}.ics`;
 
-      await Sharing.shareAsync(fileUri);
-      
+        await FileSystem.writeAsStringAsync(fileUri, ics, {
+          encoding: FileSystem.EncodingType.UTF8,
+        });
+
+        if (Platform.OS === 'android') {
+          const contentUri = await FileSystem.getContentUriAsync(fileUri);
+
+          await IntentLauncher.startActivityAsync('android.intent.action.VIEW',
+            {
+              data: contentUri,
+              flags: 1,
+              type: 'text/calendar',
+            }
+          );
+        } else {
+          // fallback (iOS ou erro)
+          await Sharing.shareAsync(fileUri);
+        }
+
+      } catch (error) {
+        console.error('Erro ao abrir ICS:', error);
+      }
     }
   }
 
