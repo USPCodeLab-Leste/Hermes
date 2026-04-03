@@ -4,11 +4,11 @@
     "slug": "portal-hermes",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo-pequena.png",
+    "icon": "./assets/logo-pequena-padding.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/logo-grande.png",
+      "image": "./assets/logo-media-padding.png",
       "resizeMode": "contain",
       "backgroundColor": "#5FA9C9"
     },
@@ -17,15 +17,21 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo-pequena.png",
+        "foregroundImage": "./assets/logo-pequena-padding.png",
         "backgroundColor": "#5FA9C9"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "resize"
+      "softwareKeyboardLayoutMode": "resize",
+      "package": "com.portal_hermes.portalhermes"
     },
     "web": {
-      "favicon": "./assets/logo-pequena.png"
+      "favicon": "./assets/logo-pequena-padding.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1106c0e0-fe11-4300-b988-b200e035e1c2"
+      }
     }
   }
 }
