@@ -22,10 +22,16 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "resize"
+      "softwareKeyboardLayoutMode": "resize",
+      "package": "com.portal_hermes.portalhermes"
     },
     "web": {
       "favicon": "./assets/logo-pequena.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1106c0e0-fe11-4300-b988-b200e035e1c2"
+      }
     }
   }
 }
