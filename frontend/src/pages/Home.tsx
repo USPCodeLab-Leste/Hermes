@@ -186,7 +186,7 @@ const EventsSection = ({
   fetchNextPage 
 }: EventSectionProps) => {
   return (
-    <section className={`m-auto mt-10 flex flex-col items-center gap-8`}>
+    <section className={`m-auto md:mt-10 mt-6 flex flex-col items-center gap-8`}>
       {(events && events.length > 0) || isLoadingEvents ? (
         <>
           {events?.map((event) => (

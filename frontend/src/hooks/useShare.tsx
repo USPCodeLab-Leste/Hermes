@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { toast } from "react-toastify";
+import { isMobile } from "../utils/so";
 
 type ShareOptions = {
   title?: string;
@@ -21,9 +22,7 @@ export function useShare() {
       url,
     };
 
-    const isTouchDevice = navigator.maxTouchPoints > 0;
-
-    if (navigator.share && isTouchDevice) {
+    if (navigator.share && isMobile()) {
       try {
         await navigator.share(shareData);
         onSuccess?.();
