@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Portal Hermes",
+    "slug": "portal-hermes",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo-pequena.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/logo-grande.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#5FA9C9"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo-pequena.png",
+        "backgroundColor": "#5FA9C9"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "resize"
+    },
+    "web": {
+      "favicon": "./assets/logo-pequena.png"
+    }
+  }
+}
