@@ -3,6 +3,7 @@ import { BackHandler, Share, StyleSheet, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { type WebView as WebViewType, WebView } from 'react-native-webview';
 
+import * as NavigationBar from 'expo-navigation-bar';
 import * as IntentLauncher from 'expo-intent-launcher';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
@@ -63,8 +64,12 @@ export default function App() {
       subscription.remove();
   }, []);
 
+  useEffect(() => {
+    NavigationBar.setVisibilityAsync('hidden');
+  }, []);
+
   return (
-    <SafeAreaView style={styles.container} edges={['bottom', 'top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <WebView
         ref={webViewRef}
         source={{ uri: URL }}
