@@ -8,7 +8,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/logo-media-padding.png",
+      "image": "./assets/logo-grande-padding.png",
       "resizeMode": "contain",
       "backgroundColor": "#5FA9C9"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo-pequena-padding.png",
+        "foregroundImage": "./assets/logo-media-padding.png",
         "backgroundColor": "#5FA9C9"
       },
       "edgeToEdgeEnabled": true,
