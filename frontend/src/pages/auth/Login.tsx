@@ -104,7 +104,7 @@ export default function Login() {
   }, [location, navigate])
 
   useEffect(() => {
-    const verified = Boolean(searchParams.get("verification"));
+    const verified = Boolean(searchParams.get("verified"));
 
     if (verified) {
       toast.success("E-mail verificado com sucesso! Agora você pode fazer login.");
