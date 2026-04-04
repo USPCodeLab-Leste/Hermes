@@ -72,9 +72,28 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const handleDeepLink = (url: string) => {
+      if (!url) return;
+
+      webViewRef.current?.injectJavaScript(`
+        window.location.href = "${url}";
+        true;
+      `);
+    };
+
+    // quando abre o app pelo link (primeira vez)
     Linking.getInitialURL().then((url) => {
-      if (url) setInitialUrl(url);
+      if (url) {
+        setInitialUrl(url);
+      }
     });
+
+    // quando o app já tá aberto e recebe um link
+    const subscription = Linking.addEventListener('url', ({ url }) => {
+      handleDeepLink(url);
+    });
+
+    return () => subscription.remove();
   }, []);
 
   return (
