@@ -68,10 +68,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    NavigationBar.setVisibilityAsync('hidden');
-  }, []);
-
-  useEffect(() => {
     const handleDeepLink = (url: string) => {
       if (!url) return;
 
@@ -97,7 +93,7 @@ export default function App() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['bottom', 'top', 'left', 'right']}>
       <WebView
         ref={webViewRef}
         source={{ uri: initialUrl }}
