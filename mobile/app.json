@@ -2,6 +2,7 @@
   "expo": {
     "name": "Portal Hermes",
     "slug": "portal-hermes",
+    "scheme": "porta-hermes",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo-pequena-padding.png",
@@ -23,7 +24,21 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize",
-      "package": "com.portal_hermes.portalhermes"
+      "package": "com.portal_hermes.portalhermes",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "portalhermes.app",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/logo-pequena-padding.png"

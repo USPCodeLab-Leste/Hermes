@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.portal_hermes.portalhermes",
+      "sha256_cert_fingerprints": ["93:5E:5F:34:C1:EF:D8:E5:8E:67:B0:ED:02:B6:89:1B:F4:1F:76:23:C7:0B:4D:00:DC:D3:3E:A0:F5:EE:C5:0D"]
+    }
+  }
+]

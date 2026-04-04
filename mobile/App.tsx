@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { BackHandler, Share, StyleSheet, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { type WebView as WebViewType, WebView } from 'react-native-webview';
 
+import * as Linking from 'expo-linking';
 import * as NavigationBar from 'expo-navigation-bar';
 import * as IntentLauncher from 'expo-intent-launcher';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -12,6 +13,8 @@ const URL = `https://portalhermes.app`
 
 export default function App() {
   const webViewRef = useRef<WebViewType>(null);
+
+  const [initialUrl, setInitialUrl] = useState(URL);
 
   const handleMessage = async (event: any) => {
     const data = JSON.parse(event.nativeEvent.data);
@@ -68,11 +71,17 @@ export default function App() {
     NavigationBar.setVisibilityAsync('hidden');
   }, []);
 
+  useEffect(() => {
+    Linking.getInitialURL().then((url) => {
+      if (url) setInitialUrl(url);
+    });
+  }, []);
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <WebView
         ref={webViewRef}
-        source={{ uri: URL }}
+        source={{ uri: initialUrl }}
         pullToRefreshEnabled={true}
         injectedJavaScript={`window.isMobileApp = true; true;`}
         onMessage={handleMessage}
