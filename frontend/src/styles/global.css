@@ -81,9 +81,15 @@ img {
 
 /* react-toastify */
 .Toastify {
-  position: fixed;
-  top: 0;
-  z-index: 9999;
+  @apply min-h-dvh fixed inset-0 z-9999 pointer-events-none ;
+}
+
+.Toastify * {
+  @apply pointer-events-auto;
+}
+
+.Toastify__toast-container {
+  @apply md:top-5! top-0!
 }
 
 /* Reset Scrollbar */

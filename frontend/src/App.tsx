@@ -192,6 +192,7 @@ export default function App() {
   return (
     <AuthProvider>
       <ToastContainer
+        
         // className="fixed"
         toastClassName="dark:bg-violet-dark! bg-violet-light! text-paper! rounded-lg shadow-lg"
         position="top-right"     // Posição na tela
