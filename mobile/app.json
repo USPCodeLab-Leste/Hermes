@@ -14,7 +14,11 @@
       "backgroundColor": "#5FA9C9"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.portal_hermes.portalhermes",
+      "associatedDomains": [
+        "applinks:portalhermes.app"
+      ]
     },
     "android": {
       "adaptiveIcon": {
