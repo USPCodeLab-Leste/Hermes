@@ -226,7 +226,7 @@ class BaseContentController {
         return res.status(403).json({ error: "acesso negado: Você não é o autor deste conteúdo"});
       }
       
-      const response = await ContentModel.delete(id);
+      const response = await ContentModel.delete(id, userId);
 
       if (!response) {
         return res.status(400).json({
