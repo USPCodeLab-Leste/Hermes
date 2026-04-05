@@ -17,6 +17,7 @@ O **Hermes** (em referência ao deus mensageiro) é uma plataforma web que atua 
 ## Tecnologias utilizadas
 * **Node.js:** Ambiente de execução do backend.
 * **PostgreSQL:** Banco de dados relacional robusto para integridade das relações entre Usuários, Posts e Tags.
+* **Docker & Docker Compose:** Containerização da aplicação e do banco de dados, garantindo um ambiente padronizado e fácil de rodar em qualquer máquina.
 * **Express:** Framework para estruturação da API Rest.
 * **React:** Biblioteca para construção de interfaces dinâmicas e reativas no Frontend.
 * **Tailwind CSS:** Framework de estilização para um design ágil e responsivo.
