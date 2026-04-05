@@ -8,7 +8,7 @@ export async function sendVerificationEmail(userEmail,token) {
     const verificationLink = `${baseUrl}/auth/verify-email?token=${token}`;
 
     const { data, error } = await resend.emails.send({
-        from: "Sistema Hermes <no-reply@hermes.kauamoreno.dev>",
+        from: "Sistema Hermes <no-reply@portalhermes.app>",
         to: userEmail,
         subject: "Ative sua conta no Hermes",
         html: `
