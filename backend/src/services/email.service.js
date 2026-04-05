@@ -100,7 +100,7 @@ export async function sendVerificationEmail(userEmail,token) {
                 <tr>
                     <td>
                     <p style="color:#8E8AAE; font-size:12px;">
-                        Feito com 🤍 por USP CodeLab Leste
+                        Feito com 🩷🤍 por USP CodeLab Leste
                     </p>
                     </td>
                 </tr>
