@@ -38,7 +38,8 @@ class JwtController {
           res.cookie("access_token", newAccessToken, {
             httpOnly: true,
             sameSite: cookieSite,
-            secure: isProduction
+            secure: isProduction,
+            maxAge: 1000 * 60 * 60
           });
 
           return res.status(200).json({

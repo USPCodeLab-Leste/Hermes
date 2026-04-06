@@ -101,13 +101,15 @@ class AuthController {
       res.cookie("access_token", accessToken, {
         httpOnly: true,
         sameSite: cookieSite,
-        secure: isProduction
+        secure: isProduction,
+        maxAge: 1000 * 60 * 60
       });
 
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         sameSite: cookieSite,
-        secure: isProduction
+        secure: isProduction,
+        maxAge: 1000 * 60 * 60 * 24 * 7
       });
 
       res.status(200).json({ message: "Login realizado com sucesso" });
