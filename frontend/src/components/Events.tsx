@@ -65,7 +65,7 @@ const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
     >
       <Tags tags={event.tags} className="p-4" />
       <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b rounded-b-xl">
-        <h2 className="w-full font-bold text-[18px] md:text-xl text-paper text-left whitespace-nowrap text-ellipsis overflow-hidden">{event.title}</h2>
+        <h2 className="w-full font-bold text-[18px] md:text-xl text-paper text-left truncate">{event.title}</h2>
         <DateWrapper start={event.data_inicio} end={event.data_fim} textClass="text-paper/75" />
       </div>
     </motion.button>

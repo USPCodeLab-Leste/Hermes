@@ -152,7 +152,7 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
           onClick={handleFollowTag}
         />
         <div className="flex flex-row justify-between items-center gap-4">
-          <h2 className="text-2xl font-bold -mb-1 overflow-hidden text-ellipsis whitespace-nowrap">{event?.title}</h2>
+          <h2 className="text-2xl font-bold -mb-1 truncate">{event?.title}</h2>
           <button 
             className="cursor-pointer p-2 rounded-xl bg-teal-light shadow-md hover:bg-teal-light/90 transition-colors"
             onClick={handleAddToCalendar}

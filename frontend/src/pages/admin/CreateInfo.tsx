@@ -134,7 +134,7 @@ const CreateInfoButton = ({ onClick }: { onClick: () => void }) => {
 
     >
       <PlusIcon className="size-5" />
-      <span className='inline-block text-left whitespace-nowrap text-ellipsis overflow-hidden flex-1'>Crie uma nova Informação</span>
+      <span className='inline-block text-left truncate flex-1'>Crie uma nova Informação</span>
     </motion.button>
   )
 }

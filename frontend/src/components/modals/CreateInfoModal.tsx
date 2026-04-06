@@ -170,13 +170,13 @@ const CreateInfoModalContent = ({
     if (tagsArray.length === 0) {
       newErrors.tags = {
         hasError: true,
-        message: "Informe ao menos UMA tag (separadas por vírgula).",
+        message: "Informe ao menos UMA tag",
       };
       hasLocalError = true;
     } else if (tagsArray.length > 5) {
       newErrors.tags = {
         hasError: true,
-        message: "Informe no máximo CINCO tags (separadas por vírgula).",
+        message: "Informe no máximo CINCO tags",
       };
       hasLocalError = true;
     }

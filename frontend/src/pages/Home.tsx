@@ -162,6 +162,7 @@ export default function Home() {
           hasNextPage={hasNextPage}
           handleEventCardClick={handleEventCardClick}
           fetchNextPage={fetchNextPage}
+          searchQuery={searchQuery}
         />
       </main>
     </>
@@ -175,6 +176,7 @@ interface EventSectionProps {
   hasNextPage: boolean;
   handleEventCardClick: (id: string) => void;
   fetchNextPage: () => void;
+  searchQuery: string;
 }
 
 const EventsSection = ({ 
@@ -183,7 +185,8 @@ const EventsSection = ({
   isEventsFetching, 
   hasNextPage, 
   handleEventCardClick, 
-  fetchNextPage 
+  fetchNextPage,
+  searchQuery
 }: EventSectionProps) => {
   return (
     <section className={`m-auto md:mt-10 mt-6 flex flex-col items-center gap-8`}>
@@ -211,7 +214,7 @@ const EventsSection = ({
           )}
         </>
       ) : (
-        <p className="text-center font-medium p-4" style={{opacity: isEventsFetching ? 0.5 : 1}}>Nenhum evento encontrado com essa busca.</p>
+        <p className="text-center font-medium p-4" style={{opacity: isEventsFetching ? 0.5 : 1}}>{searchQuery ? "Nenhum evento encontrado com essa busca :(" : "Nenhum evento disponível no momento :("}</p>
       )}
     </section>
   )

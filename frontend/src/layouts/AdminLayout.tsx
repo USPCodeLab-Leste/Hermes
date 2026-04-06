@@ -19,9 +19,9 @@ export default function AdminLayout() {
             transition={{ delay: 0.2 }}
           >
             <ul className="flex items-center gap-6 justify-evenly py-2 md:py-1.5 px-4">
-              <li><NavItem to="create_events" label="Eventos" /></li>
-              <li><NavItem to="create_infos" label="Informações" /></li>
-              <li><NavItem to="create_tags" label="Tags" /></li>
+              <NavItem to="create_events" label="Eventos" />
+              <NavItem to="create_infos" label="Informações" />
+              <NavItem to="create_tags" label="Tags" />
             </ul>
           </motion.nav>
         </div>

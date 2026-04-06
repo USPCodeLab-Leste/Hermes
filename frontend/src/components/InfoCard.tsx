@@ -39,8 +39,8 @@ export const InfoCard = ({ card, variants }: InfoCardProps) => {
           <LazySvg name={card.icon} className='size-7' />
         </div>
         <div className='w-full'>
-          <h3 className='font-semibold text-lg text-left whitespace-nowrap text-ellipsis overflow-hidden'>{card.cardName}</h3>
-          <span className='text-sm text-left dark:text-paper/75 text-ink/75 whitespace-nowrap text-ellipsis overflow-hidden'>
+          <h3 className='font-semibold text-lg text-left truncate'>{card.cardName}</h3>
+          <span className='text-sm text-left dark:text-paper/75 text-ink/75 truncate'>
             {!isDisabled ? `${count} artigo${count !== 1 ? 's' : ''}` : 'Nenhum artigo'}
           </span>
         </div>

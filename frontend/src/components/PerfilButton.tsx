@@ -26,7 +26,7 @@ export default function PerfilButton({
             variants={variants}
         >
             {icon}
-            <span className="inline-block text-left whitespace-nowrap text-ellipsis overflow-hidden flex-1">{btnName}</span>
+            <span className="inline-block text-left truncate flex-1">{btnName}</span>
             <RightArrow className="w-6 h-5 transition-transform duration-200 ease-in-out group-hover:rotate-90"/>
         </motion.button>
     );

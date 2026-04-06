@@ -134,7 +134,7 @@ function TagsSection({
         className={`flex items-center justify-between gap-2 text-left p-4 border-2 cursor-pointer ${isOpen ? 'rounded-t-2xl' : 'rounded-2xl'}`}
       >
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-semibold whitespace-nowrap text-ellipsis overflow-hidden">{title}</h2>
+          <h2 className="text-xl font-semibold truncate">{title}</h2>
           <div className="text-sm text-paper rounded-full bg-teal-mid flex items-center justify-center size-6">
             <span>{tagsCount || ''}</span>
           </div>

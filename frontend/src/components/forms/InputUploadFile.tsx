@@ -112,7 +112,7 @@ interface InputUploadFileProps {
         // style={{ backgroundImage: selectedFile ? `url('${URL.createObjectURL(selectedFile)}')` : bannerUrl ? `url('${bannerUrl}')` : "none", backgroundSize: "cover", backgroundPosition: "center" }}
       >
         <UploadIcon className={`size-14 rounded-full p-3.5 ${isDragActive ? "bg-teal-mid" : "dark:bg-violet-dark bg-violet-light"} group-hover:dark:bg-violet-dark/75 group-hover:bg-violet-light/75 transition-colors pointer-events-none`} />
-        <span className="font-medium pointer-events-none text-shadow-2xs overflow-hidden text-ellipsis whitespace-nowrap w-full text-center">
+        <span className="font-medium pointer-events-none text-shadow-2xs truncate w-full text-center">
           {fileName}
         </span>
       </button>

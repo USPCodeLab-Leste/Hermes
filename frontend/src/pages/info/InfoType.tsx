@@ -236,7 +236,7 @@ const InfoSearchResultCard = ({
         onClick={() => handleClick(info)}
       >
         <Highlighter
-          className="inline-block w-full whitespace-nowrap text-ellipsis overflow-hidden"
+          className="inline-block w-full truncate"
           highlightClassName="text-ink bg-violet-light rounded-sm"
           searchWords={[search]}
           autoEscape={true}

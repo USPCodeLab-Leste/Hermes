@@ -260,7 +260,7 @@ const CreateEventModalContent = ({
     if (tagsArray.length === 0) {
       newErrors.tags = {
         hasError: true,
-        message: "Informe ao menos UMA tag (separadas por vírgula).",
+        message: "Informe ao menos UMA tag",
       };
       hasLocalError = true;
     }

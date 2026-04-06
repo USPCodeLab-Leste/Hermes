@@ -17,7 +17,7 @@ export const InfoCardSkeleton = () => {
         <div className='size-7' />
       </div>
       <div className="w-full">
-        <Skeletons className='font-semibold text-lg text-left whitespace-nowrap text-ellipsis overflow-hidden'>
+        <Skeletons className='font-semibold text-lg text-left truncate'>
           texto exemplo
         </Skeletons>
         <Skeletons className='w-fit text-sm text-left block'>

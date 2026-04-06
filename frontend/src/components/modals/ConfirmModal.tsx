@@ -71,9 +71,9 @@ export function ConfirmDeleteModal({
           <GenericButton
             onClick={handleConfirm}
             disabled={isLoading}
-            className={actionBttnClass}
+            className={`w-full ${actionBttnClass}`}
           >
-            <span className="text-paper">{isLoading ? confirmingLabel : confirmLabel}</span>
+            <span className="block w-full text-paper text-center truncate">{isLoading ? confirmingLabel : confirmLabel}</span>
           </GenericButton>
         </div>
       </section>
