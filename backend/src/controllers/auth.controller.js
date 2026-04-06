@@ -102,14 +102,18 @@ class AuthController {
         httpOnly: true,
         sameSite: cookieSite,
         secure: isProduction,
-        maxAge: 1000 * 60 * 60
+        maxAge: 1000 * 60 * 60,
+        path: "/",
+        domain: ".portalhermes.app"
       });
 
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         sameSite: cookieSite,
         secure: isProduction,
-        maxAge: 1000 * 60 * 60 * 24 * 7
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        path: "/",
+        domain: ".portalhermes.app"
       });
 
       res.status(200).json({ message: "Login realizado com sucesso" });
@@ -128,13 +132,17 @@ class AuthController {
       await res.clearCookie("access_token", {
         httpOnly: true,
         sameSite: cookieSite,
-        secure: isProduction
+        secure: isProduction,
+        path: "/",
+        domain: ".portalhermes.app"
       });
 
       await res.clearCookie("refresh_token", {
         httpOnly: true,
         sameSite: cookieSite,
-        secure: isProduction
+        secure: isProduction,
+        path: "/",
+        domain: ".portalhermes.app"
       });
 
       return res.status(200).json({ message: "Logout realizado com sucesso" });

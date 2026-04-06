@@ -39,7 +39,9 @@ class JwtController {
             httpOnly: true,
             sameSite: cookieSite,
             secure: isProduction,
-            maxAge: 1000 * 60 * 60
+            maxAge: 1000 * 60 * 60,
+            path: "/",
+            domain: ".portalhermes.app"
           });
 
           return res.status(200).json({
