@@ -24,12 +24,17 @@ import { EventModal } from "../components/modals/EventModal"
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
 import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
+import { AppAdModal } from "../components/modals/AppAdModal"
+
+// Utils
+import { isApp } from "../utils/so"
 
 
 export default function Home() {
   const {value: searchQuery, setValue: setSearchQuery} = useSharedSearch()
   const [params, setParams] = useSearchParams()
   const eventId = params.get("event")
+  const hasSeenAppAd = localStorage.getItem("hasSeenAppAd") === "true"
 
   const {activeTags, setActiveTags, activeTagsNames, activeTagsValues} = useActiveTags()
   const {events, hasNextPage, isLoading: isLoadingEvents, isFetching: isEventsFetching, fetchNextPage} = useEvents({eventTitle: searchQuery, tags: activeTagsNames})
@@ -38,6 +43,7 @@ export default function Home() {
   const [isCardModalOpen, setIsCardModalOpen] = useState(() => Boolean(eventId))
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(() => eventId)
+  const [isAppAdModalOpen, setIsAppAdModalOpen] = useState(hasSeenAppAd || isApp() ? false : true)
 
   // ===================
   // == Handlers
@@ -105,6 +111,12 @@ export default function Home() {
 
   return (
     <>
+      {/* Modal App Ad */}
+      <AppAdModal
+        isOpen={isAppAdModalOpen}
+        onClose={() => setIsAppAdModalOpen(false)}
+      />
+
       {/* Modal Card Event */}
       <EventModal
         isOpen={isCardModalOpen}
