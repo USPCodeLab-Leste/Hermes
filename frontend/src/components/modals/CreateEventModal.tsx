@@ -15,6 +15,7 @@ import { SelectTags } from "../Events";
 import { ConfirmDeleteModal } from "./ConfirmModal";
 import { Tooltip } from "../Tooltip";
 import { TagSkeleton } from "../skeletons/TagsSkeleton";
+import { MarkdownWritePreview } from "../forms/MarkdownWritePreview";
 
 // Hooks
 import { useCreateEvent } from "../../hooks/events/useCreateEvent";
@@ -28,7 +29,7 @@ import type { ActiveTags, GenericTag } from "../../types/tag";
 // Utils
 import { formatDateTimeForInput } from "../../utils/dates";
 
-const EVENT_MAX_CONTENT_LENGTH = 3000;
+const EVENT_MAX_CONTENT_LENGTH = 1500;
 
 export function CreateEventModal({
   isOpen,
@@ -373,7 +374,7 @@ const CreateEventModalContent = ({
           />
 
           {/* Body / descrição */}
-          <div className="flex flex-col gap-1">
+          {/* <div className="flex flex-col gap-1">
             <Label id="body" label="Descrição" required={true} />
             <div
               className={`
@@ -398,7 +399,19 @@ const CreateEventModalContent = ({
               hasError={errors.body.hasError}
               errorMessage={errors.body.message}
             />
-          </div>
+          </div> */}
+          <MarkdownWritePreview
+            id="body"
+            label="Descrição"
+            value={formData.body}
+            onChange={(e) => handleChange(e)}
+            placeholder="Informamos que o sistema ficará indisponível para manutenção."
+            disabled={isEditMode ? isUpdateLoading : isCreateLoading}
+            required={true}
+            hasError={errors.body.hasError}
+            errorMessage={errors.body.message}
+            maxLength={EVENT_MAX_CONTENT_LENGTH}
+          />
 
           {/* Local */}
           <InputText

@@ -18,6 +18,7 @@ import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
 import { ConfirmDeleteModal } from "./modals/ConfirmModal"
 import { CreateEventModal } from "./modals/CreateEventModal"
+import MarkdownRenderer from "./MarkdownRenderer"
 
 // Icons
 
@@ -166,7 +167,8 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
           <span>-</span>
           <DateWrapper start={event?.data_inicio!} end={event?.data_fim!} textClass="dark:text-paper/75 text-ink/75"/>
         </div>
-        <p className="text-[16px] dark:text-paper/50 text-ink/50 text-justify hyphens-auto indent-2">{event?.body}</p>
+        {/* <p className="text-[16px] dark:text-paper/50 text-ink/50 text-justify hyphens-auto indent-2">{event?.body}</p> */}
+        <MarkdownRenderer>{event?.body || ""}</MarkdownRenderer>
       </div>
       {isAdmin ? (
         <AdminEditDeleteButtons
