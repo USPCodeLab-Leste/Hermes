@@ -55,7 +55,7 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
   const { isAuthenticated, loading } = useAuth()
 
   if (loading) {
-    return <Loading />
+    return <Loading loader='loader-message' />
   }
 
   return isAuthenticated ? children : <Navigate to="/auth" replace />
@@ -65,7 +65,7 @@ export function RequireAdmin({ children }: { children: JSX.Element }) {
   const { user, loading, isAuthenticated } = useAuth();
 
   if (loading) {
-    return <Loading />;
+    return <Loading loader='loader-message' />;
   }
 
   if (!isAuthenticated) {

@@ -59,7 +59,7 @@ interface PerfilAction {
 }
 
 const APK_LINK = "https://github.com/USPCodeLab-Leste/Hermes/releases/download/v1.0/portal-hermes-android-v1.0.apk"
-const FORMS_LINK = "https://forms.gle/coS8sQid3S9JGeKk9"
+const FORMS_LINK = "https://forms.gle/7XusnvvnUYXrK27X7"
 
 export default function Perfil() {
   const navigate = useNavigate();

@@ -142,7 +142,7 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
       />
 
       <div
-        className="aspect-video w-auto bg-no-repeat bg-cover overflow-hidden bg-violet-dark rounded-xl -mx-6 -mt-12 mb-4"
+        className="aspect-video w-auto bg-no-repeat bg-cover bg-center overflow-hidden bg-violet-dark rounded-xl -mx-6 -mt-12 mb-4"
         style={{ backgroundImage: `url('${event?.img_banner}')` }}
       />
       <div className="flex flex-col gap-1 overflow-y-auto max-h-[40dvh]">
