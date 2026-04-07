@@ -27,6 +27,7 @@ import LightModeIcon from "../assets/icons/sun.svg?react"
 import PencilIcon from "../assets/icons/pencil.svg?react"
 import PlayIcon from "../assets/icons/play.svg?react"
 import PauseIcon from "../assets/icons/pause.svg?react"
+import AndroidIcon from "../assets/icons/android.svg?react"
 
 const variants: Variants = {
   visible: { 
@@ -57,6 +58,9 @@ interface PerfilAction {
   onClick: MouseEventHandler<HTMLButtonElement>,
 }
 
+const APK_LINK = "https://github.com/USPCodeLab-Leste/Hermes/releases/download/v1.0/portal-hermes-android-v1.0.apk"
+const FORMS_LINK = "https://forms.gle/coS8sQid3S9JGeKk9"
+
 export default function Perfil() {
   const navigate = useNavigate();
   const [signOut] = useSignOut(auth);
@@ -79,7 +83,10 @@ export default function Perfil() {
   const handleDarkMode = useCallback(() => toggleTheme(), [toggleTheme]);
   const handleReducedMotionToggle = useCallback(() => togglePreference(), [togglePreference]);
   const handleBug = useCallback(() => {
-    window.open("https://forms.gle/coS8sQid3S9JGeKk9", "_blank", "noopener,noreferrer");
+    window.open(FORMS_LINK, "_blank", "noopener,noreferrer");
+  }, []);
+  const handleDownload = useCallback(() => {
+    window.open(APK_LINK, "_blank", "noopener,noreferrer");
   }, []);
   const handleInfo = useCallback(() => {}, []);
   const handleAdmin = useCallback(() => navigate({ pathname: "admin", search }), [navigate, search]);
@@ -93,6 +100,7 @@ export default function Perfil() {
     { label: isReducedMotion ? "Ativar Animações" : "Desativar Animações", icon: isReducedMotion ? PlayIcon : PauseIcon, onClick: handleReducedMotionToggle },
     { label: "Relatar Bugs", icon: BugIcon, onClick: handleBug },
     // { label: "Informações", icon: InfoIcon, onClick: handleInfo },
+    { label: "Baixar APK (Android)", icon: AndroidIcon, onClick: handleDownload},
     { label: "Sair", icon: LogoutIcon, onClick: signOut },
   ].map((action, index) => ({ ...action, id: index })), [isDark, user?.role, handleDarkMode, handleReducedMotionToggle, handleBug, handleInfo, handleNotificacoes, handlePerfil, handleSenha, handleAdmin, signOut]);
 
