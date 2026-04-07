@@ -85,9 +85,9 @@ function InfoIndexRedirect({ pathname }: { pathname: string }) {
   return <Navigate to={{ pathname, search }} replace />;
 }
 
-function LazyRoute({children}: {children: JSX.Element}) {
+function LazyRoute({children, fullPage, loader}: {children: JSX.Element, fullPage?: boolean, loader?: string}) {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<Loading fullPage={fullPage} loader={loader} />}>
       {children}
     </Suspense>
   );
@@ -139,7 +139,7 @@ export const router = createBrowserRouter(
             path="admin" 
             element={
               <RequireAdmin>
-                <LazyRoute>
+                <LazyRoute fullPage={true} loader="loader-message">
                   <AdminLayout />
                 </LazyRoute>
               </RequireAdmin>
@@ -149,7 +149,7 @@ export const router = createBrowserRouter(
             <Route 
               path="create_events" 
               element={
-                <LazyRoute>
+                <LazyRoute fullPage={false}>
                   <CreateEvent />
                 </LazyRoute>
               } 
@@ -157,7 +157,7 @@ export const router = createBrowserRouter(
             <Route 
               path="create_infos" 
               element={
-                <LazyRoute>
+                <LazyRoute fullPage={false}>
                   <CreateInfo />
                 </LazyRoute>
               } 
@@ -165,7 +165,7 @@ export const router = createBrowserRouter(
             <Route 
               path="create_tags" 
               element={
-                <LazyRoute>
+                <LazyRoute fullPage={false}>
                   <CreateTags />
                 </LazyRoute>
               } 
