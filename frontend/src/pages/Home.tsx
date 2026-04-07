@@ -20,11 +20,11 @@ import { FilterTagsModal } from "../components/modals/FilterTagsModal"
 import { EventCardSkeleton } from "../components/skeletons/EventCardSkeleton"
 import { LoadMoreTrigger } from "../components/LoadMoreTrigger"
 import { EventModal } from "../components/modals/EventModal"
+import { AppAdModal } from "../components/modals/AppAdModal"
 
 // Icons
 import FilterIcon from "../assets/icons/filter.svg?react"
 import FilterSparkIcon from "../assets/icons/filter-spark.svg?react"
-import { AppAdModal } from "../components/modals/AppAdModal"
 
 // Utils
 import { isApp } from "../utils/so"

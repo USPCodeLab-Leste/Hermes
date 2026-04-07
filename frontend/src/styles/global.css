@@ -59,13 +59,13 @@ html:has(.modal-open) {
 }
 
 #root {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
-#root:has(> .main-app) {
+/* #root:has(> .main-app) {
   display: grid;
   grid-template-rows: auto 1fr;
-}
+} */
 
 img {
   max-width: 100%;
@@ -76,7 +76,7 @@ img {
 } */
 
 .main-app {
-  @apply p-4 my-0 mx-auto mb-30 max-w-2xl w-95/100
+  @apply p-4 my-0 mx-auto mb-20 pb-20 max-w-2xl w-95/100
 }
 
 /* react-toastify */

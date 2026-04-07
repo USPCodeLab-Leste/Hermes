@@ -98,7 +98,7 @@ export default function Perfil() {
     // { label: "Notificações", icon: BellIcon, onClick: handleNotificacoes },
     { label: isDark ? "Modo Claro" : "Modo Escuro", icon: isDark ? LightModeIcon : DarkModeIcon, onClick: handleDarkMode },
     { label: isReducedMotion ? "Ativar Animações" : "Desativar Animações", icon: isReducedMotion ? PlayIcon : PauseIcon, onClick: handleReducedMotionToggle },
-    { label: "Relatar Bugs", icon: BugIcon, onClick: handleBug },
+    { label: "Relatar Bugs ou Sugestões", icon: BugIcon, onClick: handleBug },
     // { label: "Informações", icon: InfoIcon, onClick: handleInfo },
     { label: "Baixar APK (Android)", icon: AndroidIcon, onClick: handleDownload},
     { label: "Sair", icon: LogoutIcon, onClick: signOut },
