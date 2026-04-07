@@ -44,7 +44,7 @@ class MuralController {
 
         const extraResult = await ContentModel.findAll({
           limit: remaining,
-          offset: 0,
+          offset: offset + events.length,
           excludeIds: existingIds,
           type: "event"
         });
