@@ -27,43 +27,17 @@ class MuralController {
       const tags = userTags.map(t => t.name);
       
       let result  = await ContentModel.findAll({
-        tags,
+        priorityTags: tags,
         limit,
         offset,
         type: "event"
       });
 
-      let events = result.data;
-      let hasMore = result.hasMore;
+      const events = result.data.map(({ type, ...rest }) => rest);
 
-      // Se veio menos que o limite, completa o restante
-      if (events.length < limit) {
-
-        const remaining = limit - events.length;
-        const existingIds = events.map(e => e.id);
-
-        const extraResult = await ContentModel.findAll({
-          limit: remaining,
-          offset: offset + events.length,
-          excludeIds: existingIds,
-          type: "event"
-        });
-
-        events = [...events, ...extraResult.data];
-
-        // se o extra ainda tem mais
-        hasMore = hasMore || extraResult.hasMore;
-      }
-
-      // Remove o campo type
-      events = events.map(event => {
-        const { type, ...rest } = event;
-        return rest;
-      });
-
-      res.status(200).json({
+      return res.status(200).json({
         mural: events,
-        hasMore
+        hasMore: result.hasMore
       });
 
     } catch (err) {
