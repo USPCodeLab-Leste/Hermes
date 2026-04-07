@@ -1,13 +1,24 @@
+import { useState } from "react"
 import { Navigate, Outlet } from "react-router-dom"
-import { useAuth } from "../hooks/auth/useAuth"
-// import { motion, AnimatePresence } from "motion/react"
 
+// Componentes
+import { AppAdModal } from "../components/modals/AppAdModal"
+
+// Hooks
+import { useAuth } from "../hooks/auth/useAuth"
+
+// Icons
 import InstagramIcon from '../assets/icons/brand-instagram.svg?react'
 import GitHubIcon from '../assets/icons/brand-github.svg?react'
 import LogoHermes from '../assets/LOGO 240x240.svg'
 
+// Utils
+import { isApp } from "../utils/so"
+
 export default function AuthLayout() {
   const { isAuthenticated } = useAuth()
+  const hasSeenAppAd = localStorage.getItem("hasSeenAppAd") === "true"
+  const [isAppAdModalOpen, setIsAppAdModalOpen] = useState(hasSeenAppAd || isApp() ? false : true)
 
   // Redireciona se já estiver logado
   if (isAuthenticated) {
@@ -15,23 +26,31 @@ export default function AuthLayout() {
   }
 
   return (
-    <main className="min-h-screen w-full flex flex-col md:flex-row bg-violet-mid">
+    <>
+      {/* Modal App Ad */}
+      <AppAdModal
+        isOpen={isAppAdModalOpen}
+        onClose={() => setIsAppAdModalOpen(false)}
+      />
+      
+      <main className="min-h-screen w-full flex flex-col md:flex-row bg-violet-mid">
 
-      {/* LOGO E DESCRIÇÃO DO HERMES */}
-      <section className="w-full flex flex-5 flex-col justify-center items-center p-6 py-14 md:p-4">
-        <img src={LogoHermes} alt="Logo do Hermes" className="w-48 md:w-64 max-w-xs object-contain" />
+        {/* LOGO E DESCRIÇÃO DO HERMES */}
+        <section className="w-full flex flex-5 flex-col justify-center items-center p-6 py-14 md:p-4">
+          <img src={LogoHermes} alt="Logo do Hermes" className="w-48 md:w-64 max-w-xs object-contain" />
 
-        <p className="text-base md:text-center max-w-sm pb-1 pt-6 text-paper">
-          <span className="font-bold text-2xl">Bem-vindo ao Hermes: a voz do campus.</span>
-        </p>
-      </section>
+          <p className="text-base md:text-center max-w-sm pb-1 pt-6 text-paper">
+            <span className="font-bold text-2xl">Bem-vindo ao Hermes: a voz do campus.</span>
+          </p>
+        </section>
 
-      {/* FORMULÁRIO DE LOGIN E RODAPÉ */}
-      <section className="w-full flex flex-2 basis-50 flex-col justify-center items-center p-4 pt-6 md:p-8 dark:bg-violet-dark bg-aux-3 rounded-t-3xl md:rounded-t-none md:rounded-l-3xl">
-        <Outlet />
-        <FooterSocials />
-      </section>
-    </main>
+        {/* FORMULÁRIO DE LOGIN E RODAPÉ */}
+        <section className="w-full flex flex-2 basis-50 flex-col justify-center items-center p-4 pt-6 md:p-8 dark:bg-violet-dark bg-aux-3 rounded-t-3xl md:rounded-t-none md:rounded-l-3xl">
+          <Outlet />
+          <FooterSocials />
+        </section>
+      </main>
+    </>
   )
 }
 
