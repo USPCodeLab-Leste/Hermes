@@ -85,8 +85,19 @@ class ContentModel {
     }
   }
 
-  // pra buscar todos (Feed) com filtros opcionais
-  async findAll({ title, tags, type, excludeIds, limit, offset } = {}) {
+  async findAll({
+    title,
+    tags,
+    priorityTags,
+    type,
+    excludeIds,
+    limit,
+    offset
+  } = {}) {
+    
+    const hasPriorityTags = Array.isArray(priorityTags) && priorityTags.length > 0;
+    const hasFilterTags = Array.isArray(tags) && tags.length > 0;
+
     let query = `
       SELECT 
         p.*,
@@ -101,6 +112,32 @@ class ContentModel {
           ) FILTER (WHERE t.id IS NOT NULL),
           '[]'
         ) AS tags
+    `;
+
+    const values = [];
+    let index = 1;
+
+    // prioridade do mural
+    if (hasPriorityTags) {
+      query += `,
+        CASE
+          WHEN EXISTS (
+            SELECT 1
+            FROM tb_content_tag pt2
+            JOIN tb_tag t2 ON pt2.tag_id = t2.id
+            WHERE pt2.content_id = p.id
+            AND LOWER(t2.name) = ANY($${index})
+          )
+          THEN 0
+          ELSE 1
+        END AS priority
+      `;
+
+      values.push(priorityTags.map(tag => tag.toLowerCase()));
+      index++;
+    }
+
+    query += `
       FROM tb_content p
       JOIN tb_user u ON p.autor_id = u.id
       LEFT JOIN tb_content_tag pt ON p.id = pt.content_id
@@ -108,44 +145,37 @@ class ContentModel {
       WHERE 1=1
     `;
 
-    const values = [];
-    let index = 1;
-
-    // filtro por titulo
+    // filtro por título
     if (title) {
       query += ` AND p.title ILIKE $${index}`;
       values.push(`%${title}%`);
       index++;
     }
 
-    // filtro por type
+    // filtro por tipo
     if (type) {
       query += ` AND p.type = $${index}`;
       values.push(type);
       index++;
     }
 
-    // filtro por nomes de tags
-    if (tags) {
-
-      // transforma em array se vier string
-      const tagArray = Array.isArray(tags) ? tags : [tags];
-
+    // filtro real por tags
+    if (hasFilterTags) {
       query += `
         AND p.id IN (
-          SELECT pt.content_id
-          FROM tb_content_tag pt
-          JOIN tb_tag t2 ON pt.tag_id = t2.id
+          SELECT pt2.content_id
+          FROM tb_content_tag pt2
+          JOIN tb_tag t2 ON pt2.tag_id = t2.id
           WHERE LOWER(t2.name) = ANY($${index})
         )
       `;
 
-      values.push(tagArray.map(tag => tag.toLowerCase()));
+      values.push(tags.map(tag => tag.toLowerCase()));
       index++;
     }
 
-    // excluir content já carregados
-    if (excludeIds && excludeIds.length > 0) {
+    // exclusão
+    if (excludeIds?.length > 0) {
       query += ` AND p.id <> ALL($${index})`;
       values.push(excludeIds);
       index++;
@@ -153,24 +183,32 @@ class ContentModel {
 
     query += `
       GROUP BY p.id, u.name
-      ORDER BY p.data_inicio ASC NULLS LAST
     `;
 
+    // ordenação
+    if (hasPriorityTags) {
+      query += `
+        ORDER BY priority ASC, p.data_inicio ASC NULLS LAST
+      `;
+    } else {
+      query += `
+        ORDER BY p.data_inicio ASC NULLS LAST
+      `;
+    }
+
+    // paginação
     if (limit !== undefined && offset !== undefined) {
       query += `
         LIMIT $${index}
         OFFSET $${index + 1}
       `;
-
       values.push(limit + 1, offset);
     }
 
     const result = await pool.query(query, values);
-    const hasMore = result.rows.length > limit;
 
-    if (hasMore) {
-      result.rows.pop(); // remove o extra
-    }
+    const hasMore = limit !== undefined ? result.rows.length > limit : false;
+    if (hasMore) result.rows.pop();
 
     return {
       data: result.rows,
