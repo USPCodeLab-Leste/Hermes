@@ -3,6 +3,8 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const baseUrl = process.env.BASE_URL;
 
+const IMG_URL = "https://i.ibb.co/twygqLLZ/logo-pequena-padding.png";
+
 export async function sendVerificationEmail(userEmail,token) {
 
     const verificationLink = `${baseUrl}/auth/verify-email?token=${token}`;
@@ -24,7 +26,7 @@ export async function sendVerificationEmail(userEmail,token) {
                 <tr>
                     <td style="padding-bottom: 10px;">
                     <img 
-                        src="https://i.ibb.co/jZTYmXTd/logo-pequena-padding.png" 
+                        src="${IMG_URL}"
                         alt="Logo Hermes"
                         width="180"
                         style="display:block; margin:0 auto;"

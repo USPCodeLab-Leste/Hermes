@@ -147,7 +147,7 @@ input:is(:-webkit-autofill, :autofill) {
 
 /* Loader */
 
-.loader {
+.loader-common {
   @apply border-paper border-[5px];
   border-bottom-color: transparent;
   border-radius: 50%;
@@ -164,3 +164,38 @@ input:is(:-webkit-autofill, :autofill) {
     transform: rotate(360deg);
   }
 }
+
+.loader-message {
+  @apply relative border-solid box-border border-[40px_60px_30px_60px] border-b-teal-light border-r-teal-light border-t-teal-mid/60 border-l-teal-mid rounded-md;
+  animation: envFloating 1s ease-in infinite alternate;
+}
+
+.loader-message:after{
+  content:"";
+  position: absolute;
+  right: 62px;
+  top: -40px;
+  height: 70px;
+  width: 50px;
+  background-image:
+            linear-gradient(#fff 45px, transparent 0),
+            linear-gradient(#fff 45px, transparent 0),
+            linear-gradient(#fff 45px, transparent 0);
+  background-repeat: no-repeat;
+  background-size: 30px 4px;
+  background-position: 0px 11px , 8px 35px, 0px 60px;
+  animation: envDropping 0.75s linear infinite;
+}
+
+@keyframes envFloating {
+  0% { transform: translate(-2px, -5px)}
+  100% { transform: translate(0, 5px)}
+}
+
+@keyframes envDropping {
+  0% {background-position: 100px 11px , 115px 35px, 105px 60px; opacity: 1;}
+  50% {background-position: 0px 11px , 20px 35px, 5px 60px; }
+  60% {background-position: -30px 11px , 0px 35px, -10px 60px; }
+  75%, 100% {background-position: -30px 11px , -30px 35px, -30px 60px; opacity: 0;}
+}
+      

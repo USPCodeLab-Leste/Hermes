@@ -69,10 +69,10 @@ export default function Info() {
     setSelectedArticleId(null);
   }, [setParams]);
   
-  if (!isLoadingInfos && infos?.length === 0 && !search) {
+  if (!isLoadingInfos && infos?.length === 0) {
     return (
-      <section className="flex flex-col items-center justify-center gap-4 h-70">
-        <div>A tag "{tagName}" não existe, tente novamente com outra tag</div>
+      <section className="flex flex-col items-center justify-center gap-4">
+        <span className="text-center">A tag "{tagName}" não existe, tente novamente com outra tag</span>
         <Link to=".." relative="path" className="bg-teal-mid p-2 text-lg font-medium rounded-xl">Voltar para Infos</Link>
       </section>
     )
@@ -85,7 +85,7 @@ export default function Info() {
         handleModalClose={handleModalClose} 
         selectedInfo={selectedInfo} 
       />
-      <section className="flex flex-col gap-4 h-70">
+      <section className="flex flex-col gap-4">
         <motion.h2 
           className="text-2xl font-bold" 
           initial={{ opacity: 0 }} 
