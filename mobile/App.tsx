@@ -9,12 +9,75 @@ import * as IntentLauncher from 'expo-intent-launcher';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+
 const URL = `https://portalhermes.app`
+
+// configura como as notificacoes irao se comportar quando o app estiver aberti
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true, 
+    shouldShowList: true,   
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
+// funcao para registrar e pegar o token
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    
+    if (finalStatus !== 'granted') {
+      console.log('Permissão negada para notificações push!');
+      return undefined;
+    }
+    
+    try {
+      const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+      token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+      console.log("Token gerado:", token);
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    console.log('Precisa usar um celular real para Push Notifications');
+  }
+
+  return token;
+}
 
 export default function App() {
   const webViewRef = useRef<WebViewType>(null);
 
   const [initialUrl, setInitialUrl] = useState(URL);
+
+  const [expoPushToken, setExpoPushToken] = useState<string | undefined>();
+
+  // efeito para pegar o token ao abrir
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => { setExpoPushToken(token);
+    })
+  }, []);
 
   const handleMessage = async (event: any) => {
     const data = JSON.parse(event.nativeEvent.data);
@@ -92,13 +155,21 @@ export default function App() {
     return () => subscription.remove();
   }, []);
 
+
+  // 
+  const injectedScript = `
+    window.isMobileApp = true;
+    window.expoPushToken = ${expoPushToken ? `"${expoPushToken}"` : "null"};
+    true;
+  `;
+
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'top', 'left', 'right']}>
       <WebView
         ref={webViewRef}
         source={{ uri: initialUrl }}
         pullToRefreshEnabled={true}
-        injectedJavaScript={`window.isMobileApp = true; true;`}
+        injectedJavaScript={injectedScript}
         onMessage={handleMessage}
       />
     </SafeAreaView>
