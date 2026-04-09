@@ -143,6 +143,25 @@ class UserModel {
     );
   }
 
+  // essa aqui salva o token depois de push do expo
+
+  async savePushToken(userId, pushToken) {
+   try { const query = `
+      UPDATE tb_user
+      SET push_token = $1
+      WHERE id = $2
+      RETURNING id, push_token
+      `;
+      const values = [pushToken, userId];
+      const result = await pool.query(query, values);
+      return result.rows[0];
+  } catch (err) {
+    console.error("ERROR SAVE PUSH TOKEN: ", err);
+    throw err;
+  }
+
+}
+
 }
 
 export default new UserModel();
