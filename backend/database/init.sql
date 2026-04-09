@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS tb_user (
     password VARCHAR(255) NOT NULL,
     role VARCHAR(50) DEFAULT 'USER',
     is_verified BOOLEAN DEFAULT FALSE
+    push_token VARCHAR(255)
 );
 
 --  tabela de tags (com type e name)
