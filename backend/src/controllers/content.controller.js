@@ -1,4 +1,7 @@
 import ContentModel from "../models/content.model.js";
+import UserModel from "../models/user.model.js"; 
+import { Expo } from "expo-server-sdk";
+const expo = new Expo()
 
 const MAX_LIMIT = 20;
 const DEFAULT_LIMIT = 10;
@@ -100,6 +103,36 @@ class BaseContentController {
         autor_id: userId,
         tags
       });
+
+      // parte pro broadcast de notificações
+      try {
+        const pushTokens = await UserModel.getAllPushTokens();
+
+        if (pushTokens && pushTokens.length > 0) {
+          let messages = [];
+          
+          for (let pushToken of pushTokens) {
+            if (!Expo.isExpoPushToken(pushToken)) continue;
+
+            messages.push({
+              to: pushToken,
+              sound: 'default',
+              title: `Novo aviso no Hermes! 📢`,
+              body: contentData.title || `Temos novidades na área de ${this.type}.`,
+            });
+          }
+
+          let chunks = expo.chunkPushNotifications(messages);
+          for (let chunk of chunks) {
+            await expo.sendPushNotificationsAsync(chunk);
+          }
+          console.log(`Push enviada para ${messages.length} celulares.`);
+        }
+      } catch (pushError) {
+        // se a notificação falhar, o post ainda é criado com sucesso
+        console.error("Erro no envio de notificações:", pushError);
+      }
+    
 
       return res.status(201).json({
         message: `${this.type} criado com sucesso`

@@ -162,6 +162,21 @@ class UserModel {
 
 }
 
+// funcao para buscar todos os tokens para Broadcast de notificacoes
+async getAllPushTokens() {
+  try {
+    const query = `
+      SELECT push_token
+      FROM tb_user
+      WHERE push_token is NOT NULL
+      `; result = await pool.query(query);
+      return result.rows.mqap(now => row.push_token);
+  } catch (err) {
+    console.error("ERROR GET ALL PUSH TOKENS: ", err);
+    return [];
+  }
+}
+
 }
 
 export default new UserModel();
