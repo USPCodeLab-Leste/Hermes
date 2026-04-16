@@ -27,6 +27,7 @@ import CalendarIcon from "../assets/icons/calendar-plus.svg?react"
 // Utils
 import { createGoogleCalendarLink, downloadICS, formatIcs } from "../utils/dates"
 import { isMobile } from "../utils/so"
+import { ScrollingTitle } from "./ScrollingTittle"
 
 
 interface SelectedEventDetailsProps {
@@ -153,7 +154,8 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
           onClick={handleFollowTag}
         />
         <div className="flex flex-row justify-between items-center gap-4">
-          <h2 className="text-2xl font-bold -mb-1 truncate">{event?.title}</h2>
+          {/* <h2 className="text-2xl font-bold -mb-1 truncate">{event?.title}</h2> */}
+          <ScrollingTitle title={event?.title || ""} className="text-2xl font-bold -mb-1" />
           <button 
             className="cursor-pointer p-2 rounded-xl bg-teal-light shadow-md hover:bg-teal-light/90 transition-colors"
             onClick={handleAddToCalendar}
