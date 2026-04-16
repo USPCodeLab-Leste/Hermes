@@ -1,4 +1,4 @@
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useCallback, useMemo, useState } from "react";
 import { motion, stagger, type Variants } from "framer-motion";
 

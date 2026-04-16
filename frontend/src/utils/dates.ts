@@ -81,3 +81,28 @@ export function createGoogleCalendarLink(event: {
 
   return `${base}&text=${text}&dates=${start}/${end}&details=${details}&location=${location}`
 }
+
+export const months = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro"
+]
+
+export const daysOfWeek = [
+  "Dom",
+  "Seg",
+  "Ter",
+  "Qua",
+  "Qui",
+  "Sex",
+  "Sáb"
+]
