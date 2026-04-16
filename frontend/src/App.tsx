@@ -43,6 +43,7 @@ import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
 import Info from './pages/info/InfoTag'
+import Calendar from './pages/Calendar';
 
 // Components
 import Loading from './components/Loading'
@@ -117,6 +118,8 @@ export const router = createBrowserRouter(
       >
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="home" element={<Home />} />
+
+        <Route path="calendar" element={<Calendar />} />
 
         <Route path="/info" element={<InfoLayout />} >
           <Route index element={<InfoIndexRedirect pathname="/info/estudos" />} />
