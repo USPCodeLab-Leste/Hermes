@@ -13,6 +13,14 @@ type CalendarEvent = {
   end: Date
 }
 
+function escapeIcsText(text: string) {
+  return text
+    .replace(/\\/g, "\\\\")  // barra invertida
+    .replace(/\n/g, "\\n")   // quebra de linha
+    .replace(/,/g, "\\,")    // vírgula
+    .replace(/;/g, "\\;")    // ponto e vírgula
+}
+
 export function formatIcs(event: CalendarEvent) {
   const start = formatDate(event.start)
   const end = formatDate(event.end)
@@ -20,9 +28,9 @@ export function formatIcs(event: CalendarEvent) {
   return `BEGIN:VCALENDAR
 VERSION:2.0
 BEGIN:VEVENT
-SUMMARY:${event.title}
-DESCRIPTION:${event.description ?? ""}
-LOCATION:${event.location ?? ""}
+SUMMARY:${escapeIcsText(event.title)}
+DESCRIPTION:${escapeIcsText(event.description ?? "")}
+LOCATION:${escapeIcsText(event.location ?? "")}
 DTSTART:${start}
 DTEND:${end}
 END:VEVENT
