@@ -169,7 +169,7 @@ const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
               <InfoSearchResultCards infos={infos} search={search} />
             </>
           ) : (
-            <p className="text-center font-medium p-4">Nenhum artigo encontrado com essa busca em <em className="capitalize">{type}</em></p>
+            <p className="text-center font-medium p-4">Nenhum artigo encontrado com essa busca :(</p>
           )}
         </div>
       )}
