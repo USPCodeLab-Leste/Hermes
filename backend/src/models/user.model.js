@@ -146,11 +146,12 @@ class UserModel {
   // essa aqui salva o token depois de push do expo
 
   async savePushToken(userId, pushToken) {
-   try { const query = `
-      UPDATE tb_user
-      SET push_token = $1
-      WHERE id = $2
-      RETURNING id, push_token
+   try { 
+      const query = `
+        UPDATE tb_user
+        SET push_token = $1
+        WHERE id = $2
+        RETURNING id, push_token
       `;
       const values = [pushToken, userId];
       const result = await pool.query(query, values);
@@ -169,8 +170,9 @@ async getAllPushTokens() {
       SELECT push_token
       FROM tb_user
       WHERE push_token is NOT NULL
-      `; result = await pool.query(query);
-      return result.rows.mqap(now => row.push_token);
+      `;
+    const result = await pool.query(query);
+    return result.rows.map((row) => row.push_token);
   } catch (err) {
     console.error("ERROR GET ALL PUSH TOKENS: ", err);
     return [];
