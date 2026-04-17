@@ -42,7 +42,8 @@
           ],
           "category": ["BROWSABLE", "DEFAULT"]
         }
-      ]
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/logo-pequena-padding.png"
@@ -51,6 +52,9 @@
       "eas": {
         "projectId": "1106c0e0-fe11-4300-b988-b200e035e1c2"
       }
-    }
+    },
+    "plugins": [
+      "expo-notifications"
+      ]
   }
 }

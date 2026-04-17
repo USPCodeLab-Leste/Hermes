@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "166545928111",
+    "project_id": "portal-hermes-usp",
+    "storage_bucket": "portal-hermes-usp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166545928111:android:e080e3778080073fba895a",
+        "android_client_info": {
+          "package_name": "com.portal_hermes.portalhermes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcjcCxeRWD-youtxFzr4ifYzT-lts4vu0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
