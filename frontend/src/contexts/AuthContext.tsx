@@ -1,5 +1,4 @@
-import { createContext, useMemo, useEffect } from 'react'
-import { updatePushToken } from '../api/users'
+import { createContext, useMemo } from 'react'
 import { auth } from '../services/auth'
 import { useAuthState } from '../hooks/auth/useAuthState'
 import type { UserMe } from '../types/user'
@@ -21,28 +20,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     error
   ] = useAuthState(auth);
-
-  useEffect(() => {
-    if (user) {
-      const win = window as any;
-
-      if (win.isMobileApp && win.expoPushToken) {
-        if (!win.pushTokenSent) {
-
-          // Chamando a nossa nova função da API
-          updatePushToken(win.expoPushToken)
-          .then(() => {
-            console.log("Token do celular salvo com sucesso no banco!");
-            win.pushTokenSent = true;
-          })
-          .catch((err: any) => {
-            console.error("Erro ao salvar token de notificação:", err);
-          });
-
-        }
-      }
-    }
-  }, [user]);
 
   const value = useMemo(() => {
     const map = new Map<string, GenericTag>()
