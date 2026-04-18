@@ -246,6 +246,20 @@ class BaseContentController {
     }
   }
 
+  async getByMonth(req, res) {
+    try {
+      
+      if (this.type === "event") {
+        const data = await ContentModel.getByMonth();
+        return res.status(200).json({ data });
+      }
+      
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Erro ao buscar eventos do mês" });
+    }
+  }
+
 }
 
 export default BaseContentController;

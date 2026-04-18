@@ -71,6 +71,42 @@ router.get("/events", authMiddleware, emailVerifiedMiddleware, eventsController.
 
 /**
  * @openapi
+ * /events/getByMonth:
+ *   get:
+ *     tags:
+ *       - Events
+ *     security:
+ *       - cookieAuth: []
+ *     summary: Listar eventos do mês atual
+ *     description: Retorna todos os eventos cujo campo data_inicio está dentro do mês atual
+ *     responses:
+ *       200:
+ *         description: Lista de eventos do mês atual
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/Event"
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: E-mail não verificado
+ *       500:
+ *         description: Erro interno
+ */
+router.get(
+  "/events/getByMonth",
+  authMiddleware,
+  emailVerifiedMiddleware,
+  eventsController.getByMonth.bind(eventsController)
+);
+
+/**
+ * @openapi
  * /events/{id}:
  *   get:
  *     tags:
