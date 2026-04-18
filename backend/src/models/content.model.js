@@ -92,7 +92,8 @@ class ContentModel {
     type,
     excludeIds,
     limit,
-    offset
+    offset,
+    onlyFuture
   } = {}) {
     
     const hasPriorityTags = Array.isArray(priorityTags) && priorityTags.length > 0;
@@ -179,6 +180,10 @@ class ContentModel {
       query += ` AND p.id <> ALL($${index})`;
       values.push(excludeIds);
       index++;
+    }
+
+    if (onlyFuture) {
+      query += ` AND p.data_inicio IS NOT NULL AND p.data_inicio >= CURRENT_DATE`;
     }
 
     query += `
