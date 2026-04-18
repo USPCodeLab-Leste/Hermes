@@ -75,13 +75,26 @@ router.get("/events", authMiddleware, emailVerifiedMiddleware, eventsController.
  *   get:
  *     tags:
  *       - Events
+ *     summary: Listar eventos por mês e ano
+ *     description: Retorna eventos com base no mês e ano informados
  *     security:
  *       - cookieAuth: []
- *     summary: Listar eventos do mês atual
- *     description: Retorna todos os eventos cujo campo data_inicio está dentro do mês atual
+ *     parameters:
+ *       - in: query
+ *         name: month
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 4
+ *       - in: query
+ *         name: year
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 2026
  *     responses:
  *       200:
- *         description: Lista de eventos do mês atual
+ *         description: Lista de eventos do mês
  *         content:
  *           application/json:
  *             schema:
@@ -91,8 +104,10 @@ router.get("/events", authMiddleware, emailVerifiedMiddleware, eventsController.
  *                   type: array
  *                   items:
  *                     $ref: "#/components/schemas/Event"
+ *       400:
+ *         description: Parâmetros inválidos
  *       401:
- *         description: Usuário não autenticado
+ *         description: Não autenticado
  *       403:
  *         description: E-mail não verificado
  *       500:

@@ -248,15 +248,22 @@ class BaseContentController {
 
   async getByMonth(req, res) {
     try {
-      
-      if (this.type === "event") {
-        const data = await ContentModel.getByMonth();
-        return res.status(200).json({ data });
+      let { month, year } = req.query;
+
+      month = Number(month);
+      year = Number(year);
+
+      if (!month || !year || month < 1 || month > 12) {
+        return res.status(400).json({ error: "month e year são obrigatórios e válidos" });
       }
-      
+
+      const data = await ContentModel.getByMonth({ month, year });
+
+      return res.status(200).json({ data });
+
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ error: "Erro ao buscar eventos do mês" });
+      return res.status(500).json({ error: "Erro ao buscar eventos" });
     }
   }
 

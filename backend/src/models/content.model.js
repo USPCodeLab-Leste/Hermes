@@ -249,18 +249,20 @@ class ContentModel {
     return result.rows[0];
   }
 
-  async getByMonth() {
+  async getByMonth({ month, year }) {
     const query = `
       SELECT *
       FROM tb_content
       WHERE 
         type = 'event'
-        AND data_inicio >= DATE_TRUNC('month', CURRENT_DATE)
-        AND data_inicio < DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month'
+        AND data_inicio >= DATE_TRUNC('month', MAKE_DATE($1, $2, 1))
+        AND data_inicio < DATE_TRUNC('month', MAKE_DATE($1, $2, 1)) + INTERVAL '1 month'
       ORDER BY data_inicio ASC
     `;
 
-    const result = await pool.query(query);
+    const values = [year, month];
+
+    const result = await pool.query(query, values);
     return result.rows;
   }
 
