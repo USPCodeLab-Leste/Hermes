@@ -40,8 +40,24 @@ export function adminMiddleware(req, res, next) {
     return res.status(401).json({ error: "Não autenticado" });
   }
 
-  if (req.user.role !== "ADMIN") {
+  if (req.user.role !== "ADMIN" && req.user.role !== "SUPERADMIN") {
     return res.status(403).json({ error: "Acesso restrito a administradores" });
+  }
+
+  next();
+}
+
+export function superAdminMiddleware(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ error: "Não autenticado" });
+  }
+
+  if (req.user.role !== "SUPERADMIN") {
+    return res.status(403).json({ error: "Acesso restrito a super administradores" });
+  }
+
+  if(process.env.ENABLE_SUPERADMIN_ROUTES !== "true") {
+    return res.status(503).json({ error: "Endpoint desabilitado" });
   }
 
   next();
