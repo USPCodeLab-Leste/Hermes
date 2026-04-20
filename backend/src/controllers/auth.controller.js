@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { registerSchema, changePasswordSchema } from "../validators/auth.validator.js";
 import jwt from "jsonwebtoken";
 import { sendVerificationEmail } from "../services/email.service.js";
+import { cookieOptions } from "../services/cookies.service.js"
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -35,7 +36,7 @@ class AuthController {
       const emailToken = jwt.sign(
         { id: user.id },
         process.env.JWT_EMAIL_SECRET,
-        { expiresIn: "1d" }
+        { expiresIn: "15m" }
       );
 
       await sendVerificationEmail(email, emailToken);
@@ -82,7 +83,7 @@ class AuthController {
           is_verified: user.is_verified || false
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "15m" }
       );
 
       // REFRESH TOKEN (longa duração)
@@ -93,28 +94,14 @@ class AuthController {
           is_verified: user.is_verified || false
         },
         process.env.ACCESS_TOKEN_SECRET_REFRESH,
-        { expiresIn: "7d" }
+        { expiresIn: "30d" }
       );
 
       // Cookies
       const cookieSite = process.env.COOKIE_SAMESITE;
-      res.cookie("access_token", accessToken, {
-        httpOnly: true,
-        sameSite: cookieSite,
-        secure: isProduction,
-        maxAge: 1000 * 60 * 60,
-        path: "/",
-        domain: ".portalhermes.app"
-      });
 
-      res.cookie("refresh_token", refreshToken, {
-        httpOnly: true,
-        sameSite: cookieSite,
-        secure: isProduction,
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        path: "/",
-        domain: ".portalhermes.app"
-      });
+      res.cookie("access_token", accessToken, cookieOptions.auth);
+      res.cookie("refresh_token", refreshToken, cookieOptions.refresh);
 
       res.status(200).json({ message: "Login realizado com sucesso" });
 
@@ -129,21 +116,9 @@ class AuthController {
     try {
 
       const cookieSite = process.env.COOKIE_SAMESITE;
-      await res.clearCookie("access_token", {
-        httpOnly: true,
-        sameSite: cookieSite,
-        secure: isProduction,
-        path: "/",
-        domain: ".portalhermes.app"
-      });
-
-      await res.clearCookie("refresh_token", {
-        httpOnly: true,
-        sameSite: cookieSite,
-        secure: isProduction,
-        path: "/",
-        domain: ".portalhermes.app"
-      });
+      
+      res.clearCookie("access_token", cookieOptions.auth);
+      res.clearCookie("refresh_token", cookieOptions.refresh);
 
       return res.status(200).json({ message: "Logout realizado com sucesso" });
 
