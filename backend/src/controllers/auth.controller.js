@@ -1,8 +1,8 @@
 import UserModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import { registerSchema, changePasswordSchema } from "../validators/auth.validator.js";
+import { registerSchema, changePasswordSchema, forgotPasswordSchema, resetPasswordSchema } from "../validators/auth.validator.js";
 import jwt from "jsonwebtoken";
-import { sendVerificationEmail } from "../services/email.service.js";
+import { sendVerificationEmail, sendResetPasswordEmail } from "../services/email.service.js";
 import { cookieOptions } from "../services/cookies.service.js"
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -97,9 +97,6 @@ class AuthController {
         { expiresIn: "30d" }
       );
 
-      // Cookies
-      const cookieSite = process.env.COOKIE_SAMESITE;
-
       res.cookie("access_token", accessToken, cookieOptions.auth);
       res.cookie("refresh_token", refreshToken, cookieOptions.refresh);
 
@@ -115,8 +112,6 @@ class AuthController {
 
     try {
 
-      const cookieSite = process.env.COOKIE_SAMESITE;
-      
       res.clearCookie("access_token", cookieOptions.auth);
       res.clearCookie("refresh_token", cookieOptions.refresh);
 
@@ -189,6 +184,88 @@ class AuthController {
       }
 
       return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+  }
+
+  async esqueciSenha(req, res) {
+    try {
+      const { email } = forgotPasswordSchema.parse(req.body);
+
+      const user = await UserModel.findOne({ email: email });
+
+      // sempre responde igual (segurança)
+      if (!user) {
+        return res.status(200).json({
+          message: "Se o email existir, um link foi enviado"
+        });
+      }
+
+      const token = jwt.sign(
+        { id: user.id },
+        process.env.JWT_EMAIL_SECRET,
+        { expiresIn: "15m" }
+      );
+
+      await sendResetPasswordEmail(email, token);
+
+      return res.status(200).json({
+        message: "Se o email existir, um link foi enviado"
+      });
+
+    } catch (err) {
+      console.error(err);
+      
+      if (err.name === "ZodError") {
+        return res.status(400).json({ error: err });
+      }
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+  }
+
+  async resetPassword(req, res) {
+    try {
+      const { token, newPassword } = resetPasswordSchema.parse(req.body);
+
+      // valida token
+      let payload;
+      try {
+        payload = jwt.verify(
+          token,
+          process.env.JWT_EMAIL_SECRET
+        );
+      } catch (err) {
+        return res.status(400).json({
+          error: "Token inválido ou expirado"
+        });
+      }
+
+      // busca usuário
+      const user = await UserModel.findOne({ id: payload.id });
+
+      if (!user) {
+        return res.status(404).json({
+          error: "Usuário não encontrado"
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await UserModel.updatePassword(user.id, hashedPassword);
+
+      return res.status(200).json({
+        message: "Senha redefinida com sucesso"
+      });
+
+    } catch (err) {
+      console.error(err);
+
+      if (err.name === "ZodError") {
+        return res.status(400).json({ error: err });
+      }
+
+      return res.status(500).json({
+        error: "Erro interno ao redefinir senha"
+      });
     }
   }
 
