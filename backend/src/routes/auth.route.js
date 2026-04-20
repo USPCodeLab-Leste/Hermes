@@ -211,4 +211,85 @@ router.post('/logout', authMiddleware, AuthController.logout);
  */
 router.patch("/change-password", authMiddleware, emailVerifiedMiddleware, AuthController.changePassword);
 
+/**
+ * @openapi
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Solicitar redefinição de senha
+ *     description: >
+ *       Envia um e-mail com link para redefinição de senha caso o e-mail exista na base.
+ *       Sempre retorna sucesso para evitar enumeração de usuários.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: hermes@usp.br
+ *     responses:
+ *       200:
+ *         description: Email enviado (se existir)
+ *         content:
+ *           application/json:
+ *             example:
+ *               {
+ *                 "message": "Se o email existir, um link foi enviado"
+ *               }
+ *       400:
+ *         description: Dados inválidos
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.post("/forgot-password", AuthController.esqueciSenha);
+
+/**
+ * @openapi
+ * /auth/reset-password:
+ *   post:
+ *     summary: Redefinir senha
+ *     description: >
+ *       Redefine a senha do usuário com base em um token válido enviado por e-mail.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - newPassword
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *               newPassword:
+ *                 type: string
+ *                 example: NovaSenha123
+ *     responses:
+ *       200:
+ *         description: Senha redefinida com sucesso
+ *         content:
+ *           application/json:
+ *             example:
+ *               {
+ *                 "message": "Senha redefinida com sucesso"
+ *               }
+ *       400:
+ *         description: Token inválido, expirado ou dados inválidos
+ *       404:
+ *         description: Usuário não encontrado
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.post("/reset-password", AuthController.resetPassword);
+
 export default router;
