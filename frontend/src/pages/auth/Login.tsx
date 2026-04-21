@@ -100,6 +100,9 @@ export default function Login() {
     if (location.state?.fromRegisterSucess) {
       toast.success("Registro realizado com sucesso! Verifique seu e-mail para ativar sua conta.");
       navigate(".", { replace: true });
+    } else if (location.state?.fromResetPasswordSucess) {
+      toast.success("Senha redefinida com sucesso! Agora você pode fazer login.");
+      navigate(".", { replace: true });
     }
   }, [location, navigate])
 
