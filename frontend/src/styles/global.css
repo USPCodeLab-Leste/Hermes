@@ -23,6 +23,7 @@
 
 /*Reset & root*/
 html {
+  --marquee-gap: 8px;
   box-sizing: border-box;
 }
 *, *:before, *:after {
@@ -198,4 +199,19 @@ input:is(:-webkit-autofill, :autofill) {
   60% {background-position: -30px 11px , 0px 35px, -10px 60px; }
   75%, 100% {background-position: -30px 11px , -30px 35px, -30px 60px; opacity: 0;}
 }
-      
+
+/* Infinite Scroll */
+
+.animate-scroll .scrolling {
+  animation: scroll 10s linear infinite;
+}
+
+.animate-scroll:hover .scrolling {
+  animation-play-state: paused;
+}
+
+@keyframes scroll {
+  to {
+    transform: translateX(calc(-100% - var(--marquee-gap)));
+  }
+}

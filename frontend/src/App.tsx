@@ -43,6 +43,7 @@ import Campus from './pages/info/Campus';
 import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
 import Info from './pages/info/InfoTag'
+import Calendar from './pages/Calendar';
 
 // Components
 import Loading from './components/Loading'
@@ -53,12 +54,14 @@ import Loading from './components/Loading'
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const { isAuthenticated, loading } = useAuth()
+  const location = useLocation()
+  const pathname = location.pathname
 
   if (loading) {
     return <Loading loader='loader-message' />
   }
 
-  return isAuthenticated ? children : <Navigate to="/auth" replace />
+  return !isAuthenticated ? <Navigate to={`/auth/login?redirectTo=${pathname}`} replace /> : children
 }
 
 export function RequireAdmin({ children }: { children: JSX.Element }) {
@@ -117,6 +120,8 @@ export const router = createBrowserRouter(
       >
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="home" element={<Home />} />
+
+        <Route path="calendar" element={<Calendar />} />
 
         <Route path="/info" element={<InfoLayout />} >
           <Route index element={<InfoIndexRedirect pathname="/info/estudos" />} />
