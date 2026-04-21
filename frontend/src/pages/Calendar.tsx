@@ -23,7 +23,7 @@ export default function CalendarPage() {
   })
   const [isCalendarEventsModalOpen, setIsCalendarEventsModalOpen] = useState(false)
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([])
-  const { data: events, isLoading, isFetching } = useMonthlyEvent(date)
+  const { data: events } = useMonthlyEvent(date)
 
   // Handlers
   const handlePrevMonth = useCallback(() => {

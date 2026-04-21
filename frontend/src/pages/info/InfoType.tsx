@@ -149,7 +149,7 @@ interface InfoSearchResultsProps {
   type: string;
 }
 
-const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
+const InfoSearchResults = ({ search }: InfoSearchResultsProps) => {
   const debounceSearch = useDebounce(search);
   const { data: infos, isLoading, isFetching } = useInfos(debounceSearch);
 
