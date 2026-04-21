@@ -5,10 +5,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import Arrow from "../assets/icons/right-arrow.svg?react"
 
 // Types
-import type { Day, MyDate } from "../types/calendar";
+import type { Day, MyDate, HashDays } from "../types/calendar";
 
 // Utils
 import { daysOfWeek, months } from "../utils/dates";
+import type { Event as CalendarEvent } from "../types/events";
 
 function getMonthDays(month: number, year: number): Day[] {
   let days: Day[] = []
@@ -60,12 +61,20 @@ function getMonthDays(month: number, year: number): Day[] {
   return days
 }
 
-const CalendarDay = ({ day, onClick }: { day: Day; onClick: (day: Day) => void }) => {
+interface CalendarDayProps {
+  day: Day
+  onClick: (day: Day, events: CalendarEvent[]) => void
+  events: CalendarEvent[]
+}
+
+const CalendarDay = ({ day, onClick, events }: CalendarDayProps) => {
   const handleClick = useCallback(() => {
     if (!day.isCurrentMonth) return
 
-    onClick(day);
+    onClick(day, events);
   }, [onClick, day]);
+
+  const hasEvents = events.length > 0
 
   return (
     <button
@@ -73,7 +82,7 @@ const CalendarDay = ({ day, onClick }: { day: Day; onClick: (day: Day) => void }
       aria-label={`Dia ${day.date} ${day.isCurrentMonth ? '' : 'fora do mês atual'}`}
       onClick={handleClick}
     >
-      <span className={`inline-flex items-center justify-center ${day.isToday ? 'bg-teal-light/50 rounded-full aspect-square md:size-8 size-5' : ''}`}>{day.date}</span>
+      <span className={`inline-flex items-center justify-center relative rounded-full aspect-square md:size-7 size-6 ${day.isToday ? 'bg-teal-light/50' : ''} ${hasEvents ? 'after:contet-[""] after:absolute after:-bottom-3.5 after:left-1/2 after:size-2 after:rounded-full after:bg-teal-light after:-translate-1/2' : ''}`}>{day.date}</span>
     </button>
   )
 }
@@ -95,13 +104,14 @@ const variants = {
 
 interface CalendarProps {
   date: MyDate;
+  events: CalendarEvent[]
   monthSpan?: number;
-  onClickDay: (day: Day) => void;
+  onClickDay: (day: Day, events: CalendarEvent[]) => void;
   onPrevMonth: () => void;
   onNextMonth: () => void;
 }
 
-export function Calendar({ date, monthSpan = 6, onClickDay, onPrevMonth, onNextMonth }: CalendarProps) {
+export function Calendar({ date, monthSpan = 6, events, onClickDay, onPrevMonth, onNextMonth }: CalendarProps) {
   const currDate = new Date()
   const currYear = currDate.getFullYear()
   const currMonth = currDate.getMonth()
@@ -112,6 +122,18 @@ export function Calendar({ date, monthSpan = 6, onClickDay, onPrevMonth, onNextM
   const [direction, setDirection] = useState< -1| 1>(1)
 
   const days = getMonthDays(date.month, date.year)
+
+  const eventsHash = events.reduce((acc, curr) => {
+    const day = new Date(curr.created_at).getDate()
+
+    if (acc[day]) {
+      acc[day].push(curr)
+    } else {
+      acc[day] = [curr]
+    }
+
+    return acc
+  }, {} as HashDays)
 
   // Handlers
   const handlePrevMonth = useCallback(() => {
@@ -171,7 +193,7 @@ export function Calendar({ date, monthSpan = 6, onClickDay, onPrevMonth, onNextM
 
             {/* Calendar days */}
             {days.map((day, index) => (
-              <CalendarDay key={`day-${index}`} day={day} onClick={onClickDay} />
+              <CalendarDay key={`day-${index}`} day={day} onClick={onClickDay} events={eventsHash[day.date] || []} />
             ))}
           </div>
         </motion.div>

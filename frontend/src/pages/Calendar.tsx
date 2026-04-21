@@ -1,8 +1,16 @@
 import { useCallback, useState } from "react";
+
+// Componentes
 import AppHeader from "../components/AppHeader";
 import { Calendar } from '../components/Calendar';
-import type { Day } from "../types/calendar";
 import { CalendarEventsModal } from "../components/modals/CalendarEventsModal";
+
+// Hooks
+import { useMonthlyEvent } from "../hooks/events/useMonthlyEvent";
+
+//Types
+import type { Day } from "../types/calendar";
+import type { Event as CalendarEvent } from "../types/events"
 
 export default function CalendarPage() {
   const currDate = new Date()
@@ -14,9 +22,15 @@ export default function CalendarPage() {
     year: currYear,
   })
   const [isCalendarEventsModalOpen, setIsCalendarEventsModalOpen] = useState(false)
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([])
+  const { data: events, isLoading, isFetching } = useMonthlyEvent(date)
+
+  console.log(events)
 
   // Handlers
   const handlePrevMonth = useCallback(() => {
+    if (isLoading || isFetching) return
+
     setDate(prev => {
       const nextDate = new Date(prev.year, prev.month - 1)
 
@@ -29,6 +43,8 @@ export default function CalendarPage() {
   }, [])
 
   const handleNextMonth = useCallback(() => {
+    if (isLoading || isFetching) return
+
     setDate(prev => {
       const nextDate = new Date(prev.year, prev.month + 1)
 
@@ -40,7 +56,8 @@ export default function CalendarPage() {
 
   }, [])
 
-  const handleClickDay = useCallback((day: Day) => {
+  const handleClickDay = useCallback((day: Day, events: CalendarEvent[]) => {
+    setCalendarEvents(events)
     setIsCalendarEventsModalOpen(true)
     setDate(prev => ({
       ...prev,
@@ -48,20 +65,20 @@ export default function CalendarPage() {
     }))
   }, [])
 
-  console.log(date)
-
   return (
     <>
       <CalendarEventsModal
         isOpen={isCalendarEventsModalOpen}
         onClose={() => setIsCalendarEventsModalOpen(false)}
         date={date}
+        events={calendarEvents}
       />
 
       <AppHeader />
       <main className="main-app px-0! pt-5!">
         <Calendar 
           date={date}
+          events={events?.data || []}
           onClickDay={handleClickDay}
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
