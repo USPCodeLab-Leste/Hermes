@@ -186,6 +186,10 @@ class ContentModel {
       query += ` AND p.data_inicio IS NOT NULL AND p.data_inicio >= CURRENT_DATE`;
     }
 
+    if (onlyFuture) {
+      query += ` AND p.data_fim IS NOT NULL AND p.data_fim >= CURRENT_DATE`;
+    }
+
     query += `
       GROUP BY p.id, u.name
     `;
