@@ -153,7 +153,7 @@ export function Calendar({ date, monthSpan = 6, events, onClickDay, onPrevMonth,
   return (
     <div className="w-full bg-violet-dark p-4 rounded-2xl shadow-2xl overflow-hidden">
       <header className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">
+        <h2 className="text-xl font-bold text-paper">
           {months[date.month]} {date.year}
         </h2>
         <div>

@@ -58,7 +58,7 @@ const CalendarEvent = ({ event }: { event: CalendarEvent }) => {
     <li key={event.id} className="py-4 pl-2 relative before:content-[''] before:absolute before:size-4 before:bg-violet-light before:-left-4.5 before:top-1/2 before:-translate-y-1/2 before:rounded-full">
       {/* <h3 className="font-bold">{event.title}</h3> */}
       <div className="self-end w-full py-2 flex flex-col items-startrounded-b-xl">
-        <ScrollingTitle title={event.title} className="font-bold text-[18px] md:text-xl text-paper text-left" />
+        <ScrollingTitle title={event.title} className="font-bold text-[18px] md:text-xl text-left" />
         {/* <span>{hour}:{minutes < 10 ? `0${minutes}` : minutes}</span> */}
         <div className="flex flex-row gap-4 mt-1">
           <div className="flex items-center">
