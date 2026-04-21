@@ -124,7 +124,7 @@ export function Calendar({ date, monthSpan = 6, events, onClickDay, onPrevMonth,
   const days = getMonthDays(date.month, date.year)
 
   const eventsHash = events.reduce((acc, curr) => {
-    const day = new Date(curr.created_at).getDate()
+    const day = new Date(curr.data_inicio).getDate()
 
     if (acc[day]) {
       acc[day].push(curr)
