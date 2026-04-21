@@ -1,5 +1,5 @@
 import { apiRequest } from './client'
-import type { Event, EventsResponse } from '../types/events';
+import { type SimpleEventsResponse, type Event, type EventsResponse } from '../types/events';
 
 interface GetEventsParams {
   offset: number
@@ -101,4 +101,12 @@ export function deleteEvent(eventId: string) {
   return apiRequest<{ message: string }>(`/events/${eventId}`, {
     method: "DELETE",
   });
+}
+
+export function getEventsByDate(month: number, year: number) {
+  const params = new URLSearchParams
+  params.set("month", String(month))
+  params.set("year", String(year))
+
+  return apiRequest<SimpleEventsResponse>(`/events/getByMonth?${params.toString()}`)
 }
