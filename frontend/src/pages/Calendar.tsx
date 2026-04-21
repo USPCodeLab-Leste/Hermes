@@ -25,12 +25,8 @@ export default function CalendarPage() {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([])
   const { data: events, isLoading, isFetching } = useMonthlyEvent(date)
 
-  console.log(events)
-
   // Handlers
   const handlePrevMonth = useCallback(() => {
-    if (isLoading || isFetching) return
-
     setDate(prev => {
       const nextDate = new Date(prev.year, prev.month - 1)
 
@@ -43,8 +39,6 @@ export default function CalendarPage() {
   }, [])
 
   const handleNextMonth = useCallback(() => {
-    if (isLoading || isFetching) return
-
     setDate(prev => {
       const nextDate = new Date(prev.year, prev.month + 1)
 
