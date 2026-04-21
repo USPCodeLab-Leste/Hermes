@@ -30,7 +30,8 @@ class MuralController {
         priorityTags: tags,
         limit,
         offset,
-        type: "event"
+        type: "event",
+        onlyFuture: true
       });
 
       const events = result.data.map(({ type, ...rest }) => rest);
