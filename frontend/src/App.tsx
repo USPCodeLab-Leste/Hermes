@@ -54,12 +54,14 @@ import Loading from './components/Loading'
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const { isAuthenticated, loading } = useAuth()
+  const location = useLocation()
+  const pathname = location.pathname
 
   if (loading) {
     return <Loading loader='loader-message' />
   }
 
-  return isAuthenticated ? children : <Navigate to="/auth" replace />
+  return !isAuthenticated ? <Navigate to={`/auth/login?redirectTo=${pathname}`} replace /> : children
 }
 
 export function RequireAdmin({ children }: { children: JSX.Element }) {
