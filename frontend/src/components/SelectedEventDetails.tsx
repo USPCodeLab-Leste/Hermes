@@ -12,7 +12,7 @@ import type { Event } from "../types/events"
 import type { GenericTag } from "../types/tag"
 
 // Components
-import { FollowTags } from "./Events"
+import { FollowTags, RecentTag } from "./Events"
 import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
@@ -181,12 +181,14 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
         ) : null}
       </div>
       <div className="flex flex-col gap-1 overflow-y-auto max-h-[40dvh]">
-        <FollowTags
-          tags={event?.tags || []}
-          className="mb-4"
-          activeTags={mapTags}
-          onClick={handleFollowTag}
-        />
+        <div className="flex flex-row items-center gap-2 mb-4">
+          <RecentTag />
+          <FollowTags
+            tags={event?.tags || []}
+            activeTags={mapTags}
+            onClick={handleFollowTag}
+          />
+        </div>
         <div className="flex flex-row justify-between items-center gap-4">
           {/* <h2 className="text-2xl font-bold -mb-1 truncate">{event?.title}</h2> */}
           <ScrollingTitle title={event?.title || ""} className="text-2xl font-bold -mb-1" />
