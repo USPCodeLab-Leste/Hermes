@@ -67,10 +67,15 @@ const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
       onAnimationComplete={() => setIsReady(true)}
       aria-label={`Selecionar evento ${event.title}`}
     >
-      <div className="p-4 flex flex-wrap gap-2 overflow-hidden">
+      <motion.div 
+        className="flex flex-row gap-2 md:flex-wrap overflow-hidden p-4"
+        // variants={tagsVariants}
+      >
         {isRecent && <RecentTag />}
-        <Tags tags={event.tags} />
-      </div>
+        {event.tags.map((tag) => (
+          <Tag key={`tag-${tag.id}`} tag={tag} />
+        ))}
+      </motion.div>
       <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b rounded-b-xl">
         <ScrollingTitle title={event.title} className="font-bold text-[18px] md:text-xl text-paper text-left" />
         <DateWrapper start={event.data_inicio} end={event.data_fim} textClass="text-paper/75" />

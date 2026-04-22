@@ -12,7 +12,7 @@ import type { Event } from "../types/events"
 import type { GenericTag } from "../types/tag"
 
 // Components
-import { FollowTags, RecentTag } from "./Events"
+import { FollowTag, RecentTag } from "./Events"
 import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
@@ -30,6 +30,7 @@ import MaximizeIcon from "../assets/icons/maximize.svg?react"
 // Utils
 import { createGoogleCalendarLink, downloadICS, formatIcs } from "../utils/dates"
 import { isMobile } from "../utils/so"
+import { motion } from "framer-motion"
 
 
 interface SelectedEventDetailsProps {
@@ -47,6 +48,9 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [followTag] = useFollowTag()
   const { mapTags } = useAuth();
+
+  const daysInMilliseconds = 1 * 24 * 60 * 60 * 1000
+  const isRecent = event ? new Date().getTime() - new Date(event.created_at).getTime() < daysInMilliseconds : false
 
   // Handlers
   const handleShare = useCallback(() => {
@@ -181,14 +185,20 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
         ) : null}
       </div>
       <div className="flex flex-col gap-1 overflow-y-auto max-h-[40dvh]">
-        <div className="flex flex-row items-center gap-2 mb-4">
-          <RecentTag />
-          <FollowTags
-            tags={event?.tags || []}
-            activeTags={mapTags}
-            onClick={handleFollowTag}
-          />
-        </div>
+        <motion.div
+          className={`flex flex-row gap-2 flex-wrap items-center mb-4`}
+          // variants={tagsVariants}
+        >
+          {isRecent && <RecentTag />}
+          {event?.tags.map((tag) => (
+            <FollowTag
+              key={`follow-tag-${tag.id}`}
+              tag={tag}
+              active={mapTags.has(tag.id)}
+              onClick={handleFollowTag}
+            />
+          ))}
+        </motion.div>
         <div className="flex flex-row justify-between items-center gap-4">
           {/* <h2 className="text-2xl font-bold -mb-1 truncate">{event?.title}</h2> */}
           <ScrollingTitle title={event?.title || ""} className="text-2xl font-bold -mb-1" />
