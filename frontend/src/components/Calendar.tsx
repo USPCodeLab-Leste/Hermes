@@ -82,7 +82,7 @@ const CalendarDay = ({ day, onClick, events }: CalendarDayProps) => {
       aria-label={`Dia ${day.date} ${day.isCurrentMonth ? '' : 'fora do mês atual'}`}
       onClick={handleClick}
     >
-      <span className={`inline-flex items-center justify-center relative rounded-full aspect-square md:size-7 size-6 ${day.isToday ? 'bg-teal-light/50' : ''} ${hasEvents ? 'after:contet-[""] after:absolute after:-bottom-3.5 after:left-1/2 after:size-2 after:rounded-full after:bg-teal-light after:-translate-1/2' : ''}`}>{day.date}</span>
+      <span className={`inline-flex items-center justify-center relative rounded-full aspect-square md:size-7 size-6 ${day.isToday ? 'bg-teal-light/50' : ''} ${hasEvents && day.isCurrentMonth ? 'after:contet-[""] after:absolute after:-bottom-3.5 after:left-1/2 after:size-2 after:rounded-full after:bg-teal-light after:-translate-1/2' : ''}`}>{day.date}</span>
     </button>
   )
 }
