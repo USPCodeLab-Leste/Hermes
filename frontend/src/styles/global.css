@@ -204,6 +204,7 @@ input:is(:-webkit-autofill, :autofill) {
 
 .animate-scroll .scrolling {
   animation: scroll 10s linear infinite;
+  animation-delay: 1.5s;
 }
 
 .animate-scroll:hover .scrolling {
