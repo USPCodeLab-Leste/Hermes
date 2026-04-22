@@ -35,7 +35,7 @@ export function CalendarEventsModal({ isOpen, date, events, onClose }: CalendarE
       <section className="min-h-100 flex gap-4 flex-col">
         <h2 className="text-xl font-bold">{date.day} de {months[date.month]} de {date.year}</h2>
         {eventsSorted.length > 0 ? (
-          <ul className="flex flex-col gap-4 max-h-120 overflow-y-auto overflow-x-visible pl-5 relative before:content-[''] before:absolute before:h-full before:w-1 before:bg-violet-light before:left-2 before:rounded-b-full">
+          <ul className="flex flex-col gap-4 max-h-120 overflow-y-auto overflow-x-hidden pl-5 relative before:content-[''] before:absolute before:h-full before:w-1 before:bg-violet-light before:left-2 before:rounded-b-full">
             {eventsSorted.map((event) => (
               <CalendarEvent key={event.id} event={event} />
             ))}
@@ -55,19 +55,20 @@ const CalendarEvent = ({ event }: { event: CalendarEvent }) => {
   const hourFormatted = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
 
   return (
-    <li key={event.id} className="py-4 pl-2 relative before:content-[''] before:absolute before:size-4 before:bg-violet-light before:-left-4.5 before:top-1/2 before:-translate-y-1/2 before:rounded-full">
+    <li key={event.id} className="py-2 pl-2 relative before:content-[''] before:absolute before:size-4 before:bg-violet-light before:-left-4.5 before:top-1/2 before:-translate-y-1/2 before:rounded-full">
       {/* <h3 className="font-bold">{event.title}</h3> */}
-      <div className="self-end w-full py-2 flex flex-col items-startrounded-b-xl">
+      <div className="self-end w-full flex flex-col items-startrounded-b-xl">
         <ScrollingTitle title={event.title} className="font-bold text-[18px] md:text-xl text-left" />
         {/* <span>{hour}:{minutes < 10 ? `0${minutes}` : minutes}</span> */}
-        <div className="flex flex-row gap-4 mt-1">
+        <div className="flex flex-col gap-2 mt-2">
           <div className="flex items-center">
-            <ClockIcon className="inline-block mr-1" />
-            <span className="font-medium">{hourFormatted}</span>
+            <ClockIcon className="inline-block mr-1 shrink-0 md:size-5 size-4" />
+            <span className="font-medium md:text-[18px] text-[16px]">{hourFormatted}</span>
           </div>
-          <div className="flex items-center">
-            <MapPinIcon className="inline-block mr-1" />
-            <span className="font-medium">{event.local}</span>
+          <div className="flex items-center w-full">
+            <MapPinIcon className="inline-block mr-1 shrink-0 md:size-5 size-4" />
+            <ScrollingTitle title={event.local} className="font-medium md:text-[18px] text-[16px]" />
+            {/* <span className="font-medium">{event.local}</span> */}
           </div>
         </div>
       </div>
