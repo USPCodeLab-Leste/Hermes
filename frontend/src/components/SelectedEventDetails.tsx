@@ -12,21 +12,25 @@ import type { Event } from "../types/events"
 import type { GenericTag } from "../types/tag"
 
 // Components
-import { FollowTags } from "./Events"
+import { FollowTag, RecentTag } from "./Events"
 import { DateWrapper } from "./Date"
 import { GenericButton } from "./GenericButton"
 import { AdminEditDeleteButtons } from "./admin/AdminEditDeleteButtons"
 import { ConfirmDeleteModal } from "./modals/ConfirmModal"
 import { CreateEventModal } from "./modals/CreateEventModal"
+import { ModalWrapper } from "./modals/Modal"
 import MarkdownRenderer from "./MarkdownRenderer"
+import { ScrollingTitle } from "./ScrollingTittle"
 
 // Icons
 
 import CalendarIcon from "../assets/icons/calendar-plus.svg?react"
+import MaximizeIcon from "../assets/icons/maximize.svg?react"
 
 // Utils
 import { createGoogleCalendarLink, downloadICS, formatIcs } from "../utils/dates"
 import { isMobile } from "../utils/so"
+import { motion } from "framer-motion"
 
 
 interface SelectedEventDetailsProps {
@@ -41,8 +45,12 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [del, isDeleteLoading, errorDelete] = useDeleteEvent();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [followTag] = useFollowTag()
   const { mapTags } = useAuth();
+
+  const daysInMilliseconds = 1 * 24 * 60 * 60 * 1000
+  const isRecent = event ? new Date().getTime() - new Date(event.created_at).getTime() < daysInMilliseconds : false
 
   // Handlers
   const handleShare = useCallback(() => {
@@ -141,19 +149,59 @@ export function SelectedEventDetails({ event, search, isAdmin = false, onDeleted
         }
       />
 
-      <div
-        className="aspect-video w-auto bg-no-repeat bg-cover bg-center overflow-hidden bg-violet-dark rounded-xl -mx-6 -mt-12 mb-4"
-        style={{ backgroundImage: `url('${event?.img_banner}')` }}
-      />
-      <div className="flex flex-col gap-1 overflow-y-auto max-h-[40dvh]">
-        <FollowTags
-          tags={event?.tags || []}
-          className="mb-4"
-          activeTags={mapTags}
-          onClick={handleFollowTag}
+      <ModalWrapper
+        isOpen={isBannerModalOpen}
+        onClose={() => setIsBannerModalOpen(false)}
+      >
+        <section className="flex flex-col gap-3">
+          <div className="max-h-[90dvh] overflow-auto rounded-xl bg-violet-dark/20 -mx-6 -mt-12 -mb-6 ">
+            <img
+              src={event?.img_banner || ""}
+              alt={event?.title ? `Banner do evento ${event.title}` : "Banner do evento"}
+              className="block w-full h-auto object-contain rounded-lg"
+            />
+          </div>
+        </section>
+      </ModalWrapper>
+
+      <div 
+        className="relative -mx-6 -mt-12 overflow-hidden rounded-xl aspect-video"
+      >
+        <img
+          src={event?.img_banner || ""}
+          alt={event?.title ? `Banner do evento ${event.title}` : "Banner do evento"}
+          className="block w-full object-cover rounded-xl mb-4"
         />
+
+        {event?.img_banner ? (
+          <button
+            type="button"
+            className="absolute bottom-3 right-3 cursor-pointer rounded-xl bg-teal-light/75 p-2 text-paper shadow-md backdrop-blur-sm transition-colors hover:bg-teal-light"
+            onClick={() => setIsBannerModalOpen(true)}
+            aria-label={`Ampliar banner do evento ${event.title}`}
+          >
+            <MaximizeIcon className="size-5" />
+          </button>
+        ) : null}
+      </div>
+      <div className="flex flex-col gap-1 overflow-y-auto max-h-[40dvh]">
+        <motion.div
+          className={`flex flex-row gap-2 flex-wrap items-center mb-4`}
+          // variants={tagsVariants}
+        >
+          {isRecent && <RecentTag />}
+          {event?.tags.map((tag) => (
+            <FollowTag
+              key={`follow-tag-${tag.id}`}
+              tag={tag}
+              active={mapTags.has(tag.id)}
+              onClick={handleFollowTag}
+            />
+          ))}
+        </motion.div>
         <div className="flex flex-row justify-between items-center gap-4">
-          <h2 className="text-2xl font-bold -mb-1 truncate">{event?.title}</h2>
+          {/* <h2 className="text-2xl font-bold -mb-1 truncate">{event?.title}</h2> */}
+          <ScrollingTitle title={event?.title || ""} className="text-2xl font-bold -mb-1" />
           <button 
             className="cursor-pointer p-2 rounded-xl bg-teal-light shadow-md hover:bg-teal-light/90 transition-colors"
             onClick={handleAddToCalendar}

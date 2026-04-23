@@ -149,7 +149,7 @@ interface InfoSearchResultsProps {
   type: string;
 }
 
-const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
+const InfoSearchResults = ({ search }: InfoSearchResultsProps) => {
   const debounceSearch = useDebounce(search);
   const { data: infos, isLoading, isFetching } = useInfos(debounceSearch);
 
@@ -169,7 +169,7 @@ const InfoSearchResults = ({ search, type }: InfoSearchResultsProps) => {
               <InfoSearchResultCards infos={infos} search={search} />
             </>
           ) : (
-            <p className="text-center font-medium p-4">Nenhum artigo encontrado com essa busca em <em className="capitalize">{type}</em></p>
+            <p className="text-center font-medium p-4">Nenhum artigo encontrado com essa busca :(</p>
           )}
         </div>
       )}

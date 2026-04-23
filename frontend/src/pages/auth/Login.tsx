@@ -20,12 +20,10 @@ export default function Login() {
   const [searchParams] = useSearchParams()
   const location = useLocation()
   const navigate = useNavigate()
+  const redirectTo = searchParams.get("redirectTo") || "/"
 
-  // Hooks de autenticação
   const [signIn, user, signInLoading, signInError] = useSignIn(auth)
-
   const [errors, setErrors] = useState(defaultErrors);
-
   const [formData, setFormData] = useState({
     email: searchParams.get("email") || "",
     password: "",
@@ -33,10 +31,7 @@ export default function Login() {
 
   // Helper para atualizar inputs
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    // Salva os dados ao digitar
     setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }))
-
-    // Limpa erro ao digitar
     setErrors(defaultErrors)
   }, [])
 
@@ -49,10 +44,6 @@ export default function Login() {
       toast.error("O campo e-mail é obrigatório!")
       newErrors.email = true;
       hasLocalError = true;
-    // } else if (!formData.email.endsWith("@usp.br")) {
-    //   toast.error("Por favor, utilize seu e-mail institucional (@usp.br).");
-    //   newErrors.email = true;
-    //   hasLocalError = true;
     } else if (formData.password.length < 8) {
       toast.error("Credenciais inválidas!")
       newErrors.email = true;
@@ -100,6 +91,9 @@ export default function Login() {
     if (location.state?.fromRegisterSucess) {
       toast.success("Registro realizado com sucesso! Verifique seu e-mail para ativar sua conta.");
       navigate(".", { replace: true });
+    } else if (location.state?.fromResetPasswordSucess) {
+      toast.success("Senha redefinida com sucesso! Agora você pode fazer login.");
+      navigate(".", { replace: true });
     }
   }, [location, navigate])
 
@@ -114,9 +108,14 @@ export default function Login() {
   }, [searchParams])
 
   if (user) {
-    return (
-      <Navigate to="/" replace />
-    )
+    return <Navigate to={redirectTo} replace />
+  }
+
+  const getRightParams = () => {
+    const params = new URLSearchParams(location.search)
+    params.set("email", formData.email)
+
+    return params.toString()
   }
 
   return (
@@ -151,14 +150,14 @@ export default function Login() {
             hasError={errors.password}
             required={true}
           />
-          <Link to={{ pathname: "/auth/reset-password", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="self-end text-sm mb-2 hover:underline w-fit">Esqueci minha senha</Link>
+          <Link to={{ pathname: "/auth/reset-password", search: getRightParams() }} className="self-end text-sm mb-2 hover:underline w-fit">Esqueci minha senha</Link>
         </div>
       </div>
 
       <SubmitButton waiting={isLoading || passwordShort || hasError} text={isLoading ? "Carregando..." : "Entrar"} className="dark:bg-teal-light bg-teal-mid" disabled={isLoading || passwordShort || hasError} />
 
       <p className="text-center">
-        ou <Link to={{ pathname: "/auth/register", search: formData.email ? `?email=${encodeURIComponent(formData.email)}` : "" }} className="dark:text-teal-light text-teal-mid hover:text-teal-mid font-bold transition-colors">Registre-se</Link>
+        ou <Link to={{ pathname: "/auth/register", search: getRightParams() }} className="dark:text-teal-light text-teal-mid hover:text-teal-mid font-bold transition-colors">Registre-se</Link>
       </p>
 
     </form>

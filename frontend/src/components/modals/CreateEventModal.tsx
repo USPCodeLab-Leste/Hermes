@@ -264,6 +264,12 @@ const CreateEventModalContent = ({
         message: "Informe ao menos UMA tag",
       };
       hasLocalError = true;
+    } else if (tagsArray.length > 5) {
+      newErrors.tags = {
+        hasError: true,
+        message: "O número máximo de tags é 5.",
+      };
+      hasLocalError = true;
     }
 
     if (hasLocalError) {

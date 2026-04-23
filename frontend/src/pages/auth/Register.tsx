@@ -36,7 +36,7 @@ export default function Register() {
   const navigate = useNavigate()
 
   // Hooks de autenticação
-  const [register, regLoading, regError] = useRegister(auth);
+  const [register, isLoading, regError] = useRegister(auth);
   const [errors, setErrors] = useState(() => structuredClone(defaultFormErrors));
 
   const [isPasswordValid, setIsPasswordValid] = useState(false);
@@ -146,8 +146,14 @@ export default function Register() {
     toast.error(regError.message || 'Ocorreu um erro ao criar usuário')
   }, [regError]);
 
-  const isLoading = regLoading;
   const hasError = useMemo(() => errors.email.hasError || errors.name.hasError || errors.password.hasError || errors.confirmPassword.hasError || !isPasswordValid, [errors, isPasswordValid]);
+  
+  const getRightParams = () => {
+    const params = new URLSearchParams(location.search)
+    params.set("email", formData.email)
+    
+    return params.toString()
+  }
 
   return (
     <form onSubmit={handleFormSubmit} className="w-full flex flex-col pt-2 pb-8 gap-3 max-w-sm justify-center">
@@ -213,7 +219,7 @@ export default function Register() {
       <SubmitButton waiting={isLoading} text={isLoading ? "Carregando..." : "Cria Conta"} className="dark:bg-teal-light bg-teal-mid" disabled={hasError}/>
 
       <p className="text-center">
-        ou faça <Link to={{ pathname: "/auth/login", search: formData.email ? `?email=${formData.email}` : "" }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Login</Link>
+        ou faça <Link to={{ pathname: "/auth/login", search: getRightParams() }} className="text-teal-light hover:text-teal-mid font-bold transition-colors">Login</Link>
       </p>
 
     </form>

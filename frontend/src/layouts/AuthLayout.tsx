@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Navigate, Outlet } from "react-router-dom"
+import { Navigate, Outlet, useSearchParams } from "react-router-dom"
 
 // Componentes
 import { AppAdModal } from "../components/modals/AppAdModal"
@@ -17,12 +17,14 @@ import { isApp } from "../utils/so"
 
 export default function AuthLayout() {
   const { isAuthenticated } = useAuth()
+  const [searchParams] = useSearchParams()
   const hasSeenAppAd = localStorage.getItem("hasSeenAppAd") === "true"
   const [isAppAdModalOpen, setIsAppAdModalOpen] = useState(hasSeenAppAd || isApp() ? false : true)
+  const redirectTo = searchParams.get("redirectTo") || "/"
 
   // Redireciona se já estiver logado
   if (isAuthenticated) {
-    return <Navigate to="/" replace />
+    return <Navigate to={redirectTo} replace />
   }
 
   return (

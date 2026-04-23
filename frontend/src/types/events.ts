@@ -8,8 +8,11 @@ export interface Event extends Info<EventTagType> {
   img_banner: string
 }
 
-export interface EventsResponse {
+export interface SimpleEventsResponse {
   data: Event[]
+}
+
+export interface EventsResponse extends SimpleEventsResponse {
   hasMore: boolean
 }
 

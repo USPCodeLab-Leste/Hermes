@@ -39,6 +39,7 @@ export function useCreateEvent() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["events"] });
       await queryClient.invalidateQueries({ queryKey: ["my-events"] });
+      await queryClient.invalidateQueries({ queryKey: ["monthly-events"] });
     },
   });
 

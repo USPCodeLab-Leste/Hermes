@@ -1,4 +1,4 @@
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useCallback, useMemo, useState } from "react";
 import { motion, stagger, type Variants } from "framer-motion";
 
@@ -68,15 +68,6 @@ export default function Info() {
     setModalOpen(false);
     setSelectedArticleId(null);
   }, [setParams]);
-  
-  if (!isLoadingInfos && infos?.length === 0) {
-    return (
-      <section className="flex flex-col items-center justify-center gap-4">
-        <span className="text-center">A tag "{tagName}" não existe, tente novamente com outra tag</span>
-        <Link to=".." relative="path" className="bg-teal-mid p-2 text-lg font-medium rounded-xl">Voltar para Infos</Link>
-      </section>
-    )
-  }
   
   return (
     <>
