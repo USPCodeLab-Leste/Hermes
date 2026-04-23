@@ -125,8 +125,9 @@ export async function sendVerificationEmail(userEmail,token) {
 }
 
 export async function sendResetPasswordEmail(userEmail, token) {
+    const url = process.env.FRONT_URL;
   
-    const resetLink = `${baseUrl}/auth/reset-password?token=${token}`;
+    const resetLink = `${url}/auth/reset-password?token=${token}`;
 
     const { data, error } = await resend.emails.send({
         from: "Sistema Hermes <no-reply@portalhermes.app>",
