@@ -119,6 +119,9 @@ class BaseContentController {
               sound: 'default',
               title: `Novo aviso no Hermes! 📢`,
               body: contentData.title || `Temos novidades na área de ${this.type}.`,
+              data: { 
+                    url: `/home?event=${novoConteudo.id}&q=${encodeURIComponent(novoConteudo.title)}` 
+              },
             });
           }
 
