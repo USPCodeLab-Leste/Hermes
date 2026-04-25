@@ -155,7 +155,21 @@ export default function App() {
     return () => subscription.remove();
   }, []);
 
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      const urlDoBackend = response.notification.request.content.data?.url;
 
+      if (urlDoBackend) {
+        webViewRef.current?.injectJavaScript(`
+          window.location.href = "${urlDoBackend}";
+          true;
+        `);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+  
   // 
   const injectedScript = `
     window.isMobileApp = true;
