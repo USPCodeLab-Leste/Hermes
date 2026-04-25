@@ -97,7 +97,7 @@ class BaseContentController {
 
       const { tags, ...contentData } = data;
 
-      await ContentModel.create({
+      const newContent = await ContentModel.create({
         ...contentData,
         type: this.type,
         autor_id: userId,
@@ -117,13 +117,16 @@ class BaseContentController {
             messages.push({
               to: pushToken,
               sound: 'default',
-              title: `Novo aviso no Hermes! 📢`,
-              body: contentData.title || `Temos novidades na área de ${this.type}.`,
+              title: `${newContent.title}`, 
+  
+              body: newContent.body 
+                    ? `${newContent.body.substring(0, 100)}...` 
+                    : `Toque para conferir as novidades na área de ${this.type}!`,
+        
               data: { 
-                    url: `/home?event=${novoConteudo.id}&q=${encodeURIComponent(novoConteudo.title)}` 
-              },
-            });
-          }
+              url: `/home?event=${newContent.id}&q=${encodeURIComponent(newContent.title)}` 
+            },
+});
 
           let chunks = expo.chunkPushNotifications(messages);
           for (let chunk of chunks) {
