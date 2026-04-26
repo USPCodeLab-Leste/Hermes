@@ -124,9 +124,10 @@ class BaseContentController {
                     : `Toque para conferir as novidades na área de ${this.type}!`,
         
               data: { 
-              url: `/home?event=${newContent.id}&q=${encodeURIComponent(newContent.title)}` 
-            },
-});
+                url: `/home?event=${newContent.id}&q=${encodeURIComponent(newContent.title)}` 
+              },
+            });
+          }
 
           let chunks = expo.chunkPushNotifications(messages);
           for (let chunk of chunks) {
