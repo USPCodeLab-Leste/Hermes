@@ -54,11 +54,13 @@
       }
     },
     "plugins": [
-      "expo-notifications", 
-      {
-        "icon": "./assets/logo-pequena-padding.png",
-        "color": "#5FA9C9"
-      }
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/logo-pequena.png",
+          "color": "#5FA9C9"
+        }
+      ]
     ]
   }
 }
