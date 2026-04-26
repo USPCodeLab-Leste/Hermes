@@ -4,18 +4,31 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { type WebView as WebViewType, WebView } from 'react-native-webview';
 
 import * as Linking from 'expo-linking';
-import * as NavigationBar from 'expo-navigation-bar';
 import * as IntentLauncher from 'expo-intent-launcher';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 
-const URL = `https://portalhermes.app`
+import * as Notifications from 'expo-notifications';
+import { BASE_URL, normalizeWebViewUrl } from './utils/webviewUrl';
+import { registerForPushNotificationsAsync } from './utils/pushNotifications';
+
+// configura como as notificacoes irao se comportar quando o app estiver aberti
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function App() {
   const webViewRef = useRef<WebViewType>(null);
 
-  const [initialUrl, setInitialUrl] = useState(URL);
+  const [initialUrl, setInitialUrl] = useState(BASE_URL);
+  const [expoPushToken, setExpoPushToken] = useState<string | undefined>();
 
+  // Handlers
   const handleMessage = async (event: any) => {
     const data = JSON.parse(event.nativeEvent.data);
 
@@ -55,6 +68,9 @@ export default function App() {
     }
   }
 
+  // Effects
+
+  // intercepta o botão de voltar do Android para navegar no WebView ao invés de fechar o app
   useEffect(() => {
     const backAction = () => {
       webViewRef.current?.goBack();
@@ -67,12 +83,16 @@ export default function App() {
       subscription.remove();
   }, []);
 
+  // intercepta os deep links para navegar no WebView
   useEffect(() => {
     const handleDeepLink = (url: string) => {
       if (!url) return;
 
+      const webViewUrl = normalizeWebViewUrl(url);
+      if (!webViewUrl) return;
+
       webViewRef.current?.injectJavaScript(`
-        window.location.href = "${url}";
+        window.location.href = "${webViewUrl}";
         true;
       `);
     };
@@ -80,7 +100,10 @@ export default function App() {
     // quando abre o app pelo link (primeira vez)
     Linking.getInitialURL().then((url) => {
       if (url) {
-        setInitialUrl(url);
+        const webViewUrl = normalizeWebViewUrl(url);
+        if (webViewUrl) {
+          setInitialUrl(webViewUrl);
+        }
       }
     });
 
@@ -92,13 +115,41 @@ export default function App() {
     return () => subscription.remove();
   }, []);
 
+  // intercepta as notificações recebidas para navegar no WebView e registra o token de push
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(setExpoPushToken);
+
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      const urlDoBackend = response.notification.request.content.data?.url as string | undefined;
+
+      if (urlDoBackend) {
+        const webViewUrl = normalizeWebViewUrl(urlDoBackend);
+        if (!webViewUrl) return;
+        
+        webViewRef.current?.injectJavaScript(`
+          window.location.href = "${webViewUrl}";
+          true;
+        `);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+  
+  // 
+  const injectedScript = `
+    window.isMobileApp = true;
+    window.expoPushToken = ${expoPushToken ? `"${expoPushToken}"` : "null"};
+    true;
+  `;
+
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'top', 'left', 'right']}>
       <WebView
         ref={webViewRef}
         source={{ uri: initialUrl }}
         pullToRefreshEnabled={true}
-        injectedJavaScript={`window.isMobileApp = true; true;`}
+        injectedJavaScript={injectedScript}
         onMessage={handleMessage}
       />
     </SafeAreaView>

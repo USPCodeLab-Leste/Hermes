@@ -134,4 +134,38 @@ router.post("/users/me/tags", authMiddleware, emailVerifiedMiddleware, UserContr
  */
 router.delete("/users/me/tags/:tagId", authMiddleware, emailVerifiedMiddleware, UserController.unfollowTag);
 
+/**
+ * @openapi
+ * /users/me/push-token:
+ * patch:
+ * summary: Atualiza o token de notificação push do usuário
+ * description: Salva o Expo Push Token gerado pelo aplicativo mobile para permitir o envio de notificações.
+ * tags:
+ * - User
+ * security:
+ * - cookieAuth: []
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * push_token:
+ * type: string
+ * example: "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]"
+ * responses:
+ * 200:
+ * description: Push token atualizado com sucesso
+ * 401:
+ * description: Usuário não autenticado
+ * 400:
+ * description: push_token não informado
+ * 403:
+ * description: E-mail não verificado
+ * 500:
+ * description: Erro ao salvar o push token
+ */
+router.patch("/users/me/push-token", authMiddleware, emailVerifiedMiddleware, UserController.updatePushToken);
+
 export default router;

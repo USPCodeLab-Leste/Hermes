@@ -1,4 +1,7 @@
 import ContentModel from "../models/content.model.js";
+import UserModel from "../models/user.model.js"; 
+import { Expo } from "expo-server-sdk";
+const expo = new Expo()
 
 const MAX_LIMIT = 20;
 const DEFAULT_LIMIT = 10;
@@ -94,12 +97,49 @@ class BaseContentController {
 
       const { tags, ...contentData } = data;
 
-      await ContentModel.create({
+      const newContent = await ContentModel.create({
         ...contentData,
         type: this.type,
         autor_id: userId,
         tags
       });
+
+      // parte pro broadcast de notificações
+      try {
+        const pushTokens = await UserModel.getAllPushTokens();
+
+        if (pushTokens && pushTokens.length > 0) {
+          let messages = [];
+          
+          for (let pushToken of pushTokens) {
+            if (!Expo.isExpoPushToken(pushToken)) continue;
+
+            messages.push({
+              to: pushToken,
+              sound: 'default',
+              title: `${newContent.title}`, 
+  
+              body: newContent.body 
+                    ? `${newContent.body.substring(0, 100)}...` 
+                    : `Toque para conferir as novidades na área de ${this.type}!`,
+        
+              data: { 
+                url: `/home?event=${newContent.id}&q=${encodeURIComponent(newContent.title)}` 
+              },
+            });
+          }
+
+          let chunks = expo.chunkPushNotifications(messages);
+          for (let chunk of chunks) {
+            await expo.sendPushNotificationsAsync(chunk);
+          }
+          console.log(`Push enviada para ${messages.length} celulares.`);
+        }
+      } catch (pushError) {
+        // se a notificação falhar, o post ainda é criado com sucesso
+        console.error("Erro no envio de notificações:", pushError);
+      }
+    
 
       return res.status(201).json({
         message: `${this.type} criado com sucesso`
