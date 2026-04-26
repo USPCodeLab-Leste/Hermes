@@ -92,7 +92,8 @@ class ContentModel {
     type,
     excludeIds,
     limit,
-    offset
+    offset,
+    onlyFuture
   } = {}) {
     
     const hasPriorityTags = Array.isArray(priorityTags) && priorityTags.length > 0;
@@ -181,6 +182,10 @@ class ContentModel {
       index++;
     }
 
+    if (onlyFuture) {
+      query += ` AND p.data_fim IS NOT NULL AND p.data_fim >= CURRENT_DATE`;
+    }
+
     query += `
       GROUP BY p.id, u.name
     `;
@@ -242,6 +247,23 @@ class ContentModel {
 
     const result = await pool.query(query, [id]);
     return result.rows[0];
+  }
+
+  async getByMonth({ month, year }) {
+    const query = `
+      SELECT *
+      FROM tb_content
+      WHERE 
+        type = 'event'
+        AND data_inicio >= DATE_TRUNC('month', MAKE_DATE($1, $2, 1))
+        AND data_inicio < DATE_TRUNC('month', MAKE_DATE($1, $2, 1)) + INTERVAL '1 month'
+      ORDER BY data_inicio ASC
+    `;
+
+    const values = [year, month];
+
+    const result = await pool.query(query, values);
+    return result.rows;
   }
 
   async update(id, info) {

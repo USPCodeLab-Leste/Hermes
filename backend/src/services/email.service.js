@@ -123,3 +123,129 @@ export async function sendVerificationEmail(userEmail,token) {
     console.log("Email enviado. ID:", data?.id);
 
 }
+
+export async function sendResetPasswordEmail(userEmail, token) {
+    const url = process.env.FRONT_URL;
+  
+    const resetLink = `${url}/auth/reset-password?token=${token}`;
+
+    const { data, error } = await resend.emails.send({
+        from: "Sistema Hermes <no-reply@portalhermes.app>",
+        to: userEmail,
+        subject: "Redefinição de senha - Portal Hermes",
+        html: `
+        <div style="margin:0; padding:0; background-color:#373358; font-family: 'Montserrat', Arial, system-ui, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <td align="center" style="padding: 40px 20px;">
+            
+            <!-- Card -->
+            <table width="100%" style="max-width:500px; background-color:#494266; border-radius:16px; padding:30px; text-align:center;">
+
+                <!-- Logo -->
+                <tr>
+                <td style="padding-bottom: 10px;">
+                    <img 
+                    src="${IMG_URL}"
+                    alt="Logo Hermes"
+                    width="180"
+                    style="display:block; margin:0 auto;"
+                    />
+                </td>
+                </tr>
+
+                <!-- Título -->
+                <tr>
+                <td>
+                    <h1 style="color:#F4F3F8; margin-bottom:10px;">
+                    Redefinir senha
+                    </h1>
+                    <p style="color:#B8B5D6; font-size:14px;">
+                    Recebemos uma solicitação para alterar sua senha
+                    </p>
+                </td>
+                </tr>
+
+                <tr><td height="20"></td></tr>
+
+                <!-- Texto -->
+                <tr>
+                <td>
+                    <p style="color:#E0DEF4; font-size:16px; line-height:1.5; display:inline-block; max-width:380px;">
+                    Clique no botão abaixo para criar uma nova senha. 
+                    Este link expira em <b>15 minutos</b>.
+                    </p>
+                </td>
+                </tr>
+
+                <tr><td height="10"></td></tr>
+
+                <!-- Botão -->
+                <tr>
+                <td>
+                    <a href="${resetLink}"
+                    style="
+                        background: #5FA9C9;
+                        color: #F4F3F8;
+                        padding: 14px 28px;
+                        text-decoration: none;
+                        border-radius: 12px;
+                        font-weight: bold;
+                        display: inline-block;
+                        font-size: 16px;
+                    ">
+                    Redefinir senha
+                    </a>
+                </td>
+                </tr>
+
+                <tr><td height="30"></td></tr>
+
+                <!-- Segurança -->
+                <tr>
+                <td>
+                    <p style="color:#B8B5D6; font-size:13px;">
+                    Se você não solicitou isso, pode ignorar este e-mail.
+                    </p>
+                </td>
+                </tr>
+
+                <!-- Link alternativo -->
+                <tr>
+                <td>
+                    <p style="color:#B8B5D6; font-size:13px;">
+                    Ou use o link abaixo:
+                    </p>
+                    <p style="color:#5BC0EB; word-break: break-all; font-size:10px;">
+                    ${resetLink}
+                    </p>
+                </td>
+                </tr>
+
+            </table>
+
+           <!-- Rodapé -->
+            <table width="100%" max-width="500px" style="margin-top:20px; text-align:center;">
+                <tr>
+                    <td>
+                    <p style="color:#8E8AAE; font-size:12px;">
+                        Feito com 🩷🤍 por USP CodeLab Leste
+                    </p>
+                    </td>
+                </tr>
+            </table>
+
+            </td>
+        </tr>
+        </table>
+        </div>
+        `
+    });
+
+    if (error) {
+        console.error("Erro ao enviar email:", error);
+        throw error;
+    }
+
+    console.log("Email de reset enviado. ID:", data?.id);
+}

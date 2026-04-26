@@ -15,6 +15,7 @@ import type { ActiveTags, GenericTag } from "../types/tag"
 
 // Components
 import { DateWrapper } from "./Date"
+import { ScrollingTitle } from "./ScrollingTittle";
 
 // Hooks
 import { useUserMotionPreference } from "../hooks/useUserMotionPreference";
@@ -43,6 +44,9 @@ const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
   const [isReady, setIsReady] = useState(false)
   const { isReducedMotion } = useUserMotionPreference()
 
+  const daysInMilliseconds = 1 * 24 * 60 * 60 * 1000
+  const isRecent = new Date().getTime() - new Date(event.created_at).getTime() < daysInMilliseconds
+
   return (
     <motion.button
       variants={variants ?? defaultEventVariants}
@@ -56,16 +60,24 @@ const EventCardContent = ({variants, event, selectEvent}: EventsProps) => {
         duration: 0.5,
         delayChildren: 0.2,
       }}
-      className={`aspect-video w-full max-w-120 bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat bg-center justify-between cursor-pointer shadow-lg hover:shadow-2xl outline-2 hover:dark:outline-paper focus:outline-paper outline-transparent ${isReady && !isReducedMotion ? 'transition-all' : ''}`}
+      className={`aspect-video w-full max-w-120 bg-violet-dark rounded-xl flex flex-col bg-cover bg-no-repeat bg-center justify-between cursor-pointer shadow-lg hover:shadow-2xl outline-2 hover:dark:outline-paper focus:outline-paper outline-transparent relative ${isReady && !isReducedMotion ? 'transition-all' : ''}`}
       style={{ backgroundImage: `url('${event.img_banner}')` }}
       whileHover={{y: -8}}
       onClick={() => selectEvent(event.id)}
       onAnimationComplete={() => setIsReady(true)}
       aria-label={`Selecionar evento ${event.title}`}
     >
-      <Tags tags={event.tags} className="p-4" />
+      <motion.div 
+        className="flex flex-row gap-2 md:flex-wrap overflow-hidden p-4"
+        // variants={tagsVariants}
+      >
+        {isRecent && <RecentTag />}
+        {event.tags.map((tag) => (
+          <Tag key={`tag-${tag.id}`} tag={tag} />
+        ))}
+      </motion.div>
       <div className="self-end w-full p-4 flex flex-col items-start backdrop-blur-sm from-violet-light/30 to-violet-mid bg-linear-to-b rounded-b-xl">
-        <h2 className="w-full font-bold text-[18px] md:text-xl text-paper text-left truncate">{event.title}</h2>
+        <ScrollingTitle title={event.title} className="font-bold text-[18px] md:text-xl text-paper text-left" />
         <DateWrapper start={event.data_inicio} end={event.data_fim} textClass="text-paper/75" />
       </div>
     </motion.button>
@@ -104,13 +116,25 @@ interface TagsProps {
 export function Tags({ tags, className }: TagsProps) {
   return (
     <motion.div 
-      className={`flex flex-row gap-2 md:flex-wrap overflow-hidden ${className}`}
+      className={`flex flex-row gap-2 md:flex-wrap overflow-hidden ${className ?? ''}`}
       variants={tagsVariants}
     >
       {tags.map((tag) => (
         <Tag key={`tag-${tag.id}`} tag={tag} />
       ))}
     </motion.div>
+  )
+}
+
+export const RecentTag = () => {
+  return (
+    <TagWrapper
+      canSelect={false}
+      className="bg-purple-500 text-paper"
+      variants={tagVariants}
+    >
+      <span className="text-inherit font-semibold">Novo</span>
+    </TagWrapper>
   )
 }
 
@@ -141,7 +165,6 @@ interface RemoveFilterTagsProps {
   className?: string;
   onClick: (tag: GenericTag) => void;
 }
-
 
 export function RemoveFilterTags({ tags, className, onClick }: RemoveFilterTagsProps) {
   return (
@@ -331,7 +354,7 @@ export const RemoveFilterTag = ({ tag, onClick }: { tag: GenericTag; onClick: (t
   return (
     <TagWrapper 
       canSelect={true}
-      className="hover:bg-violet-light/50"
+      className="bg-teal-light hover:bg-violet-light/50"
       variants={tagVariants}
       onClick={handleClick}
     >
@@ -349,7 +372,7 @@ export const DeleteTag = ({ tag, onClick }: { tag: GenericTag; onClick: (tag: Ge
   return (
     <TagWrapper 
       canSelect={true}
-      className="hover:bg-red-500/50"
+      className="bg-teal-light hover:bg-red-500/50"
       variants={tagVariants}
       onClick={handleClick}
     >
@@ -374,7 +397,7 @@ const TagWrapper = ({ children, canSelect, className, variants, onClick, disable
 
   return (
     <Component 
-      className={`px-2 md:px-3 py-2 rounded-full text-[12px] md:text-sm font-medium text-paper transition-colors inline-flex items-center justify-center gap-1 min-w-12 shadow-md shadow-black/20 bg-teal-light shrink-0 ${className ?? ''} ${disabled ? 'opacity-50 cursor-not-allowed' : canSelect ? 'cursor-pointer' : ''}`}
+      className={`px-2 md:px-3 py-2 rounded-full text-[12px] md:text-sm font-medium text-paper transition-colors inline-flex items-center justify-center gap-1 min-w-12 shadow-md shadow-black/20 shrink-0 ${className ?? 'bg-teal-light'} ${disabled ? 'opacity-50 cursor-not-allowed' : canSelect ? 'cursor-pointer' : ''}`}
       layout
       variants={variants} 
       onClick={onClick}

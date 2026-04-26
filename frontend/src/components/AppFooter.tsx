@@ -5,17 +5,18 @@ import { motion } from "framer-motion";
 import IconHome from "../assets/icons/home.svg?react";
 import IconBook from "../assets/icons/book.svg?react";
 import IconUser from "../assets/icons/user.svg?react";
+import IconCalendar from "../assets/icons/calendar.svg?react";
 import Ondinha from "../assets/ondinha.svg?react";
 
 export default function AppFooter() {
   return (
-    <footer className="w-full bottom-0 bg-violet-dark flex items-center justify-center 
-                       h-20 fixed shadow-paper-top dark:shadow-violet-top">
+    <footer className="w-full bottom-0 bg-violet-dark flex items-center justify-center h-20 fixed shadow-paper-top dark:shadow-violet-top">
       <motion.nav 
         className="flex justify-evenly items-center max-w-180 w-full relative"
         layout
       >
         <FooterItem to="/home" icon={IconHome}/>
+        <FooterItem to="/calendar" icon={IconCalendar}/>
         <FooterItem to="/info" icon={IconBook}/>
         <FooterItem to="/perfil" icon={IconUser}/>
       </motion.nav>
@@ -57,13 +58,7 @@ const FooterItem = ({ to, icon: Icon }: { to: string; icon: React.ComponentType<
               stiffness: 800,
               damping: 30,
             }}
-            className={`
-              p-4 rounded-full transition-colors relative z-5
-              ${isActive 
-                ? "bg-teal-mid" 
-                : "hover:bg-violet-light/50"
-              }
-            `}
+            className={`p-4 rounded-full transition-colors relative z-5 ${isActive ? "bg-teal-mid" : "hover:bg-violet-light/50"}`}
             animate={{
               y: isActive ? -50 : 0,
               scale: isActive ? 1.1 : 1,

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { cookieOptions } from "../services/cookies.service.js"
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -31,18 +32,10 @@ class JwtController {
               is_verified: payload.is_verified || false
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "1h" }
+            { expiresIn: "15m" }
           );
 
-          const cookieSite = process.env.COOKIE_SAMESITE;
-          res.cookie("access_token", newAccessToken, {
-            httpOnly: true,
-            sameSite: cookieSite,
-            secure: isProduction,
-            maxAge: 1000 * 60 * 60,
-            path: "/",
-            domain: ".portalhermes.app"
-          });
+          res.cookie("access_token", newAccessToken, cookieOptions.auth);
 
           return res.status(200).json({
             message: "Access token renovado com sucesso"

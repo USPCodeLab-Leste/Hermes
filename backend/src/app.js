@@ -14,6 +14,7 @@ import eventsRoutes from "./routes/events.route.js";
 import infosRoutes from "./routes/infos.route.js";
 import muralRoutes from "./routes/mural.route.js";
 import tagRoutes from "./routes/tag.route.js";
+import superRoutes from "./routes/superAdmin.route.js"
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use(eventsRoutes);
 app.use(infosRoutes);
 app.use(muralRoutes);
 app.use(tagRoutes);
+app.use("/super", superRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

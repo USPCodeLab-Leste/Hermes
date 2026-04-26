@@ -25,3 +25,19 @@ export async function register(data: RegisterPayload) {
     skipAuthRefresh: true,
   })
 }
+
+export async function forgotPassword(email: string) {
+  return apiRequest<BaseResponse>('/auth/forgot-password', {
+    method: 'POST',
+    body: { email },
+    skipAuthRefresh: true,
+  })
+}
+
+export async function resetPassword(newPassword: string, token: string) {
+  return apiRequest<BaseResponse>('/auth/reset-password', {
+    method: 'POST',
+    body: { newPassword, token },
+    skipAuthRefresh: true,
+  })
+}
