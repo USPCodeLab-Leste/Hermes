@@ -28,6 +28,8 @@ export default function App() {
   const [initialUrl, setInitialUrl] = useState(BASE_URL);
   const [expoPushToken, setExpoPushToken] = useState<string | undefined>();
 
+  const [isPushReady, setIsPushReady] = useState(false);
+
   // Handlers
   const handleMessage = async (event: any) => {
     const data = JSON.parse(event.nativeEvent.data);
@@ -117,7 +119,10 @@ export default function App() {
 
   // intercepta as notificações recebidas para navegar no WebView e registra o token de push
   useEffect(() => {
-    registerForPushNotificationsAsync().then(setExpoPushToken);
+    registerForPushNotificationsAsync().then(token => {
+      setExpoPushToken(token);
+      setIsPushReady(true); 
+    });
 
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       const urlDoBackend = response.notification.request.content.data?.url as string | undefined;
@@ -142,6 +147,10 @@ export default function App() {
     window.expoPushToken = ${expoPushToken ? `"${expoPushToken}"` : "null"};
     true;
   `;
+
+  if (!isPushReady) {
+    return <SafeAreaView style={styles.container} />;
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'top', 'left', 'right']}>
