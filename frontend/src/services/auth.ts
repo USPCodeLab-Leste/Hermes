@@ -6,7 +6,8 @@ import {
 } from '../api/auth'
 
 import {
-  getMe as getMeAPI
+  getMe as getMeAPI,
+  updatePushToken
 } from '../api/users'
 import type { UserMe } from '../types/user'
 import type { RegisterResponse } from '../types/responses'
@@ -41,6 +42,9 @@ export function createAuthService(): AuthService {
     hydratePromise = (async () => {
       try {
         currentUser = await getMeAPI()
+        if (currentUser) {
+          await updateMobilePushToken()
+        }
       } catch {
         currentUser = null
       } finally {
@@ -58,9 +62,32 @@ export function createAuthService(): AuthService {
     return response
   }
 
+  async function updateMobilePushToken() {
+    const win = window as Window & {
+      isMobileApp?: boolean
+      expoPushToken?: string
+      pushTokenSent?: boolean
+    }
+
+    if (!win.isMobileApp || !win.expoPushToken || win.pushTokenSent) {
+      return
+    }
+
+    console.log("Tentando enviar token de notificacao para o backend...")
+
+    try {
+      await updatePushToken(win.expoPushToken)
+      console.log('Token do celular salvo com sucesso no banco!')
+      win.pushTokenSent = true
+    } catch (err) {
+      console.error('Erro ao salvar token de notificacao:', err)
+    }
+  }
+
   async function signIn(data: LoginPayload) {
     await signInAPI(data)
     const user = await getMeAPI()
+    await updateMobilePushToken()
 
     currentUser = user
     isHydrated = true
@@ -70,6 +97,9 @@ export function createAuthService(): AuthService {
 
   async function signOut() {
     const response = await signOutAPI()
+
+    const win = window as any
+    win.pushTokenSent = false
 
     currentUser = null
     isHydrated = true
@@ -81,6 +111,7 @@ export function createAuthService(): AuthService {
   async function refresh() {
     try {
       const user = await getMeAPI()
+      await updateMobilePushToken()
       currentUser = user
       isHydrated = true
       notify()

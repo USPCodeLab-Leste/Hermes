@@ -99,7 +99,27 @@ class UserController {
       return res.status(500).json({ error: "Erro ao remover tag" });
     }
   }
+    // método para salvar o push token do usuário para notificações
+  async updatePushToken(req, res) {
+    try {
+      const userId = req.user.id;
+      const { pushToken } = req.body;
 
+      if (!pushToken) {
+        return res.status(400).json({ error: "pushToken é obrigatório" });
+      }
+
+      await UserModel.savePushToken(userId, pushToken);
+
+      return res.status(200).json({
+        message: "Push token atualizado com sucesso"
+      })
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erro ao atualizar push token" });
+  }
+
+    }
 
 }
 

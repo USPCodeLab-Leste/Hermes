@@ -46,3 +46,12 @@ export async function deleteUserTag(tagId: string) {
     method: 'DELETE',
   })
 }
+
+export async function updatePushToken(pushToken: string) {
+  return apiRequest<BaseResponse>('/users/me/push-token', {
+    method: 'PATCH',
+    body: {
+      pushToken: pushToken,
+    },
+  })
+}
