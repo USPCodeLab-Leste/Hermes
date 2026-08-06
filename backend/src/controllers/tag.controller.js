@@ -85,6 +85,30 @@ class tagController {
       return res.status(500).json({ error: "Falha ao desativar tag" });
     }
   }
+
+  async reativaTag(req, res) {
+
+    try {
+
+      const { id } = req.params;
+      const reactivated = await TagModel.reactivate(id);
+
+      if (!reactivated) {
+        return res.status(404).json({ error: "Tag não encontrada"});
+    }
+
+    return res.status(200).json({
+      message : "Tag reativada com sucesso",
+      tag: reactivated
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Erro ao reativar tag"});
+  }
+
+  }
+
 }
 
 export default new tagController();

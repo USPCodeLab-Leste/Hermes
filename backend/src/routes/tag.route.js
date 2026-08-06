@@ -166,4 +166,7 @@ router.delete(
   adminMiddleware,
   tagController.desativaTag
 );
+
+router.patch("/:id/reativar", TagController.reactivate);
+
 export default router;
