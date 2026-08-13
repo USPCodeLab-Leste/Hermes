@@ -44,6 +44,7 @@ import Apoios from './pages/info/Apoios';
 import Carreira from './pages/info/Carreira';
 import Info from './pages/info/InfoTag'
 import Calendar from './pages/Calendar';
+import Privacy from './pages/Privacy'
 
 // Components
 import Loading from './components/Loading'
@@ -109,6 +110,8 @@ export const router = createBrowserRouter(
         <Route path="register" element={<Register />} />
         <Route path="reset-password" element={<ResetPassword />} />
       </Route>
+
+      <Route path="/privacy" element={<Privacy />}/>
 
       {/* Rotas protegidas */}
       <Route

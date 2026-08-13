@@ -28,6 +28,8 @@ import PencilIcon from "../assets/icons/pencil.svg?react"
 import PlayIcon from "../assets/icons/play.svg?react"
 import PauseIcon from "../assets/icons/pause.svg?react"
 import AndroidIcon from "../assets/icons/android.svg?react"
+import FileIcon from "../assets/icons/file-description.svg?react"
+import TrashIcon from "../assets/icons/trash.svg?react"
 
 const variants: Variants = {
   visible: { 
@@ -58,8 +60,9 @@ interface PerfilAction {
   onClick: MouseEventHandler<HTMLButtonElement>,
 }
 
-const APK_LINK = "https://github.com/USPCodeLab-Leste/Hermes/releases/download/v1.0/portal-hermes-android-v1.0.apk"
+const APK_LINK = "https://github.com/USPCodeLab-Leste/Hermes/releases/download/v1.1/portal-hermes-android-v1.1.apk"
 const FORMS_LINK = "https://forms.gle/7XusnvvnUYXrK27X7"
+const EXCLUSION_FORM_LINK = "https://forms.gle/jGxGU2cRCdLwGu7G9"
 
 export default function Perfil() {
   const navigate = useNavigate();
@@ -88,6 +91,10 @@ export default function Perfil() {
   const handleDownload = useCallback(() => {
     window.open(APK_LINK, "_blank", "noopener,noreferrer");
   }, []);
+  const handlePrivacy = useCallback(() => navigate({ pathname: "../privacy" }), [navigate]);
+  const handleDelete = useCallback(() => {
+    window.open(EXCLUSION_FORM_LINK, "_blank", "noopener,noreferrer")
+  }, []);
   const handleInfo = useCallback(() => {}, []);
   const handleAdmin = useCallback(() => navigate({ pathname: "admin", search }), [navigate, search]);
 
@@ -101,6 +108,8 @@ export default function Perfil() {
     { label: "Relatar Bugs ou Sugestões", icon: BugIcon, onClick: handleBug },
     // { label: "Informações", icon: InfoIcon, onClick: handleInfo },
     { label: "Baixar APK (Android)", icon: AndroidIcon, onClick: handleDownload},
+    { label: "Política de Privacidade", icon: FileIcon, onClick: handlePrivacy },
+    { label: "Exclusão de Dados", icon: TrashIcon, onClick: handleDelete },
     { label: "Sair", icon: LogoutIcon, onClick: signOut },
   ].map((action, index) => ({ ...action, id: index })), [isDark, user?.role, handleDarkMode, handleReducedMotionToggle, handleBug, handleInfo, handleNotificacoes, handlePerfil, handleSenha, handleAdmin, signOut]);
 
